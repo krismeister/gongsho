@@ -1,6 +1,22 @@
 # gongsho
-Builds code locally and commits to git
+Generates code with Claude and commits to git
 
+# Project Structure
+- src/ - gongsho code
+- project/ - an example project to test gongsho
+   - simple.ts - an example file to test gongsho
+
+# TODOs
+## General TODOs
+   - [x] Build AST structure from project folder
+   - [ ] Read env variables for claude api key, github token, etc.
+
+## Claude TODOs
+   - [ ] Build a prompt for Claude to understand the project folder
+   - [ ] Build a prompt for Claude to understand the user's objective
+   - [ ] Build a prompt for Claude to understand the codebase
+   - [ ] Build a prompt for Claude to understand the pull request
+   - [ ] Build a prompt for Claude to understand the commit message
 
 # The plan
 Building an AI platform that can read a codebase, understand a user-given objective, and create a pull request using Claude is an ambitious project. Here's a high-level plan to approach this:
