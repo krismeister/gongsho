@@ -1,0 +1,24 @@
+{
+  "name": "gongsho",
+  "version": "1.0.0",
+  "description": "Builds code locally and commits to git",
+  "main": "src/main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node src/main.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krismeister/gongsho.git"
+  },
+  "author": "kris.meister@gmail.com",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/krismeister/gongsho/issues"
+  },
+  "homepage": "https://github.com/krismeister/gongsho#readme",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
