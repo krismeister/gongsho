@@ -1,6 +1,12 @@
 # gongsho
 Generates code with Claude and commits to git
 
+# Setup
+1. Clone the repo
+2. Run `npm install`
+3. Copy the config example file and update it`cp config/env_config.example.json config/env_config.json`
+4. Run `npm run start`
+
 # Project Structure
 - src/ - gongsho code
 - project/ - an example project to test gongsho
@@ -9,7 +15,7 @@ Generates code with Claude and commits to git
 # TODOs
 ## General TODOs
    - [x] Build AST structure from project folder
-   - [ ] Read env variables for claude api key, github token, etc.
+   - [x] Read env variables for claude api key, github token, etc.
 
 ## Claude TODOs
    - [ ] Build a prompt for Claude to understand the project folder
