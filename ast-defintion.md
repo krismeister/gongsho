@@ -26,7 +26,9 @@ passed into the LLM text query
 ```
 
 ## JSON (write)
+
 Output from the LLM message query
+
 ```
 interface ASTChange {
   filename: string;

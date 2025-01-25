@@ -1,12 +1,10 @@
-import { ASTProject } from "@/utils/ast-out";
-
 // export const onlyDeltaASTPrompt = (ast: ASTProject, userPrompt: string): string => {
 //     return `I have an AST representation of TypeScript code with detailed position information. When suggesting changes, please refer to specific node positions (pos and end values) where modifications should be made. Here's the AST:
-  
+
 //   ${JSON.stringify(ast)}
-  
+
 //   User Prompt: ${userPrompt}
-  
+
 //   Please provide:
 //   1. The an array of AST changes including file names without any further explenation
 //   `;
@@ -14,11 +12,11 @@ import { ASTProject } from "@/utils/ast-out";
 
 // export const moreDescriptivePrompt = (ast: ASTProject, userPrompt: string): string => {
 //     return `I have an AST representation of TypeScript code with detailed position information. When suggesting changes, please refer to specific node positions (pos and end values) where modifications should be made. Here's the AST:
-  
+
 //   ${JSON.stringify(ast)}
-  
+
 //   User Prompt: ${userPrompt}
-  
+
 //   Please provide:
 //   1. The delta AST of the changes without any explenation
 //   2. A seperator of '---'
@@ -26,9 +24,8 @@ import { ASTProject } from "@/utils/ast-out";
 //   3. A brief explanation of the considerations for maintaining the code structure and style.`;
 //   }
 
-
 export const astChangePrompt = (ast: string, userPrompt: string): string => {
-    return `You are a code modification assistant. I will provide you with an AST representation of code and a requested change. Please respond with a precise change list that follows this JSON structure:
+  return `You are a code modification assistant. I will provide you with an AST representation of code and a requested change. Please respond with a precise change list that follows this JSON structure:
   
   {
     "changes": [

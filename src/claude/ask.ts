@@ -1,11 +1,9 @@
-import { getConfig } from "@/config/config";
-import Anthropic from "@anthropic-ai/sdk";
-import { astChangePrompt } from "./prompts";
-import { TextBlock } from "@anthropic-ai/sdk/resources";
+import { getConfig } from '@/config/config';
+import Anthropic from '@anthropic-ai/sdk';
+import { astChangePrompt } from './prompts';
+import { TextBlock } from '@anthropic-ai/sdk/resources';
 
-
-let anthropic: Anthropic
-
+let anthropic: Anthropic;
 
 export const askClaude = async (ast: string, userPrompt: string) => {
   const prompt = astChangePrompt(ast, userPrompt);
@@ -17,24 +15,24 @@ export const askClaude = async (ast: string, userPrompt: string) => {
       apiKey: config.claude.anthropicApiKey,
     });
   }
-  
+
   const msg = await anthropic.messages.create({
     model: config.claude.model,
     max_tokens: config.claude.maxTokens,
     temperature: 1,
     messages: [
       {
-        "role": "user",
-        "content": [
+        role: 'user',
+        content: [
           {
-            "type": "text",
-            "text": prompt
-          }
-        ]
-      }
-    ]
+            type: 'text',
+            text: prompt,
+          },
+        ],
+      },
+    ],
   });
 
   console.log(msg);
   return (msg.content.pop() as TextBlock).text;
-}
+};
