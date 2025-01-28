@@ -1,0 +1,18 @@
+# Compiled JavaScript files
+*.js
+*.js.map
+
+# Log files
+*.log
+
+# Dependency directories
+node_modules/
+
+# IDE and OS files
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+
+# Test output
+coverage/

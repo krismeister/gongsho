@@ -1,6 +1,32 @@
 # The plan
 
-As written by Claude
+## MVP
+
+- [ ] Question and Reponses with LLM
+
+  - [ ] Make initial prompt asking if codebase explenation is required
+  - [ ] Pass AST to LLM if explenation is required
+  - [ ] Pass full text of files to LLM if explenation is required
+
+- [ ] UI
+
+  - [ ] NX project with Angular and NestJS
+  - [ ] Markdown Stream
+  - [ ] UI to see your history
+
+- [ ] Server
+
+## Nice to Have Features
+
+- [ ] Browse the codebase
+- [ ] Highlight code snippet and explain it
+- [ ] Highlight code snippet and ask for a change
+
+## Good reading:
+
+- [Benchmark from Aider on Search/Replace vs diff](https://aider.chat/docs/benchmarks.html)
+
+## Large plan as written by Claude
 
 Building an AI platform that can read a codebase, understand a user-given objective, and create a pull request using Claude is an ambitious project. Here's a high-level plan to approach this:
 

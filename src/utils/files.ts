@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export const PROJECT_ROOT = path.resolve(__dirname, '..', '..', 'project');
+const PROJECT_ROOT = path.resolve(__dirname, '..', '..', 'project');
 
 export const getProjectFiles = () => {
   return fs.readdirSync(PROJECT_ROOT);

@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+export const PROJECT_ROOT = path.resolve(__dirname, '..', '..', 'project');
+
 interface ClaudeConfig {
   anthropicApiKey: string;
   model: string;
@@ -9,7 +11,12 @@ interface ClaudeConfig {
   baseUrl: string;
 }
 
-export const getConfig = (): { claude: ClaudeConfig } => {
+interface Config {
+  projectRoot: string;
+  claude: ClaudeConfig;
+}
+
+export const getConfig = (): Config => {
   const configPath = path.resolve(__dirname, './env_config.json');
 
   try {
@@ -21,6 +28,7 @@ export const getConfig = (): { claude: ClaudeConfig } => {
     }
 
     return {
+      projectRoot: PROJECT_ROOT,
       claude: { ...config.claude },
     };
   } catch (error) {
