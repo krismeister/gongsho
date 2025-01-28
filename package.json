@@ -15,7 +15,7 @@
     "url": "git+https://github.com/krismeister/gongsho.git"
   },
   "author": "kris.meister@gmail.com",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/krismeister/gongsho/issues"
   },
