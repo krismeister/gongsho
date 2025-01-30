@@ -1,6 +1,10 @@
 import { askClaude } from '@/claude/ask';
 import { getFileProjectsLisp } from './utils/ast-read';
 import { applyASTChanges } from './utils/ast-write';
+import { RepoMap } from './repo-map/repo-map';
+import { getConfig } from './config/config';
+import { ClaudeAgent } from './agents/claude-agent';
+import { Conversation } from './dialogue/conversation';
 
 const main = async () => {
   const asts = getFileProjectsLisp();
@@ -30,4 +34,19 @@ const main = async () => {
   applyASTChanges(JSON.parse(response).changes);
 };
 
-main();
+const main2 = async () => {
+  const config = await getConfig();
+  const repo = new RepoMap(config.projectRoot);
+  await repo.buildFileMap();
+  console.log(repo.getRepoMapAstText());
+};
+
+const main3 = async () => {
+  const config = await getConfig();
+  const agent = new ClaudeAgent(config);
+  const conversation = new Conversation(config, agent);
+  await conversation.initConversation(config);
+  conversation.startConversation('make simple.ts say goodby');
+};
+
+main3();

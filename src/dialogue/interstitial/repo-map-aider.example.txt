@@ -1,0 +1,31 @@
+USER Here are summaries of some files present in my git repository.
+USER Do not propose changes to these files, treat them as *read-only*.
+USER If you need to edit any of these files, ask me to *add them to the chat* first.
+USER 
+USER package.json
+USER 
+USER public/index.html
+USER 
+USER src/App.css
+USER 
+USER src/App.tsx:
+USER ⋮...
+USER │function App() {
+USER │  return (
+USER │    <Router>
+USER │      <div className="App">
+USER │        <nav className="App-nav">
+USER │          <Link to="/">Home</Link>
+USER │          <Link to="/about">About</Link>
+USER │        </nav>
+USER │        
+USER │        <Routes>
+USER ⋮...
+USER 
+USER src/components/About.tsx
+USER 
+USER src/index.css
+USER 
+USER src/index.tsx
+USER 
+USER tsconfig.json

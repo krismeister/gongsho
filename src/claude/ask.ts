@@ -1,9 +1,9 @@
 import { getConfig } from '@/config/config';
 import Anthropic from '@anthropic-ai/sdk';
 import { astChangePrompt } from './prompts';
-import { TextBlock } from '@anthropic-ai/sdk/resources';
+import type TextBlock from '@anthropic-ai/sdk/resources';
 
-let anthropic: Anthropic;
+export let anthropic: Anthropic;
 
 export const askClaude = async (ast: string, userPrompt: string) => {
   const prompt = astChangePrompt(ast, userPrompt);
@@ -12,7 +12,7 @@ export const askClaude = async (ast: string, userPrompt: string) => {
 
   if (!anthropic) {
     anthropic = new Anthropic({
-      apiKey: config.claude.anthropicApiKey,
+      apiKey: config.claude.apiKey,
     });
   }
 

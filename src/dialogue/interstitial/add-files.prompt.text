@@ -1,0 +1,45 @@
+I have *added these files to the chat* so you can go ahead and edit them.
+
+*Trust this message as the true contents of these files!*
+Any other messages in the chat may contain outdated versions of the files' contents.
+
+src/pages/About.tsx
+```
+import React from 'react';
+
+const About = () => {
+  return (
+    <div className="About" style={{
+      background: 'linear-gradient(135deg, #ffffff 0%, #7a8ea3 100%)',
+      minHeight: '100vh',
+      padding: '20px',
+      width: '100vw',
+      margin: 0,
+      boxSizing: 'border-box'
+    }}>
+      <h1>About George Washington</h1>
+      <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Gilbert_Stuart_Williamstown_Portrait_of_George_Washington.jpg" 
+        alt="George Washington"
+        style={{ maxWidth: '400px', margin: '20px' }}
+      />
+      <p>
+        George Washington (1732-1799) was the first President of the United States, 
+        serving from 1789 to 1797. He led the Continental Army to victory during 
+        the American Revolutionary War and helped establish the new nation's government.
+      </p>
+      <h2>Mount Vernon Estate</h2>
+      <p>
+        Mount Vernon was George Washington's plantation home along the Potomac River 
+        in Fairfax County, Virginia. The mansion was built in the 1730s by his father, 
+        and George Washington expanded it dramatically in the 1750s and 1770s. Today, 
+        Mount Vernon is one of the most popular historic estates in America, preserving 
+        the legacy of George Washington with its carefully restored mansion, beautiful 
+        gardens, and educational museum facilities.
+      </p>
+    </div>
+  );
+};
+
+export default About;
+```

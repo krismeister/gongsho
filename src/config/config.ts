@@ -3,17 +3,17 @@ import path from 'path';
 
 export const PROJECT_ROOT = path.resolve(__dirname, '..', '..', 'project');
 
-interface ClaudeConfig {
-  anthropicApiKey: string;
+interface ModelConfig {
+  apiKey: string;
   model: string;
   maxTokens: number;
   apiVersion: string;
   baseUrl: string;
 }
 
-interface Config {
+export interface Config {
   projectRoot: string;
-  claude: ClaudeConfig;
+  claude: ModelConfig;
 }
 
 export const getConfig = (): Config => {
@@ -23,7 +23,7 @@ export const getConfig = (): Config => {
     const configFile = fs.readFileSync(configPath, 'utf8');
     const config = JSON.parse(configFile);
 
-    if (!config.claude?.anthropicApiKey) {
+    if (!config.claude?.apiKey) {
       throw new Error('Claude API key not found in config.json');
     }
 

@@ -1,6 +1,6 @@
 {
   "claude": {
-    "anthropicApiKey": "your-api-key-here",
+    "apiKey": "your-api-key-here",
     "model": "claude-3-5-sonnet-20241022",
     "maxTokens": 8192,
     "apiVersion": "2023-06-01",
