@@ -1,5 +1,4 @@
 import { Config } from '@/config/config';
-import { ModelConfig } from '@/models/model-configs';
 import { RepoMap } from '@/repo-map/repo-map';
 import { WholeCodebaseDialogue } from './system/whole-codebase.dialogue';
 import { RepoMapDialogue } from './interstitial/repo-map.dialogue';
@@ -7,6 +6,7 @@ import { AbstractDialogue } from './abstract-dialogue';
 import { AbstractAgent, AgentResponse } from '@/agents/abstract-agent';
 import { UserInputDialogue } from './user-input.dialogue';
 import { AssistantTextDialogue } from './agent/assistant-text.dialogue';
+import { AddFilesDialogue } from './interstitial/add-files.dialogue';
 
 export enum DialogRoles {
   USER = 'user',
@@ -73,15 +73,27 @@ export class Conversation {
       .then(response => this.onAgentResponse(response));
   }
 
-  onAgentResponse(response: AgentResponse) {
+  async onAgentResponse(response: AgentResponse) {
     console.log(response);
-    this.dialogFlow.push(
-      new AssistantTextDialogue(response.content.pop()!.text)
-    );
+    const content = response.content[response.content.length - 1]!.text;
+    this.dialogFlow.push(new AssistantTextDialogue(content));
 
-    debugger;
-    // TODO: detect if there is a interstitial dialogue that is required based on that repsponse
-    // and unshift it to the dialogue queue
+    if (content.includes('EXAMINE_FILES')) {
+      const examineFilesRegex = /EXAMINE_FILES:(.*?)(?:\n|$)/;
+      const match = content.match(examineFilesRegex);
+      const files = match ? match[1].trim().split(',') : [];
+
+      const repoFiles = await this.repoMap!.loadContents(files);
+
+      const fileContents = Object.values(repoFiles)
+        .map(file => file.getContentsForLlmMessage())
+        .join('\n');
+
+      const dialogue = new AddFilesDialogue('', {
+        files: fileContents,
+      });
+      this.dialogueQueue.unshift(dialogue);
+    }
 
     if (this.dialogueQueue.length > 0) {
       this.sendNextQueueItemToAgent();

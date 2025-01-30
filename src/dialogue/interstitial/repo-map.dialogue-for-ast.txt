@@ -1,0 +1,4 @@
+Here are summaries of some files present in my git repository.
+If you need to edit any of these files say you will *EXAMINE_FILES* them.
+
+{{repoMap}}

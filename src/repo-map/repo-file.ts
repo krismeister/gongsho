@@ -10,14 +10,9 @@ type FileMetadata = {
   lastFetched: number;
 };
 
-type FileContents = {
-  contents: string;
-  lastFetched: number;
-};
-
 export class RepoFile {
   private metadata?: FileMetadata;
-  private contents?: FileContents;
+  private contents?: string;
 
   constructor(
     public path: string,
@@ -38,12 +33,33 @@ export class RepoFile {
     });
   }
 
-  public async loadContents(): Promise<void | FileContents> {
+  public async loadLatestContents(): Promise<string> {
+    debugger;
+    try {
+      if (!this.metadata || !this.contents) {
+        await this.loadMetadata();
+        await this.loadContents();
+      } else {
+        const lastModified = this.metadata.lastModified;
+        await this.loadMetadata();
+        const newModifiedTime = this.metadata.lastModified;
+
+        if (lastModified < newModifiedTime) {
+          await this.loadContents();
+        }
+      }
+
+      return this.contents!;
+    } catch (error) {
+      console.error(`Error checking file stats for ${this.path}:`, error);
+      throw new Error(`Error checking file stats for ${this.path}\n${error}`);
+    }
+  }
+
+  private async loadContents(): Promise<string> {
     return readFile(this.path, 'utf8').then(contents => {
-      this.contents = {
-        contents,
-        lastFetched: Date.now(),
-      };
+      this.contents = contents;
+      return contents || '';
     });
   }
 
@@ -53,5 +69,13 @@ export class RepoFile {
 
   public getContents() {
     return this.contents;
+  }
+
+  public getContentsForLlmMessage(): string {
+    return `${this.relativePath}
+    \`\`\`typescript
+    ${this.contents}
+    \`\`\`
+    `;
   }
 }

@@ -31,6 +31,19 @@ export class RepoMap {
       console.log(file.getMetadata());
     }
 
-    return Object.keys(this.fileMap).join('\n\n');
+    return Object.keys(this.fileMap).join('\n');
+  }
+
+  public async loadContents(
+    relativeFilePaths: string[]
+  ): Promise<Record<string, RepoFile>> {
+    const fileContents: Record<string, RepoFile> = {};
+    const loadPromises = relativeFilePaths.map(async filePath => {
+      fileContents[filePath] = this.fileMap[filePath];
+      await fileContents[filePath].loadLatestContents();
+    });
+
+    await Promise.all(loadPromises);
+    return fileContents;
   }
 }

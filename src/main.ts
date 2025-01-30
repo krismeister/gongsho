@@ -46,7 +46,9 @@ const main3 = async () => {
   const agent = new ClaudeAgent(config);
   const conversation = new Conversation(config, agent);
   await conversation.initConversation(config);
-  conversation.startConversation('make simple.ts say goodby');
+  conversation.startConversation(
+    'I want to make the message function more friendly'
+  );
 };
 
 main3();
