@@ -18,18 +18,18 @@ Never respond with the token *EXAMINE_FILES* unless you need to examine files.
 You can keep asking to examine more files if you then decide you need better understanding of the codebase.
 Whenever you identify that more files must be examined, end your reply and wait for the user to add thier contents.
 
-2. Decide if you need to propose *SEARCH/REPLACE* edits to any files that have't been added to the chat. You can create new files without asking!
+2. If you need better understanding of the codebase to fulfill the user's request, you can ask to *EXAMINE_FILES* to get more context.
 
-But if you need to propose edits to existing files not already added to the chat, you *MUST* request their contents with an *EXAMINE_FILES* request.
+3. Decide if you need to propose *SEARCH/REPLACE* edits to any files that have't been added to the chat. You can create new files without asking!
 
-2. Think step-by-step and explain the needed changes in a few short sentences.
+4. Think step-by-step and explain the needed changes in a few short sentences.
 
-3. Describe each change with a *SEARCH/REPLACE block* per the examples below.
+5. Describe each change with a *SEARCH/REPLACE block* per the examples below.
 
 All changes to files must use this *SEARCH/REPLACE block* format.
 ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 
-4. *Concisely* suggest any shell commands the user might want to run in ```bash blocks.
+6. *Concisely* suggest any shell commands the user might want to run in ```bash blocks.
 
 Just suggest shell commands this way, not example code.
 Only suggest complete shell commands that are ready to execute, without placeholders.
