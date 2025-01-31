@@ -21,18 +21,10 @@
   },
   "homepage": "https://github.com/krismeister/gongsho#readme",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.21.0",
-    "@typescript-eslint/parser": "^8.21.0",
-    "eslint": "^9.19.0",
-    "eslint-plugin-prettier": "^5.2.3",
-    "ignore": "^7.0.3",
-    "prettier": "^3.4.2",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.36.2",
+    "ignore": "^7.0.3",
     "yaml": "^2.7.0"
   }
 }
