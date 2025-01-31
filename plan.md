@@ -1,30 +1,11 @@
-# The plan
+# The plan for Gongsho
 
-## MVP
-
-- [ ] Question and Reponses with LLM
-
-  - [ ] Make initial prompt asking if codebase explenation is required
-  - [ ] Pass AST to LLM if explenation is required
-  - [ ] Pass full text of files to LLM if explenation is required
-
-- [ ] UI
-
-  - [ ] NX project with Angular and NestJS
-  - [ ] Markdown Stream
-  - [ ] UI to see your history
-
-- [ ] Server
-
-## Nice to Have Features
-
-- [ ] Browse the codebase
-- [ ] Highlight code snippet and explain it
-- [ ] Highlight code snippet and ask for a change
-
-## Good reading:
+## Good reading
 
 - [Benchmark from Aider on Search/Replace vs diff](https://aider.chat/docs/benchmarks.html)
+- [aider repo-map](https://github.com/jxnl/aider/blob/main/aider/repo_map.py)
+- [Anthropic Claud Tool/Function calling](https://docs.anthropic.com/en/docs/tools/tool-calling)
+- [OpenAI function calling](https://platform.openai.com/docs/guides/function-calling)
 
 ## Large plan as written by Claude
 
