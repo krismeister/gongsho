@@ -32,6 +32,7 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.36.2"
+    "@anthropic-ai/sdk": "^0.36.2",
+    "yaml": "^2.7.0"
   }
 }

@@ -1,4 +1,4 @@
-import { AbstractDialogue } from '@/dialogue/abstract-dialogue';
+import { BaseDialogue } from '@/dialogue/base-dialogue';
 import { DialogRoles } from '../conversation';
 import { readFileSync } from 'fs';
 import path from 'path';
@@ -6,7 +6,7 @@ import path from 'path';
 const promptPath = path.join(__dirname, '/', 'repo-map.dialogue.txt');
 const prompt = readFileSync(promptPath, 'utf8');
 
-export class RepoMapDialogue extends AbstractDialogue {
+export class RepoMapDialogue extends BaseDialogue {
   protected description: string = 'Repo Map';
   constructor(
     protected readonly inputText: string = '',

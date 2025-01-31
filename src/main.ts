@@ -12,4 +12,13 @@ const main = async () => {
   );
 };
 
-main();
+const main2 = async () => {
+  const config = await getConfig();
+  const conversation = new Conversation(config, new ClaudeAgent(config));
+  await conversation.initConversation(config);
+  //conversation-1738289447326.yml
+  conversation.initFromProject('conversation-1738289447326');
+  conversation.addUserInput('can you make it less friendly?');
+};
+
+main2();

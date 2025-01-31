@@ -81,6 +81,7 @@ web_modules/
 
 # config
 src/config/env_config.json
+.gongsho
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

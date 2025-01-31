@@ -1,7 +1,7 @@
-import { AbstractDialogue } from './abstract-dialogue';
+import { BaseDialogue } from './base-dialogue';
 import { DialogRoles } from './conversation';
 
-export class UserInputDialogue extends AbstractDialogue {
+export class UserInputDialogue extends BaseDialogue {
   protected description: string = 'User Input';
   constructor(
     protected readonly inputText: string,

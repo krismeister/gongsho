@@ -1,3 +1,4 @@
+import { getMimeType } from '@/utils/mime-types';
 import { readFile, stat } from 'fs/promises';
 import { basename } from 'path';
 
@@ -8,6 +9,7 @@ type FileMetadata = {
   sizeInBytes: number;
   lastModified: number;
   lastFetched: number;
+  mimeType: string;
 };
 
 export class RepoFile {
@@ -28,6 +30,7 @@ export class RepoFile {
         sizeInBytes: stats.size,
         lastModified: Math.floor(stats.mtimeMs),
         lastFetched: Date.now(),
+        mimeType: getMimeType(this.path),
       };
       return this.metadata;
     });
@@ -73,9 +76,8 @@ export class RepoFile {
 
   public getContentsForLlmMessage(): string {
     return `${this.relativePath}
-    \`\`\`typescript
-    ${this.contents}
-    \`\`\`
-    `;
+\`\`\`${this.metadata?.mimeType}
+${this.contents}
+\`\`\``;
   }
 }

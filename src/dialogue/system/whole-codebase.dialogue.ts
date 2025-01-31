@@ -1,4 +1,4 @@
-import { AbstractDialogue } from '@/dialogue/abstract-dialogue';
+import { BaseDialogue } from '@/dialogue/base-dialogue';
 import { DialogRoles } from '@/dialogue/conversation';
 import os from 'os';
 import { readFileSync } from 'fs';
@@ -20,13 +20,14 @@ export function generateSystemInfo(): string {
   - Current date: ${currentDate}`;
 }
 
-export class WholeCodebaseDialogue extends AbstractDialogue {
+export class WholeCodebaseDialogue extends BaseDialogue {
   protected description: string = 'Whole Codebase';
   constructor(
     protected readonly inputText: string = '',
     protected readonly fillValues: Record<string, string> = {}
   ) {
     fillValues['sysInfo'] = generateSystemInfo();
+    debugger;
     super(prompt, fillValues);
     this.role = 'assistant';
     this.dialogueRole = DialogRoles.SYSTEM;
