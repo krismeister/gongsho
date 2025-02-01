@@ -16,3 +16,5 @@ Thumbs.db
 
 # Test output
 coverage/
+
+.gongsho/

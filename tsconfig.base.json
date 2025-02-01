@@ -16,7 +16,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@org/gongsho-core": ["libs/gongsho-core/src/index.ts"]
+      "@gongsho-core": ["libs/gongsho-core/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

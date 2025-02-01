@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { getConfig } from '@gongsho-core';
-
+import { gongshoConfig } from '@gongsho-core';
 
 @Injectable()
 export class ConfigService {
@@ -17,7 +16,7 @@ export class ConfigService {
     return { ...this.config };
   }
 
-  async getConfig(): Promise<Record<string, string>> {
-    return getConfig();
+  async getConfig() {
+    return gongshoConfig;
   }
 } 

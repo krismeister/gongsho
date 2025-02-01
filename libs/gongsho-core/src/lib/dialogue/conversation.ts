@@ -1,4 +1,4 @@
-import { Config } from '../config/config';
+import { GongshoConfig } from '../config/config';
 import { RepoMap } from '../repo-map/repo-map';
 import { WholeCodebaseDialogue } from './system/whole-codebase.dialogue';
 import { RepoMapDialogue } from './interstitial/repo-map.dialogue';
@@ -27,7 +27,7 @@ export class Conversation {
   private agentInProgress = false;
 
   constructor(
-    private readonly config: Config,
+    private readonly config: GongshoConfig,
     private readonly agent: AbstractAgent
   ) {
     this.id = `conversation-${Date.now()}`; // Set ID when conversation is created
@@ -35,7 +35,7 @@ export class Conversation {
 
   private saveToProject() {
     // TODO: move save and load to a seperate class.
-    const filePath = `${this.config.projectRoot}/.gongsho/${this.id}.yml`;
+    const filePath = `${this.config.PROJECT_ROOT}/.gongsho/${this.id}.yml`;
 
     const dirPath = path.dirname(filePath);
     if (!fs.existsSync(dirPath)) {
@@ -48,15 +48,15 @@ export class Conversation {
 
   public initFromProject(id: string) {
     this.id = id;
-    const filePath = `${this.config.projectRoot}/.gongsho/${this.id}.yml`;
+    const filePath = `${this.config.PROJECT_ROOT}/.gongsho/${this.id}.yml`;
     const dialogueData = YAML.parse(fs.readFileSync(filePath, 'utf8'));
     this.dialogFlow = dialogueData.map((item: DialogueData) =>
       BaseDialogue.fromDialogueData(item)
     );
   }
 
-  async initConversation(config: Config) {
-    this.repoMap = new RepoMap(config.projectRoot);
+  async initConversation() {
+    this.repoMap = new RepoMap(this.config.PROJECT_ROOT);
     await this.repoMap.buildFileMap();
   }
 

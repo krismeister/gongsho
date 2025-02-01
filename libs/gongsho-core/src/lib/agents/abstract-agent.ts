@@ -1,4 +1,4 @@
-import { Config } from '../config/config';
+import { AgentModelConfig } from '../models/model-configs';
 
 export type AgentMessage = {
   role: 'user' | 'assistant';
@@ -39,7 +39,7 @@ export type AgentRequest = {
 };
 
 export abstract class AbstractAgent {
-  constructor(protected readonly config: Config) {}
+  constructor(protected readonly modelConfig: AgentModelConfig) {}
   abstract sendMessages(
     system: string,
     messages: AgentMessage[]

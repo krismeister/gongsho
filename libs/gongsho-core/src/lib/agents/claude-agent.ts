@@ -1,14 +1,15 @@
-import { Config } from '../config/config';
-import { AbstractAgent, AgentMessage, AgentResponse } from './abstract-agent';
 import Anthropic from '@anthropic-ai/sdk';
+import { gongshoConfig } from '../config/config';
+import { AgentModelConfig } from '../models/model-configs';
+import { AbstractAgent, AgentMessage, AgentResponse } from './abstract-agent';
 
 export class ClaudeAgent extends AbstractAgent {
   private anthropic: Anthropic;
 
-  constructor(config: Config) {
-    super(config);
+  constructor(modelConfig: AgentModelConfig) {
+    super(modelConfig);
     this.anthropic = new Anthropic({
-      apiKey: config.claude.apiKey,
+      apiKey: gongshoConfig.ANTHROPIC_API_KEY ?? '',
     });
   }
 
@@ -19,8 +20,8 @@ export class ClaudeAgent extends AbstractAgent {
     console.log('sending messages', JSON.stringify(messages));
 
     const response = await this.anthropic.messages.create({
-      model: this.config.claude.model,
-      max_tokens: this.config.claude.maxTokens,
+      model: this.modelConfig.model,
+      max_tokens: this.modelConfig.maxTokens,
       temperature: 1,
       system: system,
       // TODO deal with tool reponses correctly.

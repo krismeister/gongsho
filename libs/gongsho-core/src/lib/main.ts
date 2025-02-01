@@ -1,21 +1,20 @@
-import { getConfig } from './config/config';
+import { gongshoConfig } from './config/config';
 import { ClaudeAgent } from './agents/claude-agent';
 import { Conversation } from './dialogue/conversation';
+import { AgentModelConfigs, AgentModels } from './models/model-configs';
 
 const main = async () => {
-  const config = await getConfig();
-  const agent = new ClaudeAgent(config);
-  const conversation = new Conversation(config, agent);
-  await conversation.initConversation(config);
+  const agent = new ClaudeAgent(AgentModelConfigs[AgentModels.CLAUDE_3_SONNET]);
+  const conversation = new Conversation(gongshoConfig, agent);
+  await conversation.initConversation();
   conversation.startConversation(
     'I want to make the message function more friendly'
   );
 };
 
 const main2 = async () => {
-  const config = await getConfig();
-  const conversation = new Conversation(config, new ClaudeAgent(config));
-  await conversation.initConversation(config);
+  const conversation = new Conversation(gongshoConfig, new ClaudeAgent(AgentModelConfigs[AgentModels.CLAUDE_3_SONNET]));
+  await conversation.initConversation();
   //conversation-1738289447326.yml
   conversation.initFromProject('conversation-1738289447326');
   conversation.addUserInput('can you make it less friendly?');
