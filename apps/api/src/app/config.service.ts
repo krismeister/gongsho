@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { gongshoConfig } from '@gongsho-core';
+import { gongshoConfig } from '@gongsho/core';
 
 @Injectable()
 export class ConfigService {

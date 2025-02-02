@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from "path";
 import YAML from 'yaml';
 import { DialogueData } from "../dialogue/base-dialogue";
-import { gongshoConfig } from "../gongsho-core";
+import { gongshoConfig } from "../core";
 
 type ConversationData = {
   id: string;

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Conversations } from '@gongsho-core';
+import { Conversations } from '@gongsho/core';
 import { ConversationSummary } from '@gongsho/types';
 
 @Injectable()
