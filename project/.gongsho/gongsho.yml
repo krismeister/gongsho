@@ -1,0 +1,8 @@
+version: "0.0.1"
+conversations:
+  - id: "1738432869846"
+    title: "Refactoring User Authentication"
+    createdAt: "2024-03-20T10:30:00.000Z"
+  - id: "1738432934091"
+    title: "Adding API Documentation"
+    createdAt: "2024-03-21T15:45:00.000Z"

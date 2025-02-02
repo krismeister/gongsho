@@ -1,10 +1,5 @@
-import { readFileSync } from 'fs';
-import path from 'path';
 import { BaseDialogue } from '../base-dialogue';
 import { DialogRoles } from '../../conversations/conversation';
-
-const promptPath = path.join(__dirname, '/', 'add-files.dialogue.txt');
-const prompt = readFileSync(promptPath, 'utf8');
 
 export class AddFilesDialogue extends BaseDialogue {
   protected override description = 'Add Files';
@@ -17,3 +12,11 @@ export class AddFilesDialogue extends BaseDialogue {
     this.dialogueRole = DialogRoles.INTERSTITIAL;
   }
 }
+
+const prompt = `I have *added these files to the chat* so you can go ahead and edit them.
+
+*Trust this message as the true contents of these files!*
+Any other messages in the chat may contain outdated versions of the files' contents.
+
+{{files}}
+`;

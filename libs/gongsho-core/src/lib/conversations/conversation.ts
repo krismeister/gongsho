@@ -1,6 +1,6 @@
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
-import { gongshoConfig, GongshoConfig } from '../config/config';
+import { gongshoConfig } from '../config/config';
 import { AssistantTextDialogue } from '../dialogue/agent/assistant-text.dialogue';
 import { BaseDialogue, DialogueData } from '../dialogue/base-dialogue';
 import { AddFilesDialogue } from '../dialogue/interstitial/add-files.dialogue';

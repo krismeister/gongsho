@@ -1,11 +1,7 @@
 import { loadGongshoStorage, saveGongshoStorage } from "../utils/storage";
 import { Conversation } from "./conversation";
+import { ConversationSummary } from "@gongsho/types";
 
-type ConversationSummary = {
-  id: string;
-  title: string,
-  createdAt: Date
-}
 
 export class Conversations {
   public static instance: Conversations;
@@ -55,6 +51,10 @@ export class Conversations {
       conversations: this.conversations,
     }
     saveGongshoStorage(storage);
+  }
+
+  public getConversationSummaries(): ConversationSummary[] {
+    return this.conversations;
   }
 }
 

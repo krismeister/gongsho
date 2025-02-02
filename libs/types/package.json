@@ -1,14 +1,11 @@
 {
-  "name": "@gongsho/gongsho-core",
+  "name": "@gongsho/types",
   "version": "0.0.1",
   "private": true,
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.36.3",
-    "ignore": "^7.0.3",
-    "tslib": "^2.3.0",
-    "yaml": "^2.4.0"
+    "tslib": "^2.3.0"
   }
 }

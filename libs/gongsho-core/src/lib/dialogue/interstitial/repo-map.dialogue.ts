@@ -1,10 +1,5 @@
 import { BaseDialogue } from '../base-dialogue';
 import { DialogRoles } from '../../conversations/conversation';
-import { readFileSync } from 'fs';
-import path from 'path';
-
-const promptPath = path.join(__dirname, '/', 'repo-map.dialogue.txt');
-const prompt = readFileSync(promptPath, 'utf8');
 
 export class RepoMapDialogue extends BaseDialogue {
   protected override description = 'Repo Map';
@@ -17,3 +12,11 @@ export class RepoMapDialogue extends BaseDialogue {
     this.dialogueRole = DialogRoles.INTERSTITIAL;
   }
 }
+
+const prompt = `Here are summaries of some files present in my git repository.
+Do not propose changes to these files, treat them as *read-only*.
+If you need to edit any of these files use *EXAMINE_FILES*.
+
+If you understand this message, respond with "How can I help?"
+
+{{repoMap}}`;
