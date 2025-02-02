@@ -1,5 +1,5 @@
 import { BaseDialogue } from '../base-dialogue';
-import { DialogRoles } from '../conversation';
+import { DialogRoles } from '../../conversations/conversation';
 import { readFileSync } from 'fs';
 import path from 'path';
 

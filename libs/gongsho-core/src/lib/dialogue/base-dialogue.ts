@@ -1,5 +1,5 @@
 import { fillDialogue } from '../utils/fill-dialogue';
-import { DialogRoles } from './conversation';
+import { DialogRoles } from '../conversations/conversation';
 
 export type DialogueData = {
   role: 'user' | 'assistant';

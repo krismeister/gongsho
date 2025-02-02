@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 import { BaseDialogue } from '../base-dialogue';
-import { DialogRoles } from '../conversation';
+import { DialogRoles } from '../../conversations/conversation';
 
 const promptPath = path.join(__dirname, '/', 'add-files.dialogue.txt');
 const prompt = readFileSync(promptPath, 'utf8');

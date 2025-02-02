@@ -1,5 +1,5 @@
 import { BaseDialogue } from './base-dialogue';
-import { DialogRoles } from './conversation';
+import { DialogRoles } from '../conversations/conversation';
 
 export class UserInputDialogue extends BaseDialogue {
   protected override description = 'User Input';

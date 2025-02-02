@@ -1,15 +1,15 @@
-import { GongshoConfig } from '../config/config';
-import { RepoMap } from '../repo-map/repo-map';
-import { WholeCodebaseDialogue } from './system/whole-codebase.dialogue';
-import { RepoMapDialogue } from './interstitial/repo-map.dialogue';
-import { BaseDialogue, DialogueData } from './base-dialogue';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
-import { UserInputDialogue } from './user-input.dialogue';
-import { AssistantTextDialogue } from './agent/assistant-text.dialogue';
-import { AddFilesDialogue } from './interstitial/add-files.dialogue';
-import fs from 'fs';
-import YAML from 'yaml';
-import path from 'path';
+import { ClaudeAgent } from '../agents/claude-agent';
+import { gongshoConfig, GongshoConfig } from '../config/config';
+import { AssistantTextDialogue } from '../dialogue/agent/assistant-text.dialogue';
+import { BaseDialogue, DialogueData } from '../dialogue/base-dialogue';
+import { AddFilesDialogue } from '../dialogue/interstitial/add-files.dialogue';
+import { RepoMapDialogue } from '../dialogue/interstitial/repo-map.dialogue';
+import { WholeCodebaseDialogue } from '../dialogue/system/whole-codebase.dialogue';
+import { UserInputDialogue } from '../dialogue/user-input.dialogue';
+import { AgentModelConfigs, AgentModels } from '../models/model-configs';
+import { RepoMap } from '../repo-map/repo-map';
+import { loadConversation, saveConversation } from '../utils/storage';
 
 export enum DialogRoles {
   USER = 'user',
@@ -23,36 +23,31 @@ export class Conversation {
   private repoMap?: RepoMap;
   private includedFiles: string[] = [];
   private dialogueQueue: BaseDialogue[] = [];
-  private id: string;
   private agentInProgress = false;
+  private config = gongshoConfig;
+  private agent: AbstractAgent;
 
   constructor(
-    private readonly config: GongshoConfig,
-    private readonly agent: AbstractAgent
+    public id: string
   ) {
-    this.id = `conversation-${Date.now()}`; // Set ID when conversation is created
+    this.agent = new ClaudeAgent(AgentModelConfigs[AgentModels.CLAUDE_3_SONNET]);
   }
 
   private saveToProject() {
-    // TODO: move save and load to a seperate class.
-    const filePath = `${this.config.PROJECT_ROOT}/.gongsho/${this.id}.yml`;
-
-    const dirPath = path.dirname(filePath);
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
-
-    const dialogueData = this.dialogFlow.map(item => item.getDialogueData());
-    fs.writeFileSync(filePath, YAML.stringify(dialogueData, { lineWidth: 0 }));
+    saveConversation({
+      id: this.id,
+      dialogueData: this.dialogFlow.map(item => item.getDialogueData()),
+      includedFiles: this.includedFiles,
+    })
   }
 
   public initFromProject(id: string) {
     this.id = id;
-    const filePath = `${this.config.PROJECT_ROOT}/.gongsho/${this.id}.yml`;
-    const dialogueData = YAML.parse(fs.readFileSync(filePath, 'utf8'));
-    this.dialogFlow = dialogueData.map((item: DialogueData) =>
+    const savedConversation = loadConversation(this.id)
+    this.dialogFlow = savedConversation.dialogueData.map((item: DialogueData) =>
       BaseDialogue.fromDialogueData(item)
     );
+    this.includedFiles = savedConversation.includedFiles;
   }
 
   async initConversation() {
