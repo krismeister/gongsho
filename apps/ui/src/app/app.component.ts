@@ -1,14 +1,19 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
-import { SpartanComponent } from './spartan-component';
+import { MainMenuComponent } from './components/main-menu/main-menu.component';
 
 @Component({
-  imports: [NxWelcomeComponent, SpartanComponent, RouterModule],
+  standalone: true,
+  imports: [RouterModule, MainMenuComponent],
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  template: `
+    <div class="min-h-screen flex flex-col">
+      <div class="gradient-top"></div>
+      <app-main-menu></app-main-menu>
+      <main class="flex-1 p-4 flex flex-col justify-end">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  `
 })
-export class AppComponent {
-  title = 'Gongsho';
-}
+export class AppComponent { }

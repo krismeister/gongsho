@@ -12,7 +12,7 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 
 @Component({
-	selector: 'app-spartan',
+	selector: 'app-components-test',
 	standalone: true,
 	imports: [
 		HlmButtonDirective,
@@ -62,7 +62,7 @@ import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 		<button hlmBtn (click)="toggleThird()">Toggle Third Item</button>
 	`,
 })
-export class SpartanComponent {
+export class ComponentsTestComponent {
 	protected readonly _thirdOpened = signal(false);
 	toggleThird() {
 		this._thirdOpened.set(!this._thirdOpened());
