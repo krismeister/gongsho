@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug Backend",
+        "type": "node",
+        "request": "launch",
+        "args": ["apps/api/src/main.ts"],
+        "runtimeArgs": [
+          "--require",
+          "ts-node/register",
+          "--require",
+          "tsconfig-paths/register"
+        ],
+        "envFile": "${workspaceFolder}/.env",
+        "cwd": "${workspaceRoot}",
+        "internalConsoleOptions": "openOnSessionStart",
+        "env": {
+          "NODE_ENV": "local",
+          "NODE_PORT": "8000",
+          "TS_NODE_PROJECT": "apps/api/tsconfig.app.json"
+        },
+        "sourceMaps": true,
+        "console": "internalConsole",
+        "outputCapture": "std",
+        "resolveSourceMapLocations": [
+          "${workspaceFolder}/**",
+          "!**/node_modules/**"
+        ]
+      }
+    ]
+  }

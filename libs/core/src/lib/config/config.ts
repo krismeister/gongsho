@@ -2,6 +2,7 @@ import path from 'path';
 
 // export const PROJECT_ROOT = path.resolve(__dirname, '..', '..', 'project');
 export const PROJECT_ROOT = path.resolve(process.cwd(), 'project');
+console.log('PROJECT_ROOT', PROJECT_ROOT);
 
 export interface GongshoConfig {
   ANTHROPIC_API_KEY?: string;
@@ -15,3 +16,4 @@ export const gongshoConfig: GongshoConfig = {
   GONGSHO_DIR: path.resolve(PROJECT_ROOT, '.gongsho'),
 };
 
+console.log('gongshoConfig', gongshoConfig);

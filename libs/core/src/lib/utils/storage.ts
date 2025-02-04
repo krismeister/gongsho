@@ -22,7 +22,7 @@ type GongshoStorage = {
 }
 
 export const saveConversation = (conversation: ConversationData) => {
-  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `/conversartions/${conversation.id}.yml`);
+  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./conversartions/${conversation.id}.yml`);
 
     const dirPath = path.dirname(filePath);
     if (!fs.existsSync(dirPath)) {
@@ -32,13 +32,13 @@ export const saveConversation = (conversation: ConversationData) => {
 }
 
 export const loadConversation = (id: string):ConversationData =>  {
-  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `/conversartions/${id}.yml`);
+  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./conversartions/${id}.yml`);
   const conversation = YAML.parse(fs.readFileSync(filePath, 'utf8'))
   return conversation as ConversationData;
 }
 
 export const loadGongshoStorage = ():GongshoStorage =>  {
-  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `/gongsho.yml`);
+  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./gongsho.yml`);
   if (!fs.existsSync(filePath)) {
     return {
       version: '0.0.1',
@@ -50,7 +50,7 @@ export const loadGongshoStorage = ():GongshoStorage =>  {
 }
 
 export const saveGongshoStorage = (storage: GongshoStorage) => {
-  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `/gongsho.yml`);
+  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./gongsho.yml`);
   const dirPath = path.dirname(filePath);
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });

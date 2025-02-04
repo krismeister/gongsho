@@ -55,6 +55,20 @@ export class Conversations {
 
   public getConversationSummaries(): ConversationSummary[] {
     return this.conversations;
+    return [
+      {
+        id: '1',
+        title: 'Conversation 1',
+        createdAt: new Date(),
+      },
+      {
+        id: '2',
+        title: 'Conversation 2',
+        createdAt: new Date(),
+      },
+    ];
+
+    // return this.conversations;
   }
 }
 
