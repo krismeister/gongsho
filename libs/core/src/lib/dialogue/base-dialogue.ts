@@ -1,19 +1,11 @@
+import { AgentMessageRoles, DialogRoles, DialogueData } from '@gongsho/types';
 import { fillDialogue } from '../utils/fill-dialogue';
-import { DialogRoles } from '../conversations/conversation';
-
-export type DialogueData = {
-  role: 'user' | 'assistant';
-  dialogueRole: DialogRoles;
-  description: string;
-  content: string;
-  timestamp: Date;
-};
 
 export class BaseDialogue {
   protected description: string;
   protected timestamp: Date;
   protected dialogueRole: DialogRoles = DialogRoles.SYSTEM;
-  public role: 'user' | 'assistant' = 'assistant';
+  public role: AgentMessageRoles = AgentMessageRoles.ASSISTANT;
   public content = '';
 
   constructor(

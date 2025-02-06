@@ -1,12 +1,13 @@
+import { ConversationSummary } from "@gongsho/types";
 import { loadGongshoStorage, saveGongshoStorage } from "../utils/storage";
 import { Conversation } from "./conversation";
-import { ConversationSummary } from "@gongsho/types";
 
 
 export class Conversations {
   public static instance: Conversations;
   private version: string;
-  private conversations: ConversationSummary[] = [];
+  private conversationsSummaries: ConversationSummary[] = [];
+  private conversations: Conversation[] = [];
 
   private constructor() {
     this.version = '1';
@@ -24,7 +25,7 @@ export class Conversations {
     const conversation = new Conversation(conversationId);
     await conversation.initConversation();
     await conversation.startConversation(input);
-    this.conversations.push({
+    this.conversationsSummaries.push({
       id: conversationId,
       title: input,
       createdAt: new Date(),
@@ -33,42 +34,45 @@ export class Conversations {
     return conversation;
   }
 
+
   public async loadConversation(id: string): Promise<Conversation> {
+    // TODO: get conversation from memory
     const conversation = new Conversation(id);
-    await conversation.initFromProject(id);;
+    await conversation.initFromProject(id);
     return conversation;
   }
 
   public async load() {
     const storage = loadGongshoStorage();
     this.version = storage.version;
-    this.conversations = storage.conversations;
+    this.conversationsSummaries = storage.conversations;
   }
 
   public async save() {
     const storage = {
       version: this.version,
-      conversations: this.conversations,
+      conversations: this.conversationsSummaries,
     }
     saveGongshoStorage(storage);
   }
 
-  public getConversationSummaries(): ConversationSummary[] {
-    return this.conversations;
-    return [
-      {
-        id: '1',
-        title: 'Conversation 1',
-        createdAt: new Date(),
-      },
-      {
-        id: '2',
-        title: 'Conversation 2',
-        createdAt: new Date(),
-      },
-    ];
+  public async getConversationSummaries(): Promise<ConversationSummary[]> {
+    if (this.conversationsSummaries.length === 0) {
+      await this.load();
+    }
+    return this.conversationsSummaries;
+  }
 
-    // return this.conversations;
+  public async getConversationSummary(id: string): Promise<ConversationSummary> {
+    let conversation = this.conversationsSummaries.find(conversation => conversation.id === id);
+    if (!conversation) {
+      await this.load();
+      conversation = this.conversationsSummaries.find(conversation => conversation.id === id);
+    }
+    if (!conversation) {
+      throw new Error(`Conversation ${id} not found`);
+    }
+    return conversation;
   }
 }
 

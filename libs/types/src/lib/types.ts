@@ -2,4 +2,5 @@ export function types(): string {
   return 'types';
 }
 
-export { ConversationSummary } from "./conversations";
+export { AgentMessageRoles, ConversationData, ConversationSummary, DialogRoles, DialogueData } from "./conversations";
+

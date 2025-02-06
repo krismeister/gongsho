@@ -1,0 +1,10 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.lineNumbers": "on",
+  "editor.trimAutoWhitespace": true,
+  "editor.tabSize": 2
+}

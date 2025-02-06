@@ -62,18 +62,28 @@
   }
 }
 
-.dark body {
-  background: #200A24;
+.dark {
+  textarea,
+  input {
+    @apply bg-gray-800 text-white;
+  }
 }
 
+.dark body {
+  background: #351c36;
+}
 
 .gradient-top {
-  height: 0.2em;
+  height: 50%;
   position: absolute;
   width: 100vw;
-  background: linear-gradient(to bottom, rgba(32, 10, 36, 0.15), rgba(32, 10, 36, 0));
+  background: linear-gradient(
+    to bottom,
+    rgba(114, 36, 127, 0.2),
+    rgba(32, 10, 36, 0)
+  );
 }
 
 .dark .gradient-top {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(32, 10, 36, 0));
+  background: linear-gradient(to bottom, rgb(26, 22, 28), rgba(32, 10, 36, 0));
 }

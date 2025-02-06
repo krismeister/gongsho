@@ -1,6 +1,6 @@
-import { BaseDialogue } from '../base-dialogue';
-import { DialogRoles } from '../../conversations/conversation';
+import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import os from 'os';
+import { BaseDialogue } from '../base-dialogue';
 
 export function generateSystemInfo(): string {
   const platform = os.platform() + '-' + os.release() + '-' + os.arch();
@@ -23,7 +23,7 @@ export class WholeCodebaseDialogue extends BaseDialogue {
   ) {
     fillValues['sysInfo'] = generateSystemInfo();
     super(prompt, fillValues);
-    this.role = 'assistant';
+    this.role = AgentMessageRoles.ASSISTANT;
     this.dialogueRole = DialogRoles.SYSTEM;
   }
 }

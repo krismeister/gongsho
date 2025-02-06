@@ -22,12 +22,11 @@ npx nx g @nx/angular:component apps/ui/src/app/spartan-component.ts
 
 ```
 
-
 One-time setup tailwind:
+
 ```
 npx nx g @nx/angular:setup-tailwind
 ```
-
 
 Angular Spartan
 
@@ -35,6 +34,7 @@ Angular Spartan
 
 npx nx g @spartan-ng/cli:healthcheck
 ```
+
 Retheme:
 
 ```
@@ -42,8 +42,14 @@ npx nx g @spartan-ng/cli:ui-theme
 ```
 
 Re-install components:
+
 ```
 npx nx g @spartan-ng/cli:ui
 ```
 
+lint a project:
 
+```
+npx eslint --debug apps/ui/eslint.config.mjs
+npx @eslint/migrate-config apps/ui/eslint.config.mjs
+```

@@ -3,6 +3,11 @@
     "nrwl.angular-console",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "firsttris.vscode-jest-runner"
+    "firsttris.vscode-jest-runner",
+    "angular.ng-template",
+    "johnpapa.angular-essentials",
+    "streetsidesoftware.code-spell-checker",
+    "yzhang.markdown-all-in-one",
+    "stylelint.vscode-stylelint"
   ]
 }

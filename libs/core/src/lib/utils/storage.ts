@@ -1,8 +1,8 @@
+import { DialogueData } from "@gongsho/types";
 import fs from 'fs';
 import path from "path";
 import YAML from 'yaml';
-import { DialogueData } from "../dialogue/base-dialogue";
-import { gongshoConfig } from "../core";
+import { gongshoConfig } from "../config/config";
 
 type ConversationData = {
   id: string;
@@ -22,22 +22,22 @@ type GongshoStorage = {
 }
 
 export const saveConversation = (conversation: ConversationData) => {
-  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./conversartions/${conversation.id}.yml`);
+  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./conversations/${conversation.id}.yml`);
 
-    const dirPath = path.dirname(filePath);
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
-    fs.writeFileSync(filePath, YAML.stringify(conversation, { lineWidth: 0 }));
+  const dirPath = path.dirname(filePath);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+  fs.writeFileSync(filePath, YAML.stringify(conversation, { lineWidth: 0 }));
 }
 
-export const loadConversation = (id: string):ConversationData =>  {
-  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./conversartions/${id}.yml`);
+export const loadConversation = (id: string): ConversationData => {
+  const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./conversations/${id}.yml`);
   const conversation = YAML.parse(fs.readFileSync(filePath, 'utf8'))
   return conversation as ConversationData;
 }
 
-export const loadGongshoStorage = ():GongshoStorage =>  {
+export const loadGongshoStorage = (): GongshoStorage => {
   const filePath = path.resolve(gongshoConfig.GONGSHO_DIR, `./gongsho.yml`);
   if (!fs.existsSync(filePath)) {
     return {

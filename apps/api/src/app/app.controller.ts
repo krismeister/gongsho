@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigService } from './config.service';
 import { ConversationsService } from './conversations.service';
@@ -9,7 +9,7 @@ export class AppController {
     private readonly appService: AppService,
     private readonly configService: ConfigService,
     private readonly conversationsService: ConversationsService,
-  ) {}
+  ) { }
 
   @Get()
   getData() {
@@ -24,5 +24,10 @@ export class AppController {
   @Get('conversations')
   getConversations() {
     return this.conversationsService.getConversations();
+  }
+
+  @Get('conversations/:id')
+  getConversation(@Param('id') id: string) {
+    return this.conversationsService.getConversation(id);
   }
 }

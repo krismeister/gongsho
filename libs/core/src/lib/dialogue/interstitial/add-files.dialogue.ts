@@ -1,5 +1,5 @@
+import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import { BaseDialogue } from '../base-dialogue';
-import { DialogRoles } from '../../conversations/conversation';
 
 export class AddFilesDialogue extends BaseDialogue {
   protected override description = 'Add Files';
@@ -8,7 +8,7 @@ export class AddFilesDialogue extends BaseDialogue {
     protected override readonly fillValues: Record<string, string> = {}
   ) {
     super(prompt, fillValues);
-    this.role = 'user';
+    this.role = AgentMessageRoles.USER;
     this.dialogueRole = DialogRoles.INTERSTITIAL;
   }
 }

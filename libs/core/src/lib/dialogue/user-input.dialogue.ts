@@ -1,5 +1,5 @@
+import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import { BaseDialogue } from './base-dialogue';
-import { DialogRoles } from '../conversations/conversation';
 
 export class UserInputDialogue extends BaseDialogue {
   protected override description = 'User Input';
@@ -9,7 +9,7 @@ export class UserInputDialogue extends BaseDialogue {
     protected override readonly fillValues: Record<string, string> = {}
   ) {
     super(inputText, fillValues);
-    this.role = 'user';
+    this.role = AgentMessageRoles.USER;
     this.dialogueRole = DialogRoles.USER;
-  }  
+  }
 }

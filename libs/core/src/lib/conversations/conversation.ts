@@ -1,8 +1,9 @@
+import { DialogueData } from '@gongsho/types';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
 import { gongshoConfig } from '../config/config';
 import { AssistantTextDialogue } from '../dialogue/agent/assistant-text.dialogue';
-import { BaseDialogue, DialogueData } from '../dialogue/base-dialogue';
+import { BaseDialogue } from '../dialogue/base-dialogue';
 import { AddFilesDialogue } from '../dialogue/interstitial/add-files.dialogue';
 import { RepoMapDialogue } from '../dialogue/interstitial/repo-map.dialogue';
 import { WholeCodebaseDialogue } from '../dialogue/system/whole-codebase.dialogue';
@@ -10,13 +11,6 @@ import { UserInputDialogue } from '../dialogue/user-input.dialogue';
 import { AgentModelConfigs, AgentModels } from '../models/model-configs';
 import { RepoMap } from '../repo-map/repo-map';
 import { loadConversation, saveConversation } from '../utils/storage';
-
-export enum DialogRoles {
-  USER = 'user',
-  SYSTEM = 'system',
-  INTERSTITIAL = 'interstitial',
-  ASSISTANT = 'assistant',
-}
 
 export class Conversation {
   private dialogFlow: BaseDialogue[] = [];
@@ -41,6 +35,10 @@ export class Conversation {
     })
   }
 
+  public getDialogueData(): DialogueData[] {
+    return this.dialogFlow.map(item => item.getDialogueData());
+  }
+
   public initFromProject(id: string) {
     this.id = id;
     const savedConversation = loadConversation(this.id)
@@ -50,7 +48,7 @@ export class Conversation {
     this.includedFiles = savedConversation.includedFiles;
   }
 
-  async initConversation() {
+  public async initConversation() {
     this.repoMap = new RepoMap(this.config.PROJECT_ROOT);
     await this.repoMap.buildFileMap();
   }
@@ -60,7 +58,7 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
-  async startConversation(userInput: string) {
+  public async startConversation(userInput: string) {
     const systemDialogue = new WholeCodebaseDialogue();
     const repoMapDialogue = new RepoMapDialogue('', {
       repoMap: this.repoMap!.getRepoMapAstText(),
@@ -112,7 +110,7 @@ export class Conversation {
 
   async onAgentResponse(response: AgentResponse) {
     console.log(response);
-    
+
     if (response.content.length === 0) {
       throw new Error('Agent response is empty, but should not happen.');
     }
