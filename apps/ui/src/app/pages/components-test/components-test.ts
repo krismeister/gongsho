@@ -8,6 +8,7 @@ import {
 	HlmAccordionItemDirective,
 	HlmAccordionTriggerDirective,
 } from '@spartan-ng/ui-accordion-helm';
+import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 
@@ -23,9 +24,15 @@ import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 		HlmAccordionIconDirective,
 		NgIcon,
 		HlmIconDirective,
+		HlmBadgeDirective,
 	],
 	providers: [provideIcons(lucide)],
 	template: `
+			<p class="text-xs">This is a test here</p>
+			<br />
+	    <a target="_blank" href="https://github.com/goetzrobin/spartan" hlmBadge>This is madness. This is spartan.</a>
+			<br />
+			<br />
 			<ng-icon hlm name="lucideHouse" [size]="'xl'" />
 	      <hlm-icon hlmAccIcon />
 		  <h1>Gongsho</h1>

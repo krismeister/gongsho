@@ -1,14 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 
 @Component({
   selector: 'app-conversation',
   standalone: true,
-  imports: [CommonModule, FormsModule, HlmInputDirective],
+  imports: [CommonModule, FormsModule, HlmInputDirective, HlmBadgeDirective],
   template: `
     <div class="flex flex-col">
+      <div class="flex-1 flex flex-row gap-2 justify-end py-2">
+        <span hlmBadge variant="outline" class="font-light">Ctrl-Enter - line break</span>
+        <span hlmBadge variant="secondary" class="font-light">Enter - submit</span>
+      </div>
+      <div class="flex-1 flex flex-col">
         <textarea 
           hlmInput
           [(ngModel)]="message" 

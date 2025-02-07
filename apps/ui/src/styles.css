@@ -70,20 +70,26 @@
 }
 
 .dark body {
-  background: #351c36;
+  background: rgb(28 31 49 / 1);
 }
 
 .gradient-top {
   height: 50%;
   position: absolute;
+  bottom: 0;
   width: 100vw;
-  background: linear-gradient(
+  /* background: linear-gradient(to top, rgb(28 31 49 / 0.4), rgb(28 31 49 / 0)); */
+  /* background: linear-gradient(
     to bottom,
     rgba(114, 36, 127, 0.2),
     rgba(32, 10, 36, 0)
-  );
+  ); */
 }
 
 .dark .gradient-top {
-  background: linear-gradient(to bottom, rgb(26, 22, 28), rgba(32, 10, 36, 0));
+  background: linear-gradient(to top, rgb(26, 22, 28), rgba(32, 10, 36, 0));
+}
+
+.main {
+  z-index: 1;
 }

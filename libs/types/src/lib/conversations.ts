@@ -25,7 +25,13 @@ export type DialogueData = {
   timestamp: Date;
 };
 
+export type ConversationDetails = {
+  id: string,
+  files: string[],
+  dialogueData: DialogueData[];
+}
+
 export type ConversationData = {
   summary: ConversationSummary;
-  dialogueData: DialogueData[];
+  details: ConversationDetails;
 }

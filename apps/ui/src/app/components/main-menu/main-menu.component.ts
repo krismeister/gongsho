@@ -56,13 +56,13 @@ export class MainMenuComponent {
 
   constructor() {
 
-    console.log('default dark?', window.matchMedia?.('(prefers-color-scheme: dark)').matches)
+    // console.log('default dark?', window.matchMedia?.('(prefers-color-scheme: dark)').matches)
 
     if (typeof window !== 'undefined') {
       // Check localStorage first
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
-        this.isDark.set(savedTheme === 'dark');
+        this.isDark.set(savedTheme !== 'light');
       } else {
         // Fall back to system preference
         this.isDark.set(window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false);

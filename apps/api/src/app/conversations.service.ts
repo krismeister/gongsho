@@ -10,11 +10,11 @@ export class ConversationsService {
   }
 
   async getConversation(id: string): Promise<ConversationData> {
-    const conversation = await Conversations.getInstance().loadConversation(id);
+    const conversation = await Conversations.getInstance().getConversation(id);
     const summary: ConversationSummary = await Conversations.getInstance().getConversationSummary(id);
     return {
       summary: summary,
-      dialogueData: conversation.getDialogueData(),
+      details: conversation.getConversationDetails(),
     };
   }
 }

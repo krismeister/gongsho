@@ -1,4 +1,5 @@
-import { DialogueData } from '@gongsho/types';
+import { ConversationDetails, DialogueData } from '@gongsho/types';
+import { map, ReplaySubject, Subject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
 import { gongshoConfig } from '../config/config';
@@ -10,45 +11,66 @@ import { WholeCodebaseDialogue } from '../dialogue/system/whole-codebase.dialogu
 import { UserInputDialogue } from '../dialogue/user-input.dialogue';
 import { AgentModelConfigs, AgentModels } from '../models/model-configs';
 import { RepoMap } from '../repo-map/repo-map';
-import { loadConversation, saveConversation } from '../utils/storage';
+import { conversationExists, loadConversation, saveConversationDetails } from '../utils/storage';
 
 export class Conversation {
+
   private dialogFlow: BaseDialogue[] = [];
+
+  private dialogueStream$ = new ReplaySubject<BaseDialogue>();
+  private dialogueDataStream = this.dialogueStream$.pipe(map(dialogue => dialogue.getDialogueData()));
+
+  private waitingForAgent$: Subject<boolean> = new Subject<boolean>();
+
   private repoMap?: RepoMap;
-  private includedFiles: string[] = [];
+  private files: string[] = [];
   private dialogueQueue: BaseDialogue[] = [];
   private agentInProgress = false;
   private config = gongshoConfig;
   private agent: AbstractAgent;
 
   constructor(
-    public id: string
+    public id: string,
+    public startingInput?: string
   ) {
     this.agent = new ClaudeAgent(AgentModelConfigs[AgentModels.CLAUDE_3_SONNET]);
+    if (!conversationExists(this.id)) {
+      this.saveToProject()
+    }
+    if (this.startingInput) {
+      this.dialogueQueue.push(new UserInputDialogue(this.startingInput));
+    }
   }
 
   private saveToProject() {
-    saveConversation({
+    saveConversationDetails({
       id: this.id,
+      files: this.files,
       dialogueData: this.dialogFlow.map(item => item.getDialogueData()),
-      includedFiles: this.includedFiles,
     })
   }
 
-  public getDialogueData(): DialogueData[] {
-    return this.dialogFlow.map(item => item.getDialogueData());
+  public getDialogueDataStream() {
+    return this.dialogueDataStream;
   }
 
-  public initFromProject(id: string) {
-    this.id = id;
+  public getConversationDetails(): ConversationDetails {
+    return {
+      id: this.id,
+      files: this.files,
+      dialogueData: this.dialogFlow.map(item => item.getDialogueData()),
+    }
+  }
+
+  public load() {
     const savedConversation = loadConversation(this.id)
     this.dialogFlow = savedConversation.dialogueData.map((item: DialogueData) =>
       BaseDialogue.fromDialogueData(item)
     );
-    this.includedFiles = savedConversation.includedFiles;
+    this.files = savedConversation.files;
   }
 
-  public async initConversation() {
+  public async loadRepoMap() {
     this.repoMap = new RepoMap(this.config.PROJECT_ROOT);
     await this.repoMap.buildFileMap();
   }
@@ -65,6 +87,8 @@ export class Conversation {
     });
 
     this.dialogFlow.push(systemDialogue);
+    this.dialogueStream$.next(systemDialogue);
+
     this.dialogueQueue.push(repoMapDialogue);
     this.dialogueQueue.push(new UserInputDialogue(userInput));
 
@@ -83,7 +107,10 @@ export class Conversation {
     this.agentInProgress = true;
     // moving item from queue to flow
     const dialogue = this.dialogueQueue.shift()!;
+
     this.dialogFlow.push(dialogue);
+    this.dialogueStream$.next(dialogue);
+
     this.saveToProject();
 
     const messages = this.dialogFlow.map(item => ({
@@ -116,7 +143,10 @@ export class Conversation {
     }
 
     const content = response.content[response.content.length - 1].text;
-    this.dialogFlow.push(new AssistantTextDialogue(content));
+    const dialogue = new AssistantTextDialogue(content);
+    this.dialogFlow.push(dialogue);
+    this.dialogueStream$.next(dialogue);
+
     this.saveToProject();
 
     if (content.includes('EXAMINE_FILES')) {

@@ -16,14 +16,31 @@ export class Conversations {
   public static getInstance() {
     if (!Conversations.instance) {
       Conversations.instance = new Conversations();
+      Conversations.instance.load();
     }
     return Conversations.instance;
   }
 
+
+  public async createConversation(input: string): Promise<ConversationSummary> {
+    const conversationId = `${Date.now()}`;
+    const conversation = new Conversation(conversationId, input);
+    await conversation.loadRepoMap();
+
+    const summary: ConversationSummary = {
+      id: conversationId,
+      title: input,
+      createdAt: new Date(),
+    }
+    this.conversationsSummaries.push(summary);
+    await this.save();
+    return summary;
+  }
+
   public async startConversation(input: string): Promise<Conversation> {
-    const conversationId = `conversation-${Date.now()}`;
-    const conversation = new Conversation(conversationId);
-    await conversation.initConversation();
+    const conversationId = `${Date.now()}`;
+    const conversation = new Conversation(conversationId, input);
+    await conversation.loadRepoMap();
     await conversation.startConversation(input);
     this.conversationsSummaries.push({
       id: conversationId,
@@ -35,14 +52,24 @@ export class Conversations {
   }
 
 
-  public async loadConversation(id: string): Promise<Conversation> {
-    // TODO: get conversation from memory
-    const conversation = new Conversation(id);
-    await conversation.initFromProject(id);
+  public async getConversation(id: string): Promise<Conversation> {
+    let conversation = this.conversations.find(conversation => conversation.id === id);
+    if (!conversation) {
+      const conversationSummary = this.conversationsSummaries.find(conversation => conversation.id === id);
+      if (conversationSummary) {
+        conversation = new Conversation(id, '');
+        await conversation.loadRepoMap();
+        await conversation.load();
+        this.conversations.push(conversation);
+      }
+    }
+    if (!conversation) {
+      throw new Error(`Conversation ${id} not found`);
+    }
     return conversation;
   }
 
-  public async load() {
+  public load() {
     const storage = loadGongshoStorage();
     this.version = storage.version;
     this.conversationsSummaries = storage.conversations;
