@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { gongshoConfig } from '@gongsho/core';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ConfigService {
@@ -13,7 +13,7 @@ export class ConfigService {
   }
 
   getAll(): Record<string, string> {
-    return { ...this.config };
+    return { ...this.config, ANTHROPIC_API_KEY: 'XXX' };
   }
 
   async getConfig() {
