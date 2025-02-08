@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
@@ -27,6 +27,7 @@ import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
   `
 })
 export class ConversationComponent {
+  @Output() submitMessage = new EventEmitter<string>();
   message = '';
 
   handleEnterKey(ev: Event) {
@@ -39,8 +40,7 @@ export class ConversationComponent {
 
   onSubmit() {
     if (this.message.trim()) {
-      console.log('Message submitted:', this.message);
-      // Add your submission logic here
+      this.submitMessage.emit(this.message.trim());
       this.message = ''; // Clear the input after submission
     }
   }

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DialogueData } from '@gongsho/types';
+import { ConversationSummary, DialogueData } from '@gongsho/types';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
@@ -8,7 +8,7 @@ import { Observable, Subject } from 'rxjs';
 })
 export class ConversationService {
   private dialogSubject = new Subject<string>();
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = '/api';
 
   constructor(private http: HttpClient) { }
 
@@ -16,8 +16,12 @@ export class ConversationService {
     return this.http.get<DialogueData[]>(`${this.apiUrl}/conversations/${id}`);
   }
 
-  createConversation(input: string): Observable<{ data: { message: string } }> {
-    return this.http.post<{ data: { message: string } }>(`${this.apiUrl}/conversations`, { input });
+  createConversation(input: string): Observable<ConversationSummary> {
+    return this.http.post<ConversationSummary>(`${this.apiUrl}/conversations`, { input });
+  }
+
+  addUserInput(conversationId: string, input: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/user-input`, { input });
   }
 
   // addUserDialog(conversationId?: string): Observable<{ data: { message: string } }> {

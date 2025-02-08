@@ -1,6 +1,6 @@
 # Compiled JavaScript files
-*.js
-*.js.map
+dist/**/*.js
+dist/**/*.js.map
 
 # Log files
 *.log

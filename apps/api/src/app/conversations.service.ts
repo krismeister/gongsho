@@ -26,13 +26,13 @@ export class ConversationsService {
     return conversation;
   }
 
-  async addUserInput(id: string, input: string): Promise<string> {
+  async addUserInput(id: string, input: string): Promise<{ message: string }> {
     if (!input || !id) {
       throw new Error('Input and id are required');
     }
     const conversation = await Conversations.getInstance().getConversation(id);
     await conversation.addUserInput(input);
-    return 'success';
+    return { message: 'success' };
   }
 
 }

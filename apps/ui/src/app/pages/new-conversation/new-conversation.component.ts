@@ -1,13 +1,39 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { map, switchMap } from 'rxjs/operators';
 import { ConversationComponent } from '../../components/conversation/conversation.component';
+import { ConversationService } from '../../services/conversation.service';
 
 @Component({
   selector: 'app-new-conversation',
-  templateUrl: './new-conversation.component.html',
+  template: `
+    <app-conversation (submitMessage)="handleSubmit($event)"></app-conversation>
+  `,
   standalone: true,
   imports: [CommonModule, ConversationComponent],
 })
 export class NewConversationComponent {
-  // Add your component logic here
+  constructor(
+    private conversationService: ConversationService,
+    private router: Router
+  ) { }
+
+  handleSubmit(message: string) {
+    this.conversationService.createConversation(message).pipe(
+      switchMap(response =>
+        this.conversationService.addUserInput(response.id, message).pipe(
+          map(() => response.id)
+        )
+      )
+    ).subscribe({
+      next: (conversationId) => {
+        this.router.navigate(['/conversations', conversationId]);
+      },
+      error: (error) => {
+        console.error('Error in conversation flow:', error);
+        // Handle error appropriately
+      }
+    });
+  }
 } 

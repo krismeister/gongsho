@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import * as lucide from '@ng-icons/lucide';
+import { lucideHouse } from '@ng-icons/lucide';
 import {
 	HlmAccordionContentComponent,
 	HlmAccordionDirective,
@@ -26,7 +26,7 @@ import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 		HlmIconDirective,
 		HlmBadgeDirective,
 	],
-	providers: [provideIcons(lucide)],
+	providers: [provideIcons({ lucideHouse })],
 	template: `
 			<p class="text-xs">This is a test here</p>
 			<br />
