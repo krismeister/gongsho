@@ -37,9 +37,6 @@ export class Conversation {
     if (!conversationExists(this.id)) {
       this.saveToProject()
     }
-    if (this.startingInput) {
-      this.dialogueQueue.push(new UserInputDialogue(this.startingInput));
-    }
   }
 
   private saveToProject() {
@@ -76,6 +73,10 @@ export class Conversation {
   }
 
   public async addUserInput(userInput: string) {
+    if (this.dialogueQueue.length === 0) {
+      this.startConversation(userInput);
+      return
+    }
     this.dialogueQueue.push(new UserInputDialogue(userInput));
     this.sendNextQueueItemToAgent();
   }

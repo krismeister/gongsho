@@ -17,4 +17,22 @@ export class ConversationsService {
       details: conversation.getConversationDetails(),
     };
   }
+
+  async createConversation(input: string): Promise<ConversationSummary> {
+    if (!input) {
+      throw new Error('Input is required');
+    }
+    const conversation = await Conversations.getInstance().createConversation(input);
+    return conversation;
+  }
+
+  async addUserInput(id: string, input: string): Promise<string> {
+    if (!input || !id) {
+      throw new Error('Input and id are required');
+    }
+    const conversation = await Conversations.getInstance().getConversation(id);
+    await conversation.addUserInput(input);
+    return 'success';
+  }
+
 }

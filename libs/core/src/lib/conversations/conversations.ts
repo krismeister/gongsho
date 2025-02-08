@@ -24,12 +24,12 @@ export class Conversations {
 
   public async createConversation(input: string): Promise<ConversationSummary> {
     const conversationId = `${Date.now()}`;
-    const conversation = new Conversation(conversationId, input);
+    const conversation = new Conversation(conversationId);
     await conversation.loadRepoMap();
 
     const summary: ConversationSummary = {
       id: conversationId,
-      title: input,
+      title: input.slice(0, 100),
       createdAt: new Date(),
     }
     this.conversationsSummaries.push(summary);
@@ -44,7 +44,7 @@ export class Conversations {
     await conversation.startConversation(input);
     this.conversationsSummaries.push({
       id: conversationId,
-      title: input,
+      title: input.slice(0, 100),
       createdAt: new Date(),
     });
     await this.save();

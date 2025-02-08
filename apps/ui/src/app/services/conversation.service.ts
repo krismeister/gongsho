@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DialogueData } from '@gongsho/types';
-import { interval, map, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,17 +16,17 @@ export class ConversationService {
     return this.http.get<DialogueData[]>(`${this.apiUrl}/conversations/${id}`);
   }
 
-  startConversation(input: string): Observable<{ data: { message: string } }> {
+  createConversation(input: string): Observable<{ data: { message: string } }> {
     return this.http.post<{ data: { message: string } }>(`${this.apiUrl}/conversations`, { input });
   }
 
-  addUserDialog(conversationId?: string): Observable<{ data: { message: string } }> {
-    // Here you would typically implement the logic to handle the conversation
-    // For now, we're just returning the Subject as an Observable
-    return interval(1000)
-      .pipe(map((_) => ({ data: { message: 'Hello from SSE!' } })))
-    // return this.dialogSubject.asObservable();
-  }
+  // addUserDialog(conversationId?: string): Observable<{ data: { message: string } }> {
+  //   // Here you would typically implement the logic to handle the conversation
+  //   // For now, we're just returning the Subject as an Observable
+  //   return interval(1000)
+  //     .pipe(map((_) => ({ data: { message: 'Hello from SSE!' } })))
+  //   // return this.dialogSubject.asObservable();
+  // }
 
   // Helper method to emit new messages (we'll use this later)
   emitMessage(message: string) {

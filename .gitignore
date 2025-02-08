@@ -43,6 +43,5 @@ Thumbs.db
 
 .angular
 
-# temporary gongsho-core config
-env_config.json
+local.env
 

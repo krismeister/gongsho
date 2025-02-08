@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigService } from './config.service';
 import { ConversationsService } from './conversations.service';
@@ -29,5 +29,15 @@ export class AppController {
   @Get('conversations/:id')
   getConversation(@Param('id') id: string) {
     return this.conversationsService.getConversation(id);
+  }
+
+  @Post('conversations')
+  createConversation(@Body() body: { input?: string }) {
+    return this.conversationsService.createConversation(body.input);
+  }
+
+  @Post('conversations/:id/user-input')
+  addUserInput(@Param('id') id: string, @Body() body: { input: string }) {
+    return this.conversationsService.addUserInput(id, body.input);
   }
 }
