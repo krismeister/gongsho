@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { ComponentsTestComponent } from './pages/components-test/components-test';
-import { ConversationDetailComponent } from './pages/conversation-detail/conversation-detail.component';
+import { ConversationComponent } from './pages/conversation/conversation.component';
 import { NewConversationComponent } from './pages/new-conversation/new-conversation.component';
 
 export const appRoutes: Routes = [
@@ -15,6 +15,6 @@ export const appRoutes: Routes = [
     },
     {
         path: 'conversations/:id',
-        component: ConversationDetailComponent
+        component: ConversationComponent
     }
 ];

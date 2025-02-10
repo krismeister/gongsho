@@ -2,16 +2,16 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
-import { ConversationComponent } from '../../components/conversation/conversation.component';
+import { ConversationTextareaComponent } from '../../components/conversation/conversation-textarea.component';
 import { ConversationService } from '../../services/conversation.service';
 
 @Component({
   selector: 'app-new-conversation',
   template: `
-    <app-conversation (submitMessage)="handleSubmit($event)"></app-conversation>
+    <app-conversation-textarea (submitMessage)="handleSubmit($event)"></app-conversation-textarea>
   `,
   standalone: true,
-  imports: [CommonModule, ConversationComponent],
+  imports: [CommonModule, ConversationTextareaComponent],
 })
 export class NewConversationComponent {
   constructor(

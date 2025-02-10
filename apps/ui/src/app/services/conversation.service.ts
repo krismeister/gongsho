@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConversationSummary, DialogueData } from '@gongsho/types';
+import { ConversationData, ConversationSummary } from '@gongsho/types';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
@@ -12,8 +12,8 @@ export class ConversationService {
 
   constructor(private http: HttpClient) { }
 
-  getConversation(id: string) {
-    return this.http.get<DialogueData[]>(`${this.apiUrl}/conversations/${id}`);
+  getConversation(id: string): Observable<ConversationData> {
+    return this.http.get<ConversationData>(`${this.apiUrl}/conversations/${id}`);
   }
 
   createConversation(input: string): Observable<ConversationSummary> {
@@ -24,6 +24,7 @@ export class ConversationService {
     return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/user-input`, { input });
   }
 
+
   // addUserDialog(conversationId?: string): Observable<{ data: { message: string } }> {
   //   // Here you would typically implement the logic to handle the conversation
   //   // For now, we're just returning the Subject as an Observable
@@ -32,8 +33,4 @@ export class ConversationService {
   //   // return this.dialogSubject.asObservable();
   // }
 
-  // Helper method to emit new messages (we'll use this later)
-  emitMessage(message: string) {
-    this.dialogSubject.next(message);
-  }
 } 

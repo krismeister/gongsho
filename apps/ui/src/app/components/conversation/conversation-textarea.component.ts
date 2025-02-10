@@ -5,7 +5,7 @@ import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 
 @Component({
-  selector: 'app-conversation',
+  selector: 'app-conversation-textarea',
   standalone: true,
   imports: [CommonModule, FormsModule, HlmInputDirective, HlmBadgeDirective],
   template: `
@@ -26,7 +26,7 @@ import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
     </div>
   `
 })
-export class ConversationComponent {
+export class ConversationTextareaComponent {
   @Output() submitMessage = new EventEmitter<string>();
   message = '';
 

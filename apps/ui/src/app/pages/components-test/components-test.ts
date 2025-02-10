@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideHouse } from '@ng-icons/lucide';
+import { lucideBot, lucideChevronDown, lucideHouse, lucideUserRoundPen } from '@ng-icons/lucide';
 import {
 	HlmAccordionContentComponent,
 	HlmAccordionDirective,
@@ -26,14 +26,18 @@ import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 		HlmIconDirective,
 		HlmBadgeDirective,
 	],
-	providers: [provideIcons({ lucideHouse })],
+	providers: [provideIcons({ lucideHouse, lucideUserRoundPen, lucideBot, lucideChevronDown })],
 	template: `
 			<p class="text-xs">This is a test here</p>
 			<br />
 	    <a target="_blank" href="https://github.com/goetzrobin/spartan" hlmBadge>This is madness. This is spartan.</a>
 			<br />
-			<br />
-			<ng-icon hlm name="lucideHouse" [size]="'xl'" />
+				<br />
+				<ng-icon hlm name="lucideHouse" [size]="'xl'" />
+				<h1>pen</h1>
+				<ng-icon hlm name="lucideUserRoundPen" />
+				<h1>bot</h1>
+				<ng-icon hlm name="lucideBot" />
 	      <hlm-icon hlmAccIcon />
 		  <h1>Gongsho</h1>
 		  <hr />
@@ -41,7 +45,7 @@ import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 			<div hlmAccordionItem isOpened>
 				<button hlmAccordionTrigger>
 					Is it accessible?
-					<hlm-icon hlmAccIcon />
+					 <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
 				</button>
 				<hlm-accordion-content>Yes. It adheres to the WAI-ARIA design pattern.</hlm-accordion-content>
 			</div>
@@ -49,7 +53,7 @@ import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 			<div hlmAccordionItem>
 				<button hlmAccordionTrigger>
 					Is it styled?
-					<hlm-icon hlmAccIcon />
+					 <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
 				</button>
 				<hlm-accordion-content>
 					Yes. It comes with default styles that match the other components' aesthetics.
