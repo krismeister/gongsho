@@ -5,8 +5,9 @@ export class AssistantTextDialogue extends BaseDialogue {
 
   protected override description = 'Assistant Output';
 
+  // TODO store agent specific meta data
+  // tokens, stopReason ect..
   public model = '';
-  public id = '';
   public stopReason = '';
   public stopSequence = '';
   public usage: Record<string, string> = {};

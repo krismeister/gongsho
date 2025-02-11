@@ -18,6 +18,7 @@ export enum AgentMessageRoles {
 }
 
 export type DialogueData = {
+  id: string;
   role: AgentMessageRoles;
   dialogueRole: DialogRoles;
   description: string;
