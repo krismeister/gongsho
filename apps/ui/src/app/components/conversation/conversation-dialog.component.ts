@@ -3,14 +3,13 @@ import { Component, Input } from '@angular/core';
 import { DialogueData } from '@gongsho/types';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideBot, lucideChevronDown, lucideUserRoundPen } from '@ng-icons/lucide';
-import { HlmAvatarComponent } from '@spartan-ng/ui-avatar-helm';
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 
 
 @Component({
   selector: 'app-conversation-dialog',
   standalone: true,
-  imports: [CommonModule, NgIcon, HlmIconDirective, HlmAvatarComponent],
+  imports: [CommonModule, NgIcon, HlmIconDirective,],
   providers: [provideIcons({ lucideUserRoundPen, lucideBot, lucideChevronDown })],
   template: `
     <div class="p-4 my-2 rounded-lg bg-gray-50 dark:bg-gray-800">

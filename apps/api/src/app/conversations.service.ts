@@ -1,6 +1,7 @@
 import { Conversations } from '@gongsho/core';
-import { ConversationData, ConversationSummary } from '@gongsho/types';
+import { ConversationData, ConversationSummary, DialogueData } from '@gongsho/types';
 import { Injectable } from '@nestjs/common';
+import { concatMap, from, Observable } from 'rxjs';
 @Injectable()
 export class ConversationsService {
 
@@ -35,4 +36,11 @@ export class ConversationsService {
     return { message: 'success' };
   }
 
+  getDialogueDataStream(id: string): Observable<DialogueData> {
+    return from(Conversations.getInstance().getConversation(id)).pipe(
+      concatMap(conversation => {
+        return conversation.getDialogueDataStream();
+      }),
+    );
+  }
 }

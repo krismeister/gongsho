@@ -81,6 +81,7 @@
     "jest-preset-angular": "~14.4.0",
     "jsonc-eslint-parser": "^2.1.0",
     "ng-packagr": "~19.1.0",
+    "ngx-sse-client": "^19.0.0",
     "nx": "20.4.0",
     "postcss": "^8.4.5",
     "postcss-url": "~10.1.3",

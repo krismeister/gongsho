@@ -6,11 +6,11 @@ import { lucideChevronDown } from '@ng-icons/lucide';
 import {
   HlmAccordionContentComponent,
   HlmAccordionDirective,
-  HlmAccordionIconDirective,
   HlmAccordionItemDirective,
   HlmAccordionTriggerDirective,
 } from '@spartan-ng/ui-accordion-helm';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { scan } from 'rxjs/operators';
 import { ConversationService } from '../../services/conversation.service';
 import { ConversationDialogComponent } from './conversation-dialog.component';
 
@@ -24,7 +24,6 @@ import { ConversationDialogComponent } from './conversation-dialog.component';
     HlmAccordionItemDirective,
     HlmAccordionTriggerDirective,
     HlmAccordionContentComponent,
-    HlmAccordionIconDirective,
     NgIcon,
   ],
   providers: [
@@ -47,51 +46,61 @@ import { ConversationDialogComponent } from './conversation-dialog.component';
       }
 
       @if (!loading && !error) {
-        @if (dialogueData.length > 0) {
-          <div class="space-y-4">
-            @for (dialog of dialogueData; track dialog) {
-              @if (isArray(dialog)) {
-                <div hlmAccordion type="single" class="w-full">
-                  <div *ngFor="let item of dialog">
+        <div class="space-y-4">
+          @for (dialog of stream$ | async; track trackByDialog(0, dialog)) {
+            @if (isArray(dialog)) {
+              <div hlmAccordion type="single" class="w-full">
+                @for (item of dialog; track trackByDialog(0, item)) {
 
-                    <div hlmAccordionItem>
-                      <button hlmAccordionTrigger>
-                        {{ getAccordianTitle(item) }}
-                        <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
-                      </button>
-                      <hlm-accordion-content>
-                          <app-conversation-dialog [dialog]="item" />
-                      </hlm-accordion-content>
-                    </div>
-
+                  <div hlmAccordionItem>
+                    <button hlmAccordionTrigger>
+                      {{ getAccordianTitle(item) }}
+                      <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
+                    </button>
+                    <hlm-accordion-content>
+                        <app-conversation-dialog [dialog]="item" />
+                    </hlm-accordion-content>
                   </div>
-                </div>
-              } @else {
-                <app-conversation-dialog [dialog]="dialog" />
-              }
+                }
+              </div>
+            } @else {
+              <app-conversation-dialog [dialog]="dialog" />
             }
-          </div>
-        } @else {
-          <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-            No messages in this conversation
-          </div>
-        }
+          }
+        </div>
       }
     </div>
   `
 })
 export class ConversationDialogListComponent implements OnInit {
   @Input() conversationId!: string;
+  stream$!: Observable<Array<DialogueData | DialogueData[]>>;
   dialogueData: Array<DialogueData | DialogueData[]> = [];
   loading = false;
   error: string | null = null;
 
-  // TODO add trackby for dialogueData
 
-  constructor(private conversationService: ConversationService) { }
+  constructor(private conversationService: ConversationService) {
+  }
 
-  ngOnInit() {
-    this.loadConversation();
+  ngOnInit(): void {
+    this.stream$ = this.conversationService.getDialogStream(this.conversationId).pipe(
+      scan((acc: Array<DialogueData | DialogueData[]>, current: DialogueData) => {
+        if (current.dialogueRole === DialogRoles.SYSTEM || current.dialogueRole === DialogRoles.INTERSTITIAL) {
+          // If last item is an array, add to it
+          if (acc.length > 0 && Array.isArray(acc[acc.length - 1])) {
+            (acc[acc.length - 1] as DialogueData[]).push(current);
+          } else {
+            // Start a new array for system/interstitial messages
+            acc.push([current]);
+          }
+        } else {
+          // For other roles, add them as single items
+          acc.push(current);
+        }
+        return acc;
+      }, [] as Array<DialogueData | DialogueData[]>),
+    );
   }
 
   isArray(value: DialogueData | DialogueData[]): value is DialogueData[] {
@@ -108,46 +117,11 @@ export class ConversationDialogListComponent implements OnInit {
     return out + dialog.description;
   }
 
-  loadConversation() {
-    this.loading = true;
-    this.error = null;
-
-    this.conversationService.getConversation(this.conversationId)
-      .pipe(
-        map(conversation => {
-          const dialogueData = conversation.details.dialogueData;
-          const out: Array<DialogueData | DialogueData[]> = [];
-
-          for (let i = 0; i < dialogueData.length; i++) {
-            const current = dialogueData[i];
-
-            if (current.dialogueRole === DialogRoles.SYSTEM || current.dialogueRole === DialogRoles.INTERSTITIAL) {
-              // If previous item in out is an array, add to it
-              if (out.length > 0 && Array.isArray(out[out.length - 1])) {
-                (out[out.length - 1] as DialogueData[]).push(current);
-              } else {
-                // Start a new array for system/interstitial messages
-                out.push([current]);
-              }
-            } else {
-              // For other roles, add them as single items
-              out.push(current);
-            }
-          }
-
-          return out;
-        })
-      )
-      .subscribe({
-        next: (processedDialogueData) => {
-          this.dialogueData = processedDialogueData;
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Error loading conversation:', error);
-          this.error = error instanceof Error ? error.message : 'An unknown error occurred';
-          this.loading = false;
-        }
-      });
+  trackByDialog(_: number, dialog: DialogueData | DialogueData[]): string {
+    if (Array.isArray(dialog)) {
+      // For arrays, concatenate all dialogue IDs
+      return dialog.map(d => d.id).join('_');
+    }
+    return dialog.id;
   }
 }

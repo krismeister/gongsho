@@ -1,5 +1,5 @@
 import { ConversationDetails, DialogueData } from '@gongsho/types';
-import { map, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
 import { gongshoConfig } from '../config/config';
@@ -18,9 +18,9 @@ export class Conversation {
   private dialogFlow: BaseDialogue[] = [];
 
   private dialogueStream$ = new ReplaySubject<BaseDialogue>();
-  private dialogueDataStream = this.dialogueStream$.pipe(map(dialogue => dialogue.getDialogueData()));
+  private dialogueDataStream$ = this.dialogueStream$.pipe(map(dialogue => dialogue.getDialogueData()));
 
-  private waitingForAgent$: Subject<boolean> = new Subject<boolean>();
+  private agentBusy$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   private repoMap?: RepoMap;
   private files: string[] = [];
@@ -48,7 +48,7 @@ export class Conversation {
   }
 
   public getDialogueDataStream() {
-    return this.dialogueDataStream;
+    return this.dialogueDataStream$
   }
 
   public getConversationDetails(): ConversationDetails {
@@ -59,11 +59,14 @@ export class Conversation {
     }
   }
 
+
   public load() {
     const savedConversation = loadConversation(this.id)
-    this.dialogFlow = savedConversation.dialogueData.map((item: DialogueData) =>
-      BaseDialogue.fromDialogueData(item)
-    );
+    this.dialogFlow = savedConversation.dialogueData.map((item: DialogueData) => {
+      const dialogItem = BaseDialogue.fromDialogueData(item);
+      this.dialogueStream$.next(dialogItem);
+      return dialogItem;
+    });
     this.files = savedConversation.files;
   }
 
@@ -106,6 +109,8 @@ export class Conversation {
     }
 
     this.agentInProgress = true;
+    this.agentBusy$.next(true);
+
     // moving item from queue to flow
     const dialogue = this.dialogueQueue.shift()!;
 
@@ -128,11 +133,13 @@ export class Conversation {
       .sendMessages(system.content[0].text, messages)
       .then(response => {
         this.agentInProgress = false;
+        this.agentBusy$.next(false);
         this.onAgentResponse(response);
       })
       .catch(error => {
         console.error('Agent error:', error);
         this.agentInProgress = false;
+        this.agentBusy$.next(false);
       });
   }
 
