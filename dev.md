@@ -8,6 +8,14 @@ npx nx dep-graph
 npx nx show project ui
 ```
 
+# generate new node library
+
+```
+npx nx g @nx/node:library libs/text-to-blocks --dry-run
+```
+
+# generate a nest controller
+
 ```
 npx nx g @nx/nest:controller apps/api/src/app/foo.controller.ts
 
@@ -52,4 +60,10 @@ lint a project:
 ```
 npx eslint --debug apps/ui/eslint.config.mjs
 npx @eslint/migrate-config apps/ui/eslint.config.mjs
+```
+
+Running jest natively:
+
+```
+npx jest --config libs/text-to-blocks/jest.config.ts libs/text-to-blocks
 ```

@@ -11,20 +11,14 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@gongsho/core": [
-        "libs/core/src/index.ts"
-      ],
-      "@gongsho/types": [
-        "libs/types/src/index.ts"
-      ],
+      "@gongsho/core": ["libs/core/src/index.ts"],
+      "@gongsho/types": ["libs/types/src/index.ts"],
+      "@gongsho/text-to-blocks": ["libs/text-to-blocks/src/index.ts"],
       "@spartan-ng/ui-accordion-helm": [
         "libs/ui/spartan-ng/ui-accordion-helm/src/index.ts"
       ],
@@ -132,8 +126,5 @@
       ]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@gongshow/source",
+  "name": "@gongsho/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -8,7 +8,8 @@
     "build:api": "nx build api --debug",
     "build:ui": "nx build ui",
     "test:api": "nx test api",
-    "test:ui": "nx test ui"
+    "test:ui": "nx test ui",
+    "test:text-to-blocks": "nx test text-to-blocks"
   },
   "private": true,
   "dependencies": {
