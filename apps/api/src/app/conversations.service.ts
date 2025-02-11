@@ -43,4 +43,12 @@ export class ConversationsService {
       }),
     );
   }
+
+  // getAgentBusyStream(id: string): Observable<boolean> {
+  //   return from(Conversations.getInstance().getConversation(id)).pipe(
+  //     concatMap(conversation => {
+  //       return conversation.getAgentBusyStream();
+  //     }),
+  //   );
+  // }
 }

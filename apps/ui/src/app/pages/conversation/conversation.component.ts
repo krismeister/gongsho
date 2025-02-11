@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ConversationDialogListComponent } from '../../components/conversation/conversation-dialog-list.component';
 import { ConversationTextareaComponent } from '../../components/conversation/conversation-textarea.component';
-
+import { ConversationService } from '../../services/conversation.service';
 @Component({
   selector: 'app-new-conversation',
   template: `
@@ -19,7 +19,7 @@ import { ConversationTextareaComponent } from '../../components/conversation/con
 export class ConversationComponent implements OnInit {
   conversationId: string;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private conversationService: ConversationService) {
     this.conversationId = '';
   }
 
@@ -28,6 +28,6 @@ export class ConversationComponent implements OnInit {
   }
 
   handleSubmit(message: string) {
-    console.log('Message submitted:', message);
+    this.conversationService.addUserInput(this.conversationId, message).subscribe();
   }
 }

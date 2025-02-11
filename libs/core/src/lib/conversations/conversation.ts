@@ -76,7 +76,7 @@ export class Conversation {
   }
 
   public async addUserInput(userInput: string) {
-    if (this.dialogueQueue.length === 0) {
+    if (this.dialogFlow.length === 0) {
       this.startConversation(userInput);
       return
     }
