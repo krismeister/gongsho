@@ -1,11 +1,14 @@
 version: 0.0.1
 conversations:
-  - id: '1738432869846'
+  - id: "1738432869846"
     title: Refactoring User Authentication
     createdAt: 2024-03-20T10:30:00.000Z
-  - id: '1738432934091'
+  - id: "1738432934091"
     title: Adding API Documentation
     createdAt: 2024-03-21T15:45:00.000Z
-  - id: '1739248425647'
+  - id: "1739248425647"
     title: I want to make the main file more developer freindly
     createdAt: 2025-02-11T04:33:45.655Z
+  - id: "1739378384578"
+    title: I want to create a main function to startup during npm start
+    createdAt: 2025-02-12T16:39:44.585Z

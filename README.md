@@ -2,7 +2,7 @@
 
 Simple NPM library to generate code with LLMs. Use NPM install, then run the start command to open the gongsho web interface.
 
-[![Gongsho Conversation Page](conversation-page.png | height=300)](conversation-page.png)
+[![Gongsho Conversation Page](screenshots/conversation-page_thumb.png)](screenshots/conversation-page.png)
 
 This product is still in early development. But you can try it out running in development mode.
 
