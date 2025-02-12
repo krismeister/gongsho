@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { HighlightLoader } from 'ngx-highlightjs';
 
 @Component({
   selector: 'app-main-menu',
@@ -53,9 +54,10 @@ import { RouterModule } from '@angular/router';
 
 export class MainMenuComponent {
   isDark = signal(false);
-
+  private hljsLoader: HighlightLoader = inject(HighlightLoader);
   constructor() {
 
+    this.hljsLoader.setTheme('/highlight-css/felipec.min.css');
     // console.log('default dark?', window.matchMedia?.('(prefers-color-scheme: dark)').matches)
 
     if (typeof window !== 'undefined') {
@@ -77,6 +79,7 @@ export class MainMenuComponent {
     this.isDark.update(dark => {
       document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', !dark ? 'dark' : 'light');
+      this.hljsLoader.setTheme(!dark ? '/highlight-css/felipec.min.css' : '/highlight-css/github.min.css');
       return !dark;
     });
   }

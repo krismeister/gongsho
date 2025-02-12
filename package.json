@@ -34,6 +34,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "embla-carousel-angular": "18.0.0",
+    "ngx-highlightjs": "^14.0.0",
     "ignore": "^7.0.3",
     "ngx-scrollbar": ">=16.0.0",
     "ngx-sonner": "^2.0.0",

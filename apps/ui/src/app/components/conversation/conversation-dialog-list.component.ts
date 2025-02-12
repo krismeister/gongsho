@@ -30,46 +30,44 @@ import { ConversationDialogComponent } from './conversation-dialog.component';
     provideIcons({ lucideChevronDown })
   ],
   template: `
-    <div class="container mx-auto max-w-4xl px-4">
-      @if (loading) {
-        <div class="flex justify-center items-center py-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        </div>
-      }
+    @if (loading) {
+      <div class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    }
 
-      @if (error) {
-        <div class="bg-red-50 dark:bg-red-900 p-4 rounded-lg my-4">
-          <p class="text-red-600 dark:text-red-200">
-            Error loading conversation: {{ error }}
-          </p>
-        </div>
-      }
+    @if (error) {
+      <div class="bg-red-50 dark:bg-red-900 p-4 rounded-lg my-4">
+        <p class="text-red-600 dark:text-red-200">
+          Error loading conversation: {{ error }}
+        </p>
+      </div>
+    }
 
-      @if (!loading && !error) {
-        <div class="space-y-4">
-          @for (dialog of stream$ | async; track trackByDialog(0, dialog)) {
-            @if (isArray(dialog)) {
-              <div hlmAccordion type="single" class="w-full">
-                @for (item of dialog; track trackByDialog(0, item)) {
+    @if (!loading && !error) {
+      <div class="space-y-4">
+        @for (dialog of stream$ | async; track trackByDialog(0, dialog)) {
+          @if (isArray(dialog)) {
+            <div hlmAccordion type="single" class="w-full">
+              @for (item of dialog; track trackByDialog(0, item)) {
 
-                  <div hlmAccordionItem>
-                    <button hlmAccordionTrigger>
-                      {{ getAccordianTitle(item) }}
-                      <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
-                    </button>
-                    <hlm-accordion-content>
-                        <app-conversation-dialog [dialog]="item" />
-                    </hlm-accordion-content>
-                  </div>
-                }
-              </div>
-            } @else {
-              <app-conversation-dialog [dialog]="dialog" />
-            }
+                <div hlmAccordionItem>
+                  <button hlmAccordionTrigger>
+                    {{ getAccordianTitle(item) }}
+                    <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
+                  </button>
+                  <hlm-accordion-content>
+                      <app-conversation-dialog [dialog]="item" />
+                  </hlm-accordion-content>
+                </div>
+              }
+            </div>
+          } @else {
+            <app-conversation-dialog [dialog]="dialog" />
           }
-        </div>
-      }
-    </div>
+        }
+      </div>
+    }
   `
 })
 export class ConversationDialogListComponent implements OnInit {

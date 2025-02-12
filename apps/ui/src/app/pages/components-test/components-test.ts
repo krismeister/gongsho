@@ -11,6 +11,8 @@ import {
 import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
+import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
+import { HlmSwitchComponent } from '@spartan-ng/ui-switch-helm';
 
 @Component({
 	selector: 'app-components-test',
@@ -25,9 +27,17 @@ import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 		NgIcon,
 		HlmIconDirective,
 		HlmBadgeDirective,
+		HlmLabelDirective,
+		HlmSwitchComponent,
 	],
 	providers: [provideIcons({ lucideHouse, lucideUserRoundPen, lucideBot, lucideChevronDown })],
 	template: `
+	<h1>Components Test</h1>
+	<h2>swtich</h2>
+	        <label class="flex items-center" hlmLabel>
+            <hlm-switch class="mr-2" />
+            Airplane mode
+        </label>
 			<p class="text-xs">This is a test here</p>
 			<br />
 	    <a target="_blank" href="https://github.com/goetzrobin/spartan" hlmBadge>This is madness. This is spartan.</a>

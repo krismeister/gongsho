@@ -1,37 +1,51 @@
-export type TextContent = {
-  content: string;
-  type: 'text';
+// Define block types as a const object
+export const BlockTypes = {
+  TEXT: 'text',
+  REPLACE: 'replace',
+  BASH: 'bash',
+  EXAMINE: 'examine'
+} as const;
+
+// Create a type from the values
+export type BlockType = typeof BlockTypes[keyof typeof BlockTypes];
+
+// Define the message block interface/type union
+export interface BaseMessageBlock {
+  type: BlockType;
 }
 
-export type ReplaceContent = {
+export interface TextBlock extends BaseMessageBlock {
+  type: typeof BlockTypes.TEXT;
+  content: string;
+}
+
+export interface BashBlock extends BaseMessageBlock {
+  type: typeof BlockTypes.BASH;
+  command: string;
+  output?: string;
+}
+
+export interface ReplaceBlock extends BaseMessageBlock {
+  type: typeof BlockTypes.REPLACE;
   file: string;
   from: string;
   to: string;
   language: string;
-  type: 'replace';
 }
 
-export type BashContent = {
-  command: string;
-  type: 'bash';
-}
-
-export type ExamineContent = {
+export interface ExamineBlock extends BaseMessageBlock {
+  type: typeof BlockTypes.EXAMINE;
   files: string[];
-  type: 'examine';
 }
 
-export type MessageBlock = TextContent | ReplaceContent | BashContent | ExamineContent;
+// Union type of all possible blocks
+export type MessageBlock = TextBlock | BashBlock | ReplaceBlock | ExamineBlock;
 
 export const parseTextToBlocks = (message: string): MessageBlock[] => {
   const blocks: MessageBlock[] = [];
 
   // Look for code blocks and examine files entries
   const searchPattern = /(.+)\n```(\w+)\s*<<<<<<< SEARCH\n([\s\S]*?)=======\n([\s\S]*?)>>>>>>> REPLACE\s*```/g;
-
-  // Add debug logging
-  console.log('Input message:', JSON.stringify(message)); // This will show us exact string with escapes
-  console.log('Pattern:', searchPattern.source);
 
   let lastIndex = 0;
 
@@ -40,7 +54,7 @@ export const parseTextToBlocks = (message: string): MessageBlock[] => {
     const trimmed = content.trim();
     if (trimmed) {
       blocks.push({
-        type: 'text',
+        type: BlockTypes.TEXT,
         content: trimmed
       });
     }
@@ -55,14 +69,13 @@ export const parseTextToBlocks = (message: string): MessageBlock[] => {
   // Find replace blocks
   let match: RegExpExecArray | null;
   while ((match = searchPattern.exec(message)) !== null) {
-    console.log('Found match:', match);
     const [fullMatch, filename, language, searchContent, replaceContent] = match;
     const matchIndex = match.index;
     allMatches.push({
       index: matchIndex,
       length: fullMatch.length,
       process: () => ({
-        type: 'replace',
+        type: BlockTypes.REPLACE,
         file: filename.trim(),
         from: searchContent.trim(),
         to: replaceContent.trim(),
@@ -79,7 +92,7 @@ export const parseTextToBlocks = (message: string): MessageBlock[] => {
       index: match.index,
       length: fullMatch.length,
       process: () => ({
-        type: 'bash',
+        type: BlockTypes.BASH,
         command: bashContent.trim() // Add required command property
       })
     });
@@ -94,7 +107,7 @@ export const parseTextToBlocks = (message: string): MessageBlock[] => {
       index: match.index,
       length: fullMatch.length,
       process: () => ({
-        type: 'examine',
+        type: BlockTypes.EXAMINE,
         files: filesContent.split(',').map(f => f.trim())
       })
     });
@@ -119,3 +132,6 @@ export const parseTextToBlocks = (message: string): MessageBlock[] => {
 
   return blocks;
 }
+
+// The BlockByType utility type
+export type BlockByType<T extends BlockType> = Extract<MessageBlock, { type: T }>;

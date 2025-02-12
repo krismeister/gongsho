@@ -73,6 +73,10 @@
   background: rgb(28 31 49 / 1);
 }
 
+.root-div {
+  position: relative;
+}
+
 .gradient-top {
   height: 50%;
   position: absolute;
@@ -92,4 +96,8 @@
 
 .main {
   z-index: 1;
+}
+
+code {
+  font-size: 13px;
 }

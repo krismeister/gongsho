@@ -7,7 +7,7 @@ import { ConversationService } from '../../services/conversation.service';
 @Component({
   selector: 'app-new-conversation',
   template: `
-    <div class="conversation-detail">
+    <div class="container mx-auto px-4">
       <h2>Conversation {{ conversationId }}</h2>
       <app-conversation-dialog-list [conversationId]="conversationId"></app-conversation-dialog-list>
       <app-conversation-textarea (submitMessage)="handleSubmit($event)"></app-conversation-textarea>
