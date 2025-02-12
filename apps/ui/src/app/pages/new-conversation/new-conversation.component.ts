@@ -8,7 +8,10 @@ import { ConversationService } from '../../services/conversation.service';
 @Component({
   selector: 'app-new-conversation',
   template: `
-    <app-conversation-textarea (submitMessage)="handleSubmit($event)"></app-conversation-textarea>
+    <div class="container mx-auto px-4">
+      <h2>New Conversation</h2>
+      <app-conversation-textarea (submitMessage)="handleSubmit($event)"></app-conversation-textarea>
+    </div>
   `,
   standalone: true,
   imports: [CommonModule, ConversationTextareaComponent],

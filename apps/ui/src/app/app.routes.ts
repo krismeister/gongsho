@@ -9,7 +9,7 @@ export const appRoutes: Routes = [
         component: ComponentsTestComponent
     },
     {
-        path: 'new-conversation',
+        path: '',
         component: NewConversationComponent,
         title: 'Create New Conversation'
     },

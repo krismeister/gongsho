@@ -1,13 +1,27 @@
 # gongsho
 
-Generates code with Claude and commits to git
+Simple NPM library to generate code with LLMs. Use NPM install, then run the start command to open the gongsho web interface.
 
-## Setup
+[![Gongsho Conversation Page](conversation-page.png | height=300)](conversation-page.png)
 
-1. Clone the repo
-2. Run `npm install`
-3. Copy the config example file and update it`cp config/env_config.example.json config/env_config.json`
-4. Run `npm run start`
+This product is still in early development. But you can try it out running in development mode.
+
+Copy the `.env` file.
+
+```
+cp .env.example .env
+```
+
+Add an anthropic api key to the `.env` file.
+
+Start the API and UI:
+
+```
+npm run start:api
+npm run start:ui
+```
+
+Open the web interface at `http://localhost:4200`
 
 ## TODOs
 
@@ -15,31 +29,40 @@ Generates code with Claude and commits to git
 
 - [x] Build AST structure from project folder
 - [x] Read env variables for claude api key, github token, etc.
-- [ ] Add a web interface to run gongsho
+- [x] Add a web interface to run gongsho
 - [ ] Add docs on configuration
 - [ ] Add support for multple LLMs
 
 ### MVP
 
 - [ ] MVP Todos
-  - [ ] NX project with Angular and NestJS
+
+  - [x] NX project with Angular and NestJS
   - [ ] Point to real project instead of projects directory
 
 - [ ] LLM
+
   - [x] Make initial prompt asking if codebase explenation is required
   - [x] Make interstitial
   - [x] Pass full text of files to LLM if explenation is required
   - [x] Save/Load convdersation to/from file
 
 - [ ] UI
+
+  - [ ] Add diff viewer of changes
+  - [ ] Add abilty to add files manually to the conversation
+  - [ ] Add apply button to apply changes to the project
   - [ ] Markdown Stream
   - [ ] UI to see your history
 
 - [ ] Server
-  - [ ] Add getConversations tRPC endpoint
-  - [ ] Add getConversation tRPC endpoint
-  - [ ] Add createConversation tRPC endpoint
-  - [ ] Add addUserInput tRPC endpoint
+  - [x] Add getConversations endpoint
+  - [x] Add getConversation endpoint
+  - [x] Add createConversation endpoint
+  - [x] Add addUserInput endpoint
+  - [x] Add stream conversation endpoint (SSE/ws)
+  - [ ] Add getChanges to a conversation
+  - [ ] Add getFiles endopint
 
 ### Assistant TODOs
 
