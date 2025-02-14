@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HighlightLoader } from 'ngx-highlightjs';
 
@@ -51,23 +51,32 @@ import { HighlightLoader } from 'ngx-highlightjs';
     </nav>
   `
 })
+export class MainMenuComponent implements OnInit {
+  private readonly lightThemeCss = '/highlight-css/github.min.css';
+  private readonly darkThemeCss = '/highlight-css/felipec.min.css';
 
-export class MainMenuComponent {
-  isDark = signal(false);
+  isDark = signal(true);
   private hljsLoader: HighlightLoader = inject(HighlightLoader);
-  constructor() {
 
-    this.hljsLoader.setTheme('/highlight-css/felipec.min.css');
-    // console.log('default dark?', window.matchMedia?.('(prefers-color-scheme: dark)').matches)
+  ngOnInit() {
+
+    // Set initial theme to dark
+
 
     if (typeof window !== 'undefined') {
       // Check localStorage first
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
         this.isDark.set(savedTheme !== 'light');
+        if (savedTheme == 'light') {
+          this.hljsLoader.setTheme(this.lightThemeCss);
+        } else {
+          this.hljsLoader.setTheme(this.darkThemeCss);
+        }
       } else {
-        // Fall back to system preference
-        this.isDark.set(window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false);
+        // Default to dark
+        this.isDark.set(true);
+        this.hljsLoader.setTheme(this.darkThemeCss);
       }
 
       // Apply the theme
@@ -79,7 +88,7 @@ export class MainMenuComponent {
     this.isDark.update(dark => {
       document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', !dark ? 'dark' : 'light');
-      this.hljsLoader.setTheme(!dark ? '/highlight-css/felipec.min.css' : '/highlight-css/github.min.css');
+      this.hljsLoader.setTheme(!dark ? this.darkThemeCss : this.lightThemeCss);
       return !dark;
     });
   }
