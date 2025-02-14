@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, signal } from '@angular/core';
-import { parseTextToBlocks } from '@gongsho/text-to-blocks';
+import { MessageBlock } from '@gongsho/text-to-blocks';
 import { DialogueData } from '@gongsho/types';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideBot, lucideChevronDown, lucideUserRoundPen } from '@ng-icons/lucide';
@@ -49,7 +49,7 @@ import { MessageBlocksComponent } from '../message-blocks/message-blocks.compone
             }
           </div>
           @if (dialog.role === 'assistant' && !showRaw()) {
-            <app-message-blocks [blocks]="messageBlocks"></app-message-blocks>
+            <app-message-blocks [blocks]="blocks"></app-message-blocks>
           } @else {
             <div class="text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
               {{ dialog.content }}
@@ -62,13 +62,11 @@ import { MessageBlocksComponent } from '../message-blocks/message-blocks.compone
 })
 export class ConversationDialogComponent {
   @Input() dialog!: DialogueData;
+  @Input() blocks: MessageBlock[] = [];
   showRaw = signal(false);
 
   toggleRaw() {
     this.showRaw.update(raw => !raw);
   }
 
-  get messageBlocks() {
-    return parseTextToBlocks(this.dialog.content);
-  }
 }

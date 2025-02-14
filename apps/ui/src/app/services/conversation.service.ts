@@ -37,6 +37,10 @@ export class ConversationService {
     }), filter(Boolean));
   }
 
+  generateChangelist(conversationId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/generate-changelist`, {});
+  }
+
   // addUserDialog(conversationId?: string): Observable<{ data: { message: string } }> {
   //   // Here you would typically implement the logic to handle the conversation
   //   // For now, we're just returning the Subject as an Observable

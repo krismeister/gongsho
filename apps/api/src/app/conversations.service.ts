@@ -44,6 +44,12 @@ export class ConversationsService {
     );
   }
 
+  async generateChangelist(id: string): Promise<{ message: string }> {
+    const conversation = await Conversations.getInstance().getConversation(id)
+    await conversation.generateChangelist();
+    return { message: 'success' };
+  }
+
   // getAgentBusyStream(id: string): Observable<boolean> {
   //   return from(Conversations.getInstance().getConversation(id)).pipe(
   //     concatMap(conversation => {

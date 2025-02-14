@@ -3,9 +3,11 @@ import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
 import { gongshoConfig } from '../config/config';
+import { AssistantChangelogDialogue } from '../dialogue/agent/assistant-changelog.dialogue';
 import { AssistantTextDialogue } from '../dialogue/agent/assistant-text.dialogue';
 import { BaseDialogue } from '../dialogue/base-dialogue';
 import { AddFilesDialogue } from '../dialogue/interstitial/add-files.dialogue';
+import { ChangelogDialogue } from '../dialogue/interstitial/changelog.dialogue';
 import { RepoMapDialogue } from '../dialogue/interstitial/repo-map.dialogue';
 import { WholeCodebaseDialogue } from '../dialogue/system/whole-codebase.dialogue';
 import { UserInputDialogue } from '../dialogue/user-input.dialogue';
@@ -84,6 +86,11 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
+  public async generateChangelist() {
+    this.dialogueQueue.push(new ChangelogDialogue());
+    this.sendNextQueueItemToAgent();
+  }
+
   public async startConversation(userInput: string) {
     const systemDialogue = new WholeCodebaseDialogue();
     const repoMapDialogue = new RepoMapDialogue('', {
@@ -151,7 +158,14 @@ export class Conversation {
     }
 
     const content = response.content[response.content.length - 1].text;
-    const dialogue = new AssistantTextDialogue(content);
+
+    let dialogue: BaseDialogue;
+    if (content.startsWith('CHANGELOG')) {
+      dialogue = new AssistantChangelogDialogue(content);
+    } else {
+      dialogue = new AssistantTextDialogue(content);
+    }
+
     this.dialogFlow.push(dialogue);
     this.dialogueStream$.next(dialogue);
 

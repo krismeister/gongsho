@@ -10,6 +10,7 @@ export enum DialogRoles {
   SYSTEM = 'system',
   INTERSTITIAL = 'interstitial',
   ASSISTANT = 'assistant',
+  CHANGELOG = 'changelog',
 }
 
 export enum AgentMessageRoles {

@@ -3,16 +3,21 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
+import { ModelSelectorComponent } from '../buttons/model-selector.component';
 
 @Component({
   selector: 'app-conversation-textarea',
   standalone: true,
-  imports: [CommonModule, FormsModule, HlmInputDirective, HlmBadgeDirective],
+  imports: [CommonModule, FormsModule, HlmInputDirective, HlmBadgeDirective, ModelSelectorComponent],
   template: `
     <div class="flex flex-col">
       <div class="flex-1 flex flex-row gap-2 justify-end py-2">
-        <span hlmBadge variant="outline" class="font-light">Ctrl-Enter - line break</span>
-        <span hlmBadge variant="secondary" class="font-light">Enter - submit</span>
+
+        <app-model-selector class="mr-auto"
+          (onChange)="onModelChange($event)"
+        />
+        <span hlmBadge variant="outline" >Ctrl-Enter - line break</span>
+        <span hlmBadge variant="secondary" >Enter - submit</span>
       </div>
       <div class="flex-1 flex flex-col">
         <textarea 
@@ -36,6 +41,10 @@ export class ConversationTextareaComponent {
       event.preventDefault();
       this.onSubmit();
     }
+  }
+
+  onModelChange(model: Event) {
+    console.log('model changed', model);
   }
 
   onSubmit() {

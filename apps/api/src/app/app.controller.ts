@@ -51,4 +51,9 @@ export class AppController {
       } as MessageEvent<DialogueData>))
     );
   }
+
+  @Post('conversations/:id/generate-changelist')
+  generateChangelist(@Param('id') id: string) {
+    return this.conversationsService.generateChangelist(id);
+  }
 }

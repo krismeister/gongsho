@@ -1,18 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { DialogRoles, DialogueData } from '@gongsho/types';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { BlockTypes, MessageBlock, parseTextToBlocks } from '@gongsho/text-to-blocks';
+import { AgentMessageRoles, DialogRoles, DialogueData } from '@gongsho/types';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronDown } from '@ng-icons/lucide';
+import { lucideChevronDown, lucideListX } from '@ng-icons/lucide';
 import {
   HlmAccordionContentComponent,
   HlmAccordionDirective,
   HlmAccordionItemDirective,
   HlmAccordionTriggerDirective,
 } from '@spartan-ng/ui-accordion-helm';
-import { Observable } from 'rxjs';
-import { scan } from 'rxjs/operators';
+import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
+import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { distinctUntilChanged, map, scan } from 'rxjs/operators';
 import { ConversationService } from '../../services/conversation.service';
+import { ApplyChangesButtonComponent } from '../buttons/apply-changes-button.component';
+import { GenerateChangelogButtonComponent } from '../buttons/generate-changelog-button.component';
 import { ConversationDialogComponent } from './conversation-dialog.component';
+
+
+type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
 
 @Component({
   selector: 'app-conversation-dialog-list',
@@ -25,69 +33,92 @@ import { ConversationDialogComponent } from './conversation-dialog.component';
     HlmAccordionTriggerDirective,
     HlmAccordionContentComponent,
     NgIcon,
+    HlmIconDirective,
+    HlmSpinnerComponent,
+    GenerateChangelogButtonComponent,
+    ApplyChangesButtonComponent
   ],
   providers: [
-    provideIcons({ lucideChevronDown })
+    provideIcons({ lucideChevronDown, lucideListX })
   ],
   template: `
-    @if (loading) {
-      <div class="flex justify-center items-center py-8">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-      </div>
-    }
+    <div class="space-y-4">
+      @for (dialog of groupedStream$ | async; track trackByDialog(0, dialog)) {
+        @if (isArray(dialog)) {
+          <div hlmAccordion type="single" class="w-full">
+            @for (item of dialog; track trackByDialog(0, item)) {
 
-    @if (error) {
-      <div class="bg-red-50 dark:bg-red-900 p-4 rounded-lg my-4">
-        <p class="text-red-600 dark:text-red-200">
-          Error loading conversation: {{ error }}
-        </p>
-      </div>
-    }
-
-    @if (!loading && !error) {
-      <div class="space-y-4">
-        @for (dialog of stream$ | async; track trackByDialog(0, dialog)) {
-          @if (isArray(dialog)) {
-            <div hlmAccordion type="single" class="w-full">
-              @for (item of dialog; track trackByDialog(0, item)) {
-
-                <div hlmAccordionItem>
-                  <button hlmAccordionTrigger>
-                    {{ getAccordianTitle(item) }}
-                    <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
-                  </button>
-                  <hlm-accordion-content>
-                      <app-conversation-dialog [dialog]="item" />
-                  </hlm-accordion-content>
-                </div>
-              }
-            </div>
-          } @else {
-            <app-conversation-dialog [dialog]="dialog" />
-          }
+              <div hlmAccordionItem>
+                <button hlmAccordionTrigger>
+                  {{ getAccordianTitle(item) }}
+                  <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
+                </button>
+                <hlm-accordion-content>
+                    <app-conversation-dialog [dialog]="item" [blocks]="item.blocks" />
+                </hlm-accordion-content>
+              </div>
+            }
+          </div>
+        } @else {
+          <app-conversation-dialog [dialog]="dialog" [blocks]="dialog.blocks" />
         }
+      }
+    </div>
+
+
+    @if (waitingOnAssistant$ | async) {
+      <div class="py-4 flex justify-center">
+        <hlm-spinner />
       </div>
     }
+    
+    @if (lastDialogHasChanges$ | async) {
+      <div class="py-4 flex justify-center">
+        <app-generate-changelog-button [conversationId]="conversationId" />
+      </div>
+    }
+
+    @if (lastDialogIsChangelist$ | async) {
+      <div class="py-4 flex justify-center">
+        <app-apply-changes-button [conversationId]="conversationId" />
+      </div>
+    }
+
   `
 })
-export class ConversationDialogListComponent implements OnInit {
+export class ConversationDialogListComponent implements OnInit, OnDestroy {
   @Input() conversationId!: string;
-  stream$!: Observable<Array<DialogueData | DialogueData[]>>;
-  dialogueData: Array<DialogueData | DialogueData[]> = [];
-  loading = false;
-  error: string | null = null;
-
+  private SSESubscription?: Subscription;
+  stream$: Subject<DialogueData> = new Subject()
+  streamWithBlocks$!: Observable<DialogueDataWithMessageblocks>;
+  groupedStream$!: Observable<Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]>>;
+  dialogueData: Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]> = [];
+  waitingOnAssistant$!: Observable<boolean>;
+  lastDialogHasChanges$!: Observable<boolean>
+  lastDialogIsChangelist$!: Observable<boolean>
 
   constructor(private conversationService: ConversationService) {
   }
 
   ngOnInit(): void {
-    this.stream$ = this.conversationService.getDialogStream(this.conversationId).pipe(
-      scan((acc: Array<DialogueData | DialogueData[]>, current: DialogueData) => {
-        if (current.dialogueRole === DialogRoles.SYSTEM || current.dialogueRole === DialogRoles.INTERSTITIAL) {
+    // some strange bug, we need to store the stream in a subject to avoid it not being updated
+    // TODO: fix the SSE stream to not have this problem
+    this.SSESubscription = this.conversationService.getDialogStream(this.conversationId).subscribe(data => {
+      this.stream$.next(data)
+    })
+
+    this.streamWithBlocks$ = this.stream$.pipe(
+      map((dialogueData) => {
+        return { ...dialogueData, blocks: parseTextToBlocks(dialogueData.content) }
+      }),
+    )
+
+    this.groupedStream$ = this.streamWithBlocks$.pipe(
+      scan((acc: Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]>, current: DialogueDataWithMessageblocks) => {
+        if (current.dialogueRole === DialogRoles.SYSTEM || current.dialogueRole === DialogRoles.INTERSTITIAL || current.dialogueRole === DialogRoles.CHANGELOG) {
           // If last item is an array, add to it
           if (acc.length > 0 && Array.isArray(acc[acc.length - 1])) {
-            (acc[acc.length - 1] as DialogueData[]).push(current);
+            (acc[acc.length - 1] as DialogueDataWithMessageblocks[]).push(current);
           } else {
             // Start a new array for system/interstitial messages
             acc.push([current]);
@@ -97,7 +128,28 @@ export class ConversationDialogListComponent implements OnInit {
           acc.push(current);
         }
         return acc;
-      }, [] as Array<DialogueData | DialogueData[]>),
+      }, [] as Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]>),
+    );
+
+    this.lastDialogHasChanges$ = this.streamWithBlocks$.pipe(
+      map((dialogueData) => {
+        return (
+          dialogueData.blocks.some(block => block.type === BlockTypes.REPLACE) &&
+          dialogueData.dialogueRole !== DialogRoles.CHANGELOG
+        )
+      })
+    );
+
+
+    this.lastDialogIsChangelist$ = this.streamWithBlocks$.pipe(
+      map((dialogueData) => dialogueData.dialogueRole === DialogRoles.CHANGELOG)
+    );
+
+    this.waitingOnAssistant$ = this.streamWithBlocks$.pipe(
+      map((dialogueData) => {
+        return dialogueData.role !== AgentMessageRoles.ASSISTANT
+      }),
+      distinctUntilChanged()
     );
   }
 
@@ -121,5 +173,9 @@ export class ConversationDialogListComponent implements OnInit {
       return dialog.map(d => d.id).join('_');
     }
     return dialog.id;
+  }
+
+  ngOnDestroy(): void {
+    this.SSESubscription?.unsubscribe();
   }
 }
