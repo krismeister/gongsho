@@ -86,7 +86,7 @@ export class Conversation {
   private async startConversation(userInput: string) {
     const systemDialogue = new WholeCodebaseDialogue();
     const repoMapDialogue = new RepoMapDialogue('', {
-      repoMap: RepoMap.getInstance().getRepoMapAstText(),
+      repoMap: RepoMap.getRepoMapAstText(),
     });
 
     this.dialogFlow.push(systemDialogue);
@@ -166,7 +166,7 @@ export class Conversation {
       const match = content.match(examineFilesRegex);
       const files = match ? match[1].trim().split(',') : [];
 
-      const repoFiles = await RepoMap.getInstance().loadContents(files);
+      const repoFiles = await RepoMap.loadContents(files);
 
       const fileContents = Object.values(repoFiles)
         .map(file => file.getContentsForLlmMessage())

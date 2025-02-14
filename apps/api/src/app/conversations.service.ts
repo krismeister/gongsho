@@ -6,13 +6,13 @@ import { concatMap, from, Observable, tap, throwError } from 'rxjs';
 export class ConversationsService {
 
   async getConversations(): Promise<ConversationSummary[]> {
-    await Conversations.getInstance().load();
-    return Conversations.getInstance().getConversationSummaries();
+    await Conversations.load();
+    return Conversations.getConversationSummaries();
   }
 
   async getConversation(id: string): Promise<ConversationData> {
-    const conversation = await Conversations.getInstance().getConversation(id);
-    const summary: ConversationSummary = await Conversations.getInstance().getConversationSummary(id);
+    const conversation = await Conversations.getConversation(id);
+    const summary: ConversationSummary = await Conversations.getConversationSummary(id);
     return {
       summary: summary,
       details: conversation.getConversationDetails(),
@@ -23,8 +23,8 @@ export class ConversationsService {
     if (!input) {
       throw new Error('Input is required');
     }
-    const summary = await Conversations.getInstance().createConversation(input);
-    const conversation = await Conversations.getInstance().getConversation(summary.id);
+    const summary = await Conversations.createConversation(input);
+    const conversation = await Conversations.getConversation(summary.id);
     conversation.addUserInput(input);
     return summary;
   }
@@ -33,13 +33,13 @@ export class ConversationsService {
     if (!input || !id) {
       throw new Error('Input and id are required');
     }
-    const conversation = await Conversations.getInstance().getConversation(id);
+    const conversation = await Conversations.getConversation(id);
     await conversation.addUserInput(input);
     return { message: 'success' };
   }
 
   getDialogueDataStream(id: string): Observable<DialogueData> {
-    return from(Conversations.getInstance().getConversation(id)).pipe(
+    return from(Conversations.getConversation(id)).pipe(
       concatMap(conversation => {
         if (!conversation) {
           console.error('Conversation not found');
@@ -56,7 +56,7 @@ export class ConversationsService {
   }
 
   async generateChangelist(id: string): Promise<{ message: string }> {
-    const conversation = await Conversations.getInstance().getConversation(id)
+    const conversation = await Conversations.getConversation(id)
     await conversation.generateChangelist();
     return { message: 'success' };
   }

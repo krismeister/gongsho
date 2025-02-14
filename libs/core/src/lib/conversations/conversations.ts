@@ -3,23 +3,15 @@ import { loadGongshoStorage, saveGongshoStorage } from "../utils/storage";
 import { Conversation } from "./conversation";
 
 
-export class Conversations {
-  public static instance: Conversations;
+class ConversationsBase {
   private version: string;
   private conversationsSummaries: ConversationSummary[] = [];
   private conversations: Conversation[] = [];
 
-  private constructor() {
+  constructor() {
     this.version = '1';
   }
 
-  public static getInstance() {
-    if (!Conversations.instance) {
-      Conversations.instance = new Conversations();
-      Conversations.instance.load();
-    }
-    return Conversations.instance;
-  }
 
 
   public async createConversation(input: string): Promise<ConversationSummary> {
@@ -103,4 +95,6 @@ export class Conversations {
     return conversation;
   }
 }
+
+export const Conversations = new ConversationsBase();
 
