@@ -25,7 +25,6 @@ export class Conversations {
   public async createConversation(input: string): Promise<ConversationSummary> {
     const conversationId = `${Date.now()}`;
     const conversation = new Conversation(conversationId);
-    await conversation.loadRepoMap();
 
     const summary: ConversationSummary = {
       id: conversationId,
@@ -33,32 +32,34 @@ export class Conversations {
       createdAt: new Date(),
     }
     this.conversationsSummaries.push(summary);
+    this.conversations.push(conversation);
     await this.save();
     return summary;
   }
 
-  public async startConversation(input: string): Promise<Conversation> {
-    const conversationId = `${Date.now()}`;
-    const conversation = new Conversation(conversationId, input);
-    await conversation.loadRepoMap();
-    await conversation.startConversation(input);
-    this.conversationsSummaries.push({
-      id: conversationId,
-      title: input.slice(0, 100),
-      createdAt: new Date(),
-    });
-    await this.save();
-    return conversation;
-  }
+  // TODO add Agent model as an input
+  // public async startConversation(input: string): Promise<Conversation> {
+  //   const conversationId = `${Date.now()}`;
+  //   const conversation = new Conversation(conversationId, input);
+  //   await conversation.addUserInput(input);
+  //   this.conversationsSummaries.push({
+  //     id: conversationId,
+  //     title: input.slice(0, 100),
+  //     createdAt: new Date(),
+  //   });
+  //   await this.save();
+  //   this.conversations.push(conversation);
+  //   return conversation;
+  // }
 
-
+  // TODO add Agent model as an input
   public async getConversation(id: string): Promise<Conversation> {
     let conversation = this.conversations.find(conversation => conversation.id === id);
     if (!conversation) {
       const conversationSummary = this.conversationsSummaries.find(conversation => conversation.id === id);
+      // the user could be loading an old conversation from the filesystem
       if (conversationSummary) {
         conversation = new Conversation(id, '');
-        await conversation.loadRepoMap();
         await conversation.load();
         this.conversations.push(conversation);
       }

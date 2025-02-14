@@ -1,7 +1,7 @@
 import { Conversations } from '@gongsho/core';
 import { ConversationData, ConversationSummary, DialogueData } from '@gongsho/types';
 import { Injectable } from '@nestjs/common';
-import { concatMap, from, Observable } from 'rxjs';
+import { concatMap, from, Observable, tap, throwError } from 'rxjs';
 @Injectable()
 export class ConversationsService {
 
@@ -23,8 +23,10 @@ export class ConversationsService {
     if (!input) {
       throw new Error('Input is required');
     }
-    const conversation = await Conversations.getInstance().createConversation(input);
-    return conversation;
+    const summary = await Conversations.getInstance().createConversation(input);
+    const conversation = await Conversations.getInstance().getConversation(summary.id);
+    conversation.addUserInput(input);
+    return summary;
   }
 
   async addUserInput(id: string, input: string): Promise<{ message: string }> {
@@ -39,7 +41,16 @@ export class ConversationsService {
   getDialogueDataStream(id: string): Observable<DialogueData> {
     return from(Conversations.getInstance().getConversation(id)).pipe(
       concatMap(conversation => {
-        return conversation.getDialogueDataStream();
+        if (!conversation) {
+          console.error('Conversation not found');
+          return throwError(() => new Error('Conversation not found'));
+        }
+        return conversation.getDialogueDataStream()
+          .pipe(
+            tap(dialogueData => {
+              console.log('dialogueData', dialogueData.id)
+            }),
+          );
       }),
     );
   }

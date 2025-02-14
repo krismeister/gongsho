@@ -1,14 +1,22 @@
+import { relative } from 'path';
+import { gongshoConfig } from '../config/config';
 import { readdirRecursive } from './folders';
 import { RepoFile } from './repo-file';
-import { relative } from 'path';
 
 export class RepoMap {
+  private static instance: RepoMap | null = null;
   private fileMap: Record<string, RepoFile> = {};
 
-  constructor(
-    public readonly rootPath: string,
-    public sharedFiles: string[] = []
-  ) {}
+  private constructor(
+    public readonly rootPath: string
+  ) { }
+
+  public static getInstance(rootPath: string = gongshoConfig.PROJECT_ROOT): RepoMap {
+    if (!RepoMap.instance) {
+      RepoMap.instance = new RepoMap(rootPath);
+    }
+    return RepoMap.instance;
+  }
 
   public async buildFileMap(): Promise<Record<string, RepoFile>> {
     const allFiles = await readdirRecursive(this.rootPath);

@@ -34,6 +34,8 @@ export class ClaudeAgent extends AbstractAgent {
       })),
     });
 
+    // console.log('AGENT response', response);
+
     return response as unknown as AgentResponse;
   }
 }

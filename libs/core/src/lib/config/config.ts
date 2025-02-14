@@ -23,11 +23,16 @@ export const gongshoConfig: GongshoConfig = {
   GONGSHO_DIR: path.resolve(PROJECT_ROOT, '.gongsho'),
 };
 
-console.log('gongshoConfig::');
-Object.entries(gongshoConfig).forEach(([key, value]) => {
-  console.log(`  Config ${key} found: ${!!value}`);
-});
+export const verifyConfig = () => {
+  console.log('gongshoConfig::');
+  Object.entries(gongshoConfig).forEach(([key, value]) => {
+    console.log(`  Config ${key} found: ${!!value}`);
+  });
 
-if (gongshoConfig.ANTHROPIC_API_KEY === '') {
-  console.error('ANTHROPIC_API_KEY is missing');
+  if (gongshoConfig.ANTHROPIC_API_KEY === '') {
+    throw new Error('ANTHROPIC_API_KEY is missing');
+  }
 }
+
+
+

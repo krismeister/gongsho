@@ -11,6 +11,8 @@ export const alertVariants = cva(
 				default: 'bg-background text-foreground',
 				destructive:
 					'text-destructive border-destructive/50 dark:border-destructive [&>[hlmAlertIcon]]:text-destructive',
+				destructive2:
+					'bg-red-500 text-white border-red-500 dark:border-white [&>[hlmAlertIcon]]:text-white',
 			},
 		},
 		defaultVariants: {

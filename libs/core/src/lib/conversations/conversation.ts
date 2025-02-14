@@ -2,7 +2,6 @@ import { ConversationDetails, DialogueData } from '@gongsho/types';
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
-import { gongshoConfig } from '../config/config';
 import { AssistantChangelogDialogue } from '../dialogue/agent/assistant-changelog.dialogue';
 import { AssistantTextDialogue } from '../dialogue/agent/assistant-text.dialogue';
 import { BaseDialogue } from '../dialogue/base-dialogue';
@@ -24,11 +23,9 @@ export class Conversation {
 
   private agentBusy$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  private repoMap?: RepoMap;
   private files: string[] = [];
   private dialogueQueue: BaseDialogue[] = [];
   private agentInProgress = false;
-  private config = gongshoConfig;
   private agent: AbstractAgent;
 
   constructor(
@@ -72,11 +69,6 @@ export class Conversation {
     this.files = savedConversation.files;
   }
 
-  public async loadRepoMap() {
-    this.repoMap = new RepoMap(this.config.PROJECT_ROOT);
-    await this.repoMap.buildFileMap();
-  }
-
   public async addUserInput(userInput: string) {
     if (this.dialogFlow.length === 0) {
       this.startConversation(userInput);
@@ -91,10 +83,10 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
-  public async startConversation(userInput: string) {
+  private async startConversation(userInput: string) {
     const systemDialogue = new WholeCodebaseDialogue();
     const repoMapDialogue = new RepoMapDialogue('', {
-      repoMap: this.repoMap!.getRepoMapAstText(),
+      repoMap: RepoMap.getInstance().getRepoMapAstText(),
     });
 
     this.dialogFlow.push(systemDialogue);
@@ -151,8 +143,6 @@ export class Conversation {
   }
 
   async onAgentResponse(response: AgentResponse) {
-    console.log(response);
-
     if (response.content.length === 0) {
       throw new Error('Agent response is empty, but should not happen.');
     }
@@ -176,7 +166,7 @@ export class Conversation {
       const match = content.match(examineFilesRegex);
       const files = match ? match[1].trim().split(',') : [];
 
-      const repoFiles = await this.repoMap!.loadContents(files);
+      const repoFiles = await RepoMap.getInstance().loadContents(files);
 
       const fileContents = Object.values(repoFiles)
         .map(file => file.getContentsForLlmMessage())

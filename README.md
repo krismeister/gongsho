@@ -35,10 +35,11 @@ Open the web interface at `http://localhost:4200`
 
 ### MVP
 
-- [ ] MVP Todos
+- [ ] MVP
 
   - [x] NX project with Angular and NestJS
   - [ ] Point to real project instead of projects directory
+  - [ ] Build NPM package
 
 - [ ] LLM
 
@@ -51,8 +52,8 @@ Open the web interface at `http://localhost:4200`
 
   - [ ] Add diff viewer of changes
   - [ ] Add abilty to add files manually to the conversation
-  - [ ] Add apply button to apply changes to the project
-  - [ ] Markdown Stream
+  - [x] Add apply button to apply changes to the project
+  - [x] event stream
   - [ ] UI to see your history
 
 - [ ] Server
@@ -61,7 +62,7 @@ Open the web interface at `http://localhost:4200`
   - [x] Add createConversation endpoint
   - [x] Add addUserInput endpoint
   - [x] Add stream conversation endpoint (SSE/ws)
-  - [ ] Add getChanges to a conversation
+  - [x] Add getChanges to a conversation
   - [ ] Add getFiles endopint
 
 ### Assistant TODOs
@@ -79,3 +80,13 @@ Open the web interface at `http://localhost:4200`
 - [ ] Browse the codebase
 - [ ] Highlight code snippet and explain it
 - [ ] Highlight code snippet and ask for a change
+
+## Bugs
+
+- [ ] Theres an extra conversations load `http://localhost:4200/api/conversations/` on the conversation details page
+- [ ] Handle conversation start when server has an error, better handling of clearing text area.
+- [ ] Deal with Agent errors better.
+
+## Backlog
+
+- [ ] Better way to handle titles of created conversations.

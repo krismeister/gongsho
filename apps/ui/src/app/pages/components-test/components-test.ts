@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideBot, lucideChevronDown, lucideHouse, lucideUserRoundPen } from '@ng-icons/lucide';
+import { lucideBot, lucideBox, lucideChevronDown, lucideHouse, lucideUserRoundPen } from '@ng-icons/lucide';
 import {
 	HlmAccordionContentComponent,
 	HlmAccordionDirective,
@@ -8,6 +8,7 @@ import {
 	HlmAccordionItemDirective,
 	HlmAccordionTriggerDirective,
 } from '@spartan-ng/ui-accordion-helm';
+import { HlmAlertDescriptionDirective, HlmAlertDirective, HlmAlertIconDirective, HlmAlertTitleDirective } from '@spartan-ng/ui-alert-helm';
 import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
@@ -29,10 +30,28 @@ import { HlmSwitchComponent } from '@spartan-ng/ui-switch-helm';
 		HlmBadgeDirective,
 		HlmLabelDirective,
 		HlmSwitchComponent,
+		HlmAlertDirective,
+		HlmAlertDescriptionDirective,
+		HlmAlertIconDirective,
+		HlmAlertTitleDirective,
+		HlmIconDirective,
 	],
-	providers: [provideIcons({ lucideHouse, lucideUserRoundPen, lucideBot, lucideChevronDown })],
+	providers: [provideIcons({ lucideHouse, lucideUserRoundPen, lucideBot, lucideChevronDown, lucideBox })],
 	template: `
 	<h1>Components Test</h1>
+
+	<h2>aler message</h2>
+	
+
+	<div hlmAlert variant="destructive">
+	<ng-icon hlm hlmAlertIcon name="lucideBox" />
+	<h4 hlmAlertTitle>Introducing spartan/ui!</h4>
+	<p hlmAlertDesc>
+		spartan/ui is made up of unstyled UI providers, the spartan/ui/brain.<br />
+		On top we add spartan/ui/helm(et) with shadcn-like styles.
+	</p>
+</div>
+	
 	<h2>swtich</h2>
 	        <label class="flex items-center" hlmLabel>
             <hlm-switch class="mr-2" />

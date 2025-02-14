@@ -14,11 +14,11 @@ import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map, scan } from 'rxjs/operators';
+import { ErrorCardComponent } from '../../components/cards/error-card.component';
 import { ConversationService } from '../../services/conversation.service';
 import { ApplyChangesButtonComponent } from '../buttons/apply-changes-button.component';
 import { GenerateChangelogButtonComponent } from '../buttons/generate-changelog-button.component';
 import { ConversationDialogComponent } from './conversation-dialog.component';
-
 
 type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
 
@@ -36,7 +36,8 @@ type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
     HlmIconDirective,
     HlmSpinnerComponent,
     GenerateChangelogButtonComponent,
-    ApplyChangesButtonComponent
+    ApplyChangesButtonComponent,
+    ErrorCardComponent
   ],
   providers: [
     provideIcons({ lucideChevronDown, lucideListX })
@@ -84,6 +85,10 @@ type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
       </div>
     }
 
+    @if (error) {
+      <app-error-card title="404 Error" description="Could not find the conversation." />
+    }
+
   `
 })
 export class ConversationDialogListComponent implements OnInit, OnDestroy {
@@ -96,6 +101,7 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
   waitingOnAssistant$!: Observable<boolean>;
   lastDialogHasChanges$!: Observable<boolean>
   lastDialogIsChangelist$!: Observable<boolean>
+  error = false;
 
   constructor(private conversationService: ConversationService) {
   }
@@ -103,8 +109,14 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // some strange bug, we need to store the stream in a subject to avoid it not being updated
     // TODO: fix the SSE stream to not have this problem
-    this.SSESubscription = this.conversationService.getDialogStream(this.conversationId).subscribe(data => {
-      this.stream$.next(data)
+    this.SSESubscription = this.conversationService.getDialogStream(this.conversationId).subscribe({
+      next: (data) => {
+        this.stream$.next(data)
+      },
+      error: (error) => {
+        console.error('Error in conversation stream:', error);
+        this.error = true;
+      }
     })
 
     this.streamWithBlocks$ = this.stream$.pipe(
