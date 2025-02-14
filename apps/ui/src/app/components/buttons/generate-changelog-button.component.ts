@@ -29,7 +29,7 @@ export class GenerateChangelogButtonComponent {
   constructor(private conversationService: ConversationService) { }
 
   generateChangelist() {
-    this.conversationService.generateChangelist(this.conversationId).subscribe(data => {
+    this.conversationService.requestChangelog(this.conversationId).subscribe(data => {
       console.log(data);
     });
   }

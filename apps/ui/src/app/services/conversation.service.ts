@@ -40,8 +40,8 @@ export class ConversationService {
     );
   }
 
-  generateChangelist(conversationId: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/generate-changelist`, {});
+  requestChangelog(conversationId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/request-changelog`, {});
   }
 
 } 

@@ -78,6 +78,11 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
+  public async requestChangeLog() {
+    this.dialogueQueue.push(new ChangelogDialogue());
+    this.sendNextQueueItemToAgent();
+  }
+
   public async generateChangelist() {
     this.dialogueQueue.push(new ChangelogDialogue());
     this.sendNextQueueItemToAgent();

@@ -52,8 +52,8 @@ export class AppController {
     );
   }
 
-  @Post('conversations/:id/generate-changelist')
-  generateChangelist(@Param('id') id: string) {
-    return this.conversationsService.generateChangelist(id);
+  @Post('conversations/:id/request-changelog')
+  requestChangelog(@Param('id') id: string) {
+    return this.conversationsService.requestChangeLog(id);
   }
 }

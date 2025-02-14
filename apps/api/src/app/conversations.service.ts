@@ -55,9 +55,9 @@ export class ConversationsService {
     );
   }
 
-  async generateChangelist(id: string): Promise<{ message: string }> {
+  async requestChangeLog(id: string): Promise<{ message: string }> {
     const conversation = await Conversations.getConversation(id)
-    await conversation.generateChangelist();
+    await conversation.requestChangeLog();
     return { message: 'success' };
   }
 
