@@ -1,4 +1,4 @@
-export const fillDialogue = (
+export const fillDialog = (
   dialogue: string,
   fillValues: Record<string, string>
 ) => {

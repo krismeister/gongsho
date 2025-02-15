@@ -20,10 +20,10 @@ export enum AgentMessageRoles {
   NONE = 'none',
 }
 
-export type DialogueData = {
+export type DialogData = {
   id: string;
   role: AgentMessageRoles;
-  dialogueRole: DialogRoles;
+  dialogRole: DialogRoles;
   description: string;
   content: string;
   timestamp: Date;
@@ -32,7 +32,7 @@ export type DialogueData = {
 export type ConversationDetails = {
   id: string,
   files: string[],
-  dialogueData: DialogueData[];
+  dialogData: DialogData[];
 }
 
 export type ConversationData = {

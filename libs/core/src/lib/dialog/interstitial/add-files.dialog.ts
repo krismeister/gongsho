@@ -1,8 +1,8 @@
 import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import { RepoMap } from '../../repo-map/repo-map';
-import { BaseDialogue } from '../base-dialogue';
+import { BaseDialog } from '../base-dialog';
 
-export class AddFilesDialogue extends BaseDialogue {
+export class AddFilesDialog extends BaseDialog {
   protected override description = 'Add Files';
   constructor(
     protected override readonly inputText = '',
@@ -10,10 +10,10 @@ export class AddFilesDialogue extends BaseDialogue {
   ) {
     super(prompt, fillValues);
     this.role = AgentMessageRoles.USER;
-    this.dialogueRole = DialogRoles.INTERSTITIAL;
+    this.dialogRole = DialogRoles.INTERSTITIAL;
   }
 
-  public static async create(files: string[]): Promise<AddFilesDialogue> {
+  public static async create(files: string[]): Promise<AddFilesDialog> {
 
     const repoFiles = await RepoMap.loadContents(files);
 
@@ -21,7 +21,7 @@ export class AddFilesDialogue extends BaseDialogue {
       .map(file => file.getContentsForLlmMessage())
       .join('\n');
 
-    const dialogue = new AddFilesDialogue('', {
+    const dialogue = new AddFilesDialog('', {
       files: fileContents,
     });
 

@@ -1,4 +1,4 @@
-import { DialogueData } from '@gongsho/types';
+import { DialogData } from '@gongsho/types';
 import { Body, Controller, Get, Param, Post, Sse } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -44,11 +44,11 @@ export class AppController {
   }
 
   @Sse('conversations/:id/stream')
-  getDialogStream(@Param('id') id: string): Observable<MessageEvent<DialogueData>> {
-    return this.conversationsService.getDialogueDataStream(id).pipe(
+  getDialogStream(@Param('id') id: string): Observable<MessageEvent<DialogData>> {
+    return this.conversationsService.getDialogDataStream(id).pipe(
       map((dialogData) => ({
         data: dialogData
-      } as MessageEvent<DialogueData>))
+      } as MessageEvent<DialogData>))
     );
   }
 

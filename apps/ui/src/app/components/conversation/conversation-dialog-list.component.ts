@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { BlockTypes, MessageBlock, parseTextToBlocks } from '@gongsho/text-to-blocks';
-import { AgentMessageRoles, DialogRoles, DialogueData } from '@gongsho/types';
+import { AgentMessageRoles, DialogData, DialogRoles } from '@gongsho/types';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronDown, lucideListX } from '@ng-icons/lucide';
 import {
@@ -20,7 +20,7 @@ import { ApplyChangesButtonComponent } from '../buttons/apply-changes-button.com
 import { GenerateChangelogButtonComponent } from '../buttons/generate-changelog-button.component';
 import { ConversationDialogComponent } from './conversation-dialog.component';
 
-type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
+type DialogWithBlocks = DialogData & { blocks: MessageBlock[] }
 
 @Component({
   selector: 'app-conversation-dialog-list',
@@ -51,7 +51,7 @@ type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
 
               <div hlmAccordionItem>
                 <button hlmAccordionTrigger>
-                  {{ getAccordianTitle(item) }}
+                  {{ getAccordionTitle(item) }}
                   <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
                 </button>
                 <hlm-accordion-content>
@@ -99,10 +99,10 @@ type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
 export class ConversationDialogListComponent implements OnInit, OnDestroy {
   @Input() conversationId!: string;
   private SSESubscription?: Subscription;
-  stream$: Subject<DialogueData> = new Subject()
-  streamWithBlocks$!: Observable<DialogueDataWithMessageblocks>;
-  groupedStream$!: Observable<Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]>>;
-  dialogueData: Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]> = [];
+  stream$: Subject<DialogData> = new Subject()
+  streamWithBlocks$!: Observable<DialogWithBlocks>;
+  groupedStream$!: Observable<Array<DialogWithBlocks | DialogWithBlocks[]>>;
+  dialogData: Array<DialogWithBlocks | DialogWithBlocks[]> = [];
   waitingOnAssistant$!: Observable<boolean>;
   lastDialogHasChanges$!: Observable<boolean>
   lastDialogIsChangelist$!: Observable<{ changelistId: string, isChangelist: boolean }>
@@ -125,18 +125,18 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
     })
 
     this.streamWithBlocks$ = this.stream$.pipe(
-      map((dialogueData) => {
-        return { ...dialogueData, blocks: parseTextToBlocks(dialogueData.content) }
+      map((dialogData) => {
+        return { ...dialogData, blocks: parseTextToBlocks(dialogData.content) }
       }),
     )
 
     this.groupedStream$ = this.streamWithBlocks$.pipe(
-      scan((acc: Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]>, current: DialogueDataWithMessageblocks) => {
-        if (current.dialogueRole === DialogRoles.SYSTEM ||
-          current.dialogueRole === DialogRoles.INTERSTITIAL || current.dialogueRole === DialogRoles.CHANGELIST) {
+      scan((acc: Array<DialogWithBlocks | DialogWithBlocks[]>, current: DialogWithBlocks) => {
+        if (current.dialogRole === DialogRoles.SYSTEM ||
+          current.dialogRole === DialogRoles.INTERSTITIAL || current.dialogRole === DialogRoles.CHANGELIST) {
           // If last item is an array, add to it
           if (acc.length > 0 && Array.isArray(acc[acc.length - 1])) {
-            (acc[acc.length - 1] as DialogueDataWithMessageblocks[]).push(current);
+            (acc[acc.length - 1] as DialogWithBlocks[]).push(current);
           } else {
             // Start a new array for system/interstitial messages
             acc.push([current]);
@@ -146,54 +146,54 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
           acc.push(current);
         }
         return acc;
-      }, [] as Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]>),
+      }, [] as Array<DialogWithBlocks | DialogWithBlocks[]>),
     );
 
     this.lastDialogHasChanges$ = this.streamWithBlocks$.pipe(
-      map((dialogueData) => {
+      map((dialogData) => {
         return (
-          dialogueData.blocks.some(block => block.type === BlockTypes.REPLACE) &&
-          dialogueData.dialogueRole !== DialogRoles.CHANGELIST
+          dialogData.blocks.some(block => block.type === BlockTypes.REPLACE) &&
+          dialogData.dialogRole !== DialogRoles.CHANGELIST
         )
       })
     );
 
     this.lastDialogIsChangelist$ = this.stream$.pipe(
-      map((dialogueData) => {
+      map((dialogData) => {
         return {
-          changelistId: dialogueData.id,
-          isChangelist: dialogueData.dialogueRole === DialogRoles.CHANGELIST
+          changelistId: dialogData.id,
+          isChangelist: dialogData.dialogRole === DialogRoles.CHANGELIST
         }
       }),
     );
 
     this.waitingOnAssistant$ = this.streamWithBlocks$.pipe(
       tap((data) => console.log('waiting on assistant', data.role, data.role !== AgentMessageRoles.ASSISTANT)),
-      map((dialogueData) => {
-        return dialogueData.role === AgentMessageRoles.USER
+      map((dialogData) => {
+        return dialogData.role === AgentMessageRoles.USER
       }),
       distinctUntilChanged(),
       tap((data) => console.log('waiting on assistant 2', data)),
     );
   }
 
-  isArray(value: DialogueData | DialogueData[]): value is DialogueData[] {
+  isArray(value: DialogData | DialogData[]): value is DialogData[] {
     return Array.isArray(value);
   }
 
-  getAccordianTitle(dialog: DialogueData): string {
+  getAccordionTitle(dialog: DialogData): string {
     let out = '';
-    if (dialog.dialogueRole === DialogRoles.SYSTEM) {
+    if (dialog.dialogRole === DialogRoles.SYSTEM) {
       out += 'System Message: ';
-    } else if (dialog.dialogueRole === DialogRoles.INTERSTITIAL) {
+    } else if (dialog.dialogRole === DialogRoles.INTERSTITIAL) {
       out += 'Interstitial Message: ';
     }
     return out + dialog.description;
   }
 
-  trackByDialog(_: number, dialog: DialogueData | DialogueData[]): string {
+  trackByDialog(_: number, dialog: DialogData | DialogData[]): string {
     if (Array.isArray(dialog)) {
-      // For arrays, concatenate all dialogue IDs
+      // For arrays, concatenate all IDs
       return dialog.map(d => d.id).join('_');
     }
     return dialog.id;

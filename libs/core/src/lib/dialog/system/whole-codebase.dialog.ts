@@ -1,6 +1,6 @@
 import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import os from 'os';
-import { BaseDialogue } from '../base-dialogue';
+import { BaseDialog } from '../base-dialog';
 
 export function generateSystemInfo(): string {
   const platform = os.platform() + '-' + os.release() + '-' + os.arch();
@@ -15,7 +15,7 @@ export function generateSystemInfo(): string {
   - Current date: ${currentDate}`;
 }
 
-export class WholeCodebaseDialogue extends BaseDialogue {
+export class WholeCodebaseDialog extends BaseDialog {
   protected override description = 'Whole Codebase';
   constructor(
     protected override readonly inputText = '',
@@ -24,7 +24,7 @@ export class WholeCodebaseDialogue extends BaseDialogue {
     fillValues['sysInfo'] = generateSystemInfo();
     super(prompt, fillValues);
     this.role = AgentMessageRoles.ASSISTANT;
-    this.dialogueRole = DialogRoles.SYSTEM;
+    this.dialogRole = DialogRoles.SYSTEM;
   }
 }
 

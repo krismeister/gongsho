@@ -24,7 +24,7 @@ const createConversation = async () => {
   const conversation = await Conversations.getConversation(convSummary.id);
   conversation.addUserInput('I want to add a main class to my project.');
 
-  conversation.getDialogueDataStream().subscribe((data) => {
+  conversation.getDialogDataStream().subscribe((data) => {
     console.log(data);
   });
 };

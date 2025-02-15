@@ -1,32 +1,32 @@
-import { AgentMessageRoles, ChangeList, ConversationDetails, DialogRoles, DialogueData } from '@gongsho/types';
+import { AgentMessageRoles, ChangeList, ConversationDetails, DialogData, DialogRoles } from '@gongsho/types';
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
-import { AssistantChangelistDialogue } from '../dialogue/agent/assistant-changelist.dialogue';
-import { AssistantTextDialogue } from '../dialogue/agent/assistant-text.dialogue';
-import { BaseDialogue } from '../dialogue/base-dialogue';
+import { AssistantChangelistDialog } from '../dialog/agent/assistant-changelist.dialog';
+import { AssistantTextDialog } from '../dialog/agent/assistant-text.dialog';
+import { BaseDialog } from '../dialog/base-dialog';
 
-import { ChangelistAppliedDialogue } from '../dialogue/info/changelist-applied';
-import { AddFilesDialogue } from '../dialogue/interstitial/add-files.dialogue';
-import { ChangelistDialogue } from '../dialogue/interstitial/changelist.dialogue';
-import { RepoMapDialogue } from '../dialogue/interstitial/repo-map.dialogue';
-import { WholeCodebaseDialogue } from '../dialogue/system/whole-codebase.dialogue';
-import { UserInputDialogue } from '../dialogue/user-input.dialogue';
+import { ChangelistAppliedDialog } from '../dialog/info/changelist-applied.dialog';
+import { AddFilesDialog } from '../dialog/interstitial/add-files.dialog';
+import { ChangelistDialog } from '../dialog/interstitial/changelist.dialog';
+import { RepoMapDialog } from '../dialog/interstitial/repo-map.dialog';
+import { WholeCodebaseDialog } from '../dialog/system/whole-codebase.dialog';
+import { UserInputDialog } from '../dialog/user-input.dialog';
 import { AgentModelConfigs, AgentModels } from '../models/model-configs';
 import { contentToChangelist } from '../utils/changelist';
 import { conversationExists, loadConversation, saveConversationDetails } from '../utils/storage';
 
 export class Conversation {
 
-  private dialogFlow: BaseDialogue[] = [];
+  private dialogFlow: BaseDialog[] = [];
 
-  private dialogueStream$ = new ReplaySubject<BaseDialogue>();
-  private dialogueDataStream$ = this.dialogueStream$.pipe(map(dialogue => dialogue.getDialogueData()));
+  private dialogStream$ = new ReplaySubject<BaseDialog>();
+  private dialogDataStream$ = this.dialogStream$.pipe(map(dialog => dialog.getDialogData()));
 
   private agentBusy$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   private files: string[] = [];
-  private dialogueQueue: BaseDialogue[] = [];
+  private dialogQueue: BaseDialog[] = [];
   private agentInProgress = false;
   private agent: AbstractAgent;
 
@@ -44,28 +44,28 @@ export class Conversation {
     saveConversationDetails({
       id: this.id,
       files: this.files,
-      dialogueData: this.dialogFlow.map(item => item.getDialogueData()),
+      dialogData: this.dialogFlow.map(item => item.getDialogData()),
     })
   }
 
-  public getDialogueDataStream() {
-    return this.dialogueDataStream$
+  public getDialogDataStream() {
+    return this.dialogDataStream$
   }
 
   public getConversationDetails(): ConversationDetails {
     return {
       id: this.id,
       files: this.files,
-      dialogueData: this.dialogFlow.map(item => item.getDialogueData()),
+      dialogData: this.dialogFlow.map(item => item.getDialogData()),
     }
   }
 
 
   public load() {
     const savedConversation = loadConversation(this.id)
-    this.dialogFlow = savedConversation.dialogueData.map((item: DialogueData) => {
-      const dialogItem = BaseDialogue.fromDialogueData(item);
-      this.dialogueStream$.next(dialogItem);
+    this.dialogFlow = savedConversation.dialogData.map((item: DialogData) => {
+      const dialogItem = BaseDialog.fromDialogData(item);
+      this.dialogStream$.next(dialogItem);
       return dialogItem;
     });
     this.files = savedConversation.files;
@@ -76,42 +76,42 @@ export class Conversation {
       this.startConversation(userInput);
       return
     }
-    // const lastDialogue = this.dialogFlow.at(-1)!.role = ;
-    this.dialogueQueue.push(new UserInputDialogue(userInput));
+    // const lastDialog = this.dialogFlow.at(-1)!.role = ;
+    this.dialogQueue.push(new UserInputDialog(userInput));
     this.sendNextQueueItemToAgent();
   }
 
-  public async addInfoDialogue(type: 'changelist-applied') {
-    console.log('adding info dialogue', type);
-    const infoDialogue = new ChangelistAppliedDialogue();
+  public async addInfoDialog(type: 'changelist-applied') {
+    console.log('adding info dialog', type);
+    const infoDialog = new ChangelistAppliedDialog();
 
-    this.dialogFlow.push(infoDialogue);
-    this.dialogueStream$.next(infoDialogue);
+    this.dialogFlow.push(infoDialog);
+    this.dialogStream$.next(infoDialog);
     this.saveToProject();
   }
 
   public async requestChangelist() {
-    this.dialogueQueue.push(new ChangelistDialogue());
+    this.dialogQueue.push(new ChangelistDialog());
     this.sendNextQueueItemToAgent();
   }
 
   public async getChangelistResponse(id: string): Promise<ChangeList> {
-    const dialogue = this.dialogFlow.find(dialogue => dialogue.id === id);
-    if (dialogue?.dialogueRole !== DialogRoles.CHANGELIST) {
+    const dialog = this.dialogFlow.find(dialog => dialog.id === id);
+    if (dialog?.dialogRole !== DialogRoles.CHANGELIST) {
       throw new Error('Invalid changelist id');
     }
-    return contentToChangelist(dialogue.getDialogueData().content);
+    return contentToChangelist(dialog.getDialogData().content);
   }
 
   private async startConversation(userInput: string) {
-    const systemDialogue = new WholeCodebaseDialogue();
-    const repoMapDialogue = RepoMapDialogue.create()
+    const systemDialog = new WholeCodebaseDialog();
+    const repoMapDialog = RepoMapDialog.create()
 
-    this.dialogFlow.push(systemDialogue);
-    this.dialogueStream$.next(systemDialogue);
+    this.dialogFlow.push(systemDialog);
+    this.dialogStream$.next(systemDialog);
 
-    this.dialogueQueue.push(repoMapDialogue);
-    this.dialogueQueue.push(new UserInputDialogue(userInput));
+    this.dialogQueue.push(repoMapDialog);
+    this.dialogQueue.push(new UserInputDialog(userInput));
 
     this.sendNextQueueItemToAgent();
   }
@@ -119,7 +119,7 @@ export class Conversation {
   sendNextQueueItemToAgent() {
     if (
       this.dialogFlow.length < 1 ||
-      this.dialogueQueue.length < 1 ||
+      this.dialogQueue.length < 1 ||
       this.agentInProgress
     ) {
       return;
@@ -129,10 +129,10 @@ export class Conversation {
     this.agentBusy$.next(true);
 
     // moving item from queue to flow
-    const dialogue = this.dialogueQueue.shift()!;
+    const dialog = this.dialogQueue.shift()!;
 
-    this.dialogFlow.push(dialogue);
-    this.dialogueStream$.next(dialogue);
+    this.dialogFlow.push(dialog);
+    this.dialogStream$.next(dialog);
 
     this.saveToProject();
 
@@ -169,15 +169,15 @@ export class Conversation {
 
     const content = response.content[response.content.length - 1].text;
 
-    let dialogue: BaseDialogue;
+    let dialog: BaseDialog;
     if (content.startsWith('CHANGELIST')) {
-      dialogue = new AssistantChangelistDialogue(content);
+      dialog = new AssistantChangelistDialog(content);
     } else {
-      dialogue = new AssistantTextDialogue(content);
+      dialog = new AssistantTextDialog(content);
     }
 
-    this.dialogFlow.push(dialogue);
-    this.dialogueStream$.next(dialogue);
+    this.dialogFlow.push(dialog);
+    this.dialogStream$.next(dialog);
 
     this.saveToProject();
 
@@ -185,11 +185,11 @@ export class Conversation {
       const examineFilesRegex = /EXAMINE_FILES:(.*?)(?:\n|$)/;
       const match = content.match(examineFilesRegex);
       const files = match ? match[1].trim().split(',') : [];
-      const addFilesDialogue = await AddFilesDialogue.create(files);
-      this.dialogueQueue.unshift(addFilesDialogue);
+      const addFilesDialog = await AddFilesDialog.create(files);
+      this.dialogQueue.unshift(addFilesDialog);
     }
 
-    if (this.dialogueQueue.length > 0) {
+    if (this.dialogQueue.length > 0) {
       this.sendNextQueueItemToAgent();
     }
   }

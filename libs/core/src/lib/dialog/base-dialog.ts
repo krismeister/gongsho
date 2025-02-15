@@ -1,12 +1,12 @@
-import { AgentMessageRoles, DialogRoles, DialogueData } from '@gongsho/types';
+import { AgentMessageRoles, DialogData, DialogRoles } from '@gongsho/types';
 import { v4 as uuidv4 } from 'uuid';
-import { fillDialogue } from '../utils/fill-dialogue';
+import { fillDialog } from '../utils/fill-dialog';
 
-export class BaseDialogue {
+export class BaseDialog {
   protected description: string;
   protected timestamp: Date;
   public id: string;
-  public dialogueRole: DialogRoles = DialogRoles.SYSTEM;
+  public dialogRole: DialogRoles = DialogRoles.SYSTEM;
   public role: AgentMessageRoles = AgentMessageRoles.ASSISTANT;
   public content = '';
 
@@ -14,30 +14,31 @@ export class BaseDialogue {
     protected readonly inputText: string,
     protected readonly fillValues: Record<string, string>
   ) {
-    this.content = fillDialogue(this.inputText, this.fillValues);
+    this.content = fillDialog(this.inputText, this.fillValues);
     this.description = '';
     this.timestamp = new Date();
     this.id = uuidv4();
   }
 
-  public getDialogueData(): DialogueData {
+  public getDialogData(): DialogData {
     return {
       id: this.id,
       role: this.role,
-      dialogueRole: this.dialogueRole,
+      dialogRole: this.dialogRole,
       description: this.description,
       content: this.content,
       timestamp: this.timestamp,
     };
   }
 
-  public static fromDialogueData(data: DialogueData): BaseDialogue {
-    const newDialogue = new BaseDialogue(data.content, {});
+  public static fromDialogData(data: DialogData): BaseDialog {
+    const newDialogue = new BaseDialog(data.content, {});
     newDialogue.description = data.description;
     newDialogue.timestamp = data.timestamp;
     newDialogue.id = data.id;
-    newDialogue.dialogueRole = data.dialogueRole;
+    newDialogue.dialogRole = data.dialogRole;
     newDialogue.role = data.role;
     return newDialogue;
   }
 }
+

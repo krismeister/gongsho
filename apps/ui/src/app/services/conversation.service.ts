@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConversationData, ConversationSummary, DialogueData } from '@gongsho/types';
+import { ConversationData, ConversationSummary, DialogData } from '@gongsho/types';
 import { SseClient } from 'ngx-sse-client';
 import { Observable, catchError, filter, map, throwError } from 'rxjs';
 
@@ -24,7 +24,7 @@ export class ConversationService {
     return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/user-input`, { input });
   }
 
-  getDialogStream(conversationId: string): Observable<DialogueData> {
+  getDialogStream(conversationId: string): Observable<DialogData> {
     return this.sseClient.stream(
       `${this.apiUrl}/conversations/${conversationId}/stream`
     ).pipe(
@@ -33,7 +33,7 @@ export class ConversationService {
           throw new Error((event as MessageEvent).data);
         }
         const data = event as MessageEvent;
-        return JSON.parse(data.data) as DialogueData;
+        return JSON.parse(data.data) as DialogData;
       }),
       catchError(error => throwError(() => error)),
       filter(Boolean)

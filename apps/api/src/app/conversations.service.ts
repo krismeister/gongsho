@@ -1,5 +1,5 @@
 import { Conversations, writeChangelistToFiles } from '@gongsho/core';
-import { ConversationData, ConversationSummary, DialogueData } from '@gongsho/types';
+import { ConversationData, ConversationSummary, DialogData } from '@gongsho/types';
 import { Injectable } from '@nestjs/common';
 import { concatMap, from, Observable, tap, throwError } from 'rxjs';
 @Injectable()
@@ -38,17 +38,17 @@ export class ConversationsService {
     return { message: 'success' };
   }
 
-  getDialogueDataStream(id: string): Observable<DialogueData> {
+  getDialogDataStream(id: string): Observable<DialogData> {
     return from(Conversations.getConversation(id)).pipe(
       concatMap(conversation => {
         if (!conversation) {
           console.error('Conversation not found');
           return throwError(() => new Error('Conversation not found'));
         }
-        return conversation.getDialogueDataStream()
+        return conversation.getDialogDataStream()
           .pipe(
-            tap(dialogueData => {
-              console.log('dialogueData', dialogueData.id)
+            tap(dialogData => {
+              console.log('streaming dialog:', dialogData.id)
             }),
           );
       }),
@@ -65,7 +65,7 @@ export class ConversationsService {
     const conversation = await Conversations.getConversation(id)
     const changeList = await conversation.getChangelistResponse(changelistId);
     await writeChangelistToFiles(changeList);
-    await conversation.addInfoDialogue('changelist-applied');
+    await conversation.addInfoDialog('changelist-applied');
     return { message: 'success' };
   }
 

@@ -1,7 +1,7 @@
 import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
-import { BaseDialogue } from '../base-dialogue';
+import { BaseDialog } from '../base-dialog';
 
-export class AssistantTextDialogue extends BaseDialogue {
+export class AssistantTextDialog extends BaseDialog {
 
   protected override description = 'Assistant Output';
 
@@ -19,6 +19,6 @@ export class AssistantTextDialogue extends BaseDialogue {
     super(text, fillValues);
     this.description = 'Assistant Output';
     this.role = AgentMessageRoles.ASSISTANT;
-    this.dialogueRole = DialogRoles.ASSISTANT;
+    this.dialogRole = DialogRoles.ASSISTANT;
   }
 }

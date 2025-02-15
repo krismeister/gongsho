@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, signal } from '@angular/core';
 import { MessageBlock } from '@gongsho/text-to-blocks';
-import { DialogueData } from '@gongsho/types';
+import { DialogData } from '@gongsho/types';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideBot, lucideChevronDown, lucideInfo, lucideUserRoundPen } from '@ng-icons/lucide';
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
@@ -45,12 +45,13 @@ import { MessageBlocksComponent } from '../message-blocks/message-blocks.compone
           <div class="flex justify-between items-center mb-1">
             <p class="text-sm font-semibold text-gray-600 dark:text-gray-300">
               @if (dialog.role === 'none') {
-                {{ dialog.dialogueRole }}
+                {{ dialog.dialogRole }}
               } @else {
                 {{ dialog.role }}
               }
             </p>
             @if (dialog.role === 'assistant') {
+              <!-- eslint-disable-next-line -->
               <label class="flex items-center scale-[.6] cursor-pointer border border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700 rounded-md p-1" hlmLabel for="show-raw" (click)="toggleRaw()">
                 <hlm-switch style="pointer-events:none" id="show-raw" class="mr-2" [checked]="showRaw()" />
                 Raw
@@ -70,7 +71,7 @@ import { MessageBlocksComponent } from '../message-blocks/message-blocks.compone
   `
 })
 export class ConversationDialogComponent {
-  @Input() dialog!: DialogueData;
+  @Input() dialog!: DialogData;
   @Input() blocks: MessageBlock[] = [];
   showRaw = signal(false);
 
