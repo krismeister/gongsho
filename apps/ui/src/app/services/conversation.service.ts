@@ -44,4 +44,8 @@ export class ConversationService {
     return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/request-changelog`, {});
   }
 
+  applyChangelog(conversationId: string, changelogId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/apply-changelog`, { changelogId });
+  }
+
 } 

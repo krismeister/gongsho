@@ -13,7 +13,7 @@ import {
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, map, scan } from 'rxjs/operators';
+import { distinctUntilChanged, map, scan, tap } from 'rxjs/operators';
 import { ErrorCardComponent } from '../../components/cards/error-card.component';
 import { ConversationService } from '../../services/conversation.service';
 import { ApplyChangesButtonComponent } from '../buttons/apply-changes-button.component';
@@ -79,11 +79,16 @@ type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
       </div>
     }
 
-    @if (lastDialogIsChangelist$ | async) {
-      <div class="py-4 flex justify-center">
-        <app-apply-changes-button [conversationId]="conversationId" />
-      </div>
-    }
+    <ng-container *ngIf="lastDialogIsChangelog$ | async as changelog">
+      @if (changelog.isChangelog) {
+        <div class="py-4 flex justify-center">
+          <app-apply-changes-button 
+            [conversationId]="conversationId"
+            [changelogId]="changelog.changelogId"
+          />
+        </div>
+      }
+    </ng-container>
 
     @if (error) {
       <app-error-card title="404 Error" description="Could not find the conversation." />
@@ -100,7 +105,7 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
   dialogueData: Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]> = [];
   waitingOnAssistant$!: Observable<boolean>;
   lastDialogHasChanges$!: Observable<boolean>
-  lastDialogIsChangelist$!: Observable<boolean>
+  lastDialogIsChangelog$!: Observable<{ changelogId: string, isChangelog: boolean }>
   error = false;
 
   constructor(private conversationService: ConversationService) {
@@ -152,16 +157,22 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
       })
     );
 
-
-    this.lastDialogIsChangelist$ = this.streamWithBlocks$.pipe(
-      map((dialogueData) => dialogueData.dialogueRole === DialogRoles.CHANGELOG)
+    this.lastDialogIsChangelog$ = this.stream$.pipe(
+      map((dialogueData) => {
+        return {
+          changelogId: dialogueData.id,
+          isChangelog: dialogueData.dialogueRole === DialogRoles.CHANGELOG
+        }
+      }),
     );
 
     this.waitingOnAssistant$ = this.streamWithBlocks$.pipe(
+      tap((data) => console.log('waiting on assistant', data)),
       map((dialogueData) => {
-        return dialogueData.role !== AgentMessageRoles.ASSISTANT
+        return dialogueData.role === AgentMessageRoles.USER || dialogueData.role === AgentMessageRoles.NONE
       }),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      tap((data) => console.log('waiting on assistant 2', data)),
     );
   }
 

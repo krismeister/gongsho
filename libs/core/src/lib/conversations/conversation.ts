@@ -1,10 +1,11 @@
-import { ConversationDetails, DialogueData } from '@gongsho/types';
+import { AgentMessageRoles, ConversationDetails, DialogRoles, DialogueData } from '@gongsho/types';
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
 import { AssistantChangelogDialogue } from '../dialogue/agent/assistant-changelog.dialogue';
 import { AssistantTextDialogue } from '../dialogue/agent/assistant-text.dialogue';
 import { BaseDialogue } from '../dialogue/base-dialogue';
+import { ChangelogAppliedDialogue } from '../dialogue/info/changlog-applied';
 import { AddFilesDialogue } from '../dialogue/interstitial/add-files.dialogue';
 import { ChangelogDialogue } from '../dialogue/interstitial/changelog.dialogue';
 import { RepoMapDialogue } from '../dialogue/interstitial/repo-map.dialogue';
@@ -78,14 +79,27 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
+  public async addInfoDialogue(type: 'changelog-applied') {
+    console.log('adding info dialogue', type);
+    const infoDialogue = new ChangelogAppliedDialogue();
+
+    this.dialogFlow.push(infoDialogue);
+    this.dialogueStream$.next(infoDialogue);
+    this.saveToProject();
+  }
+
   public async requestChangeLog() {
     this.dialogueQueue.push(new ChangelogDialogue());
     this.sendNextQueueItemToAgent();
   }
 
-  public async generateChangelist() {
-    this.dialogueQueue.push(new ChangelogDialogue());
-    this.sendNextQueueItemToAgent();
+  public async getChangelogResponse(id: string): Promise<DialogueData> {
+    debugger;
+    const dialogue = this.dialogFlow.find(dialogue => dialogue.id === id);
+    if (dialogue?.dialogueRole !== DialogRoles.CHANGELOG) {
+      throw new Error('Invalid changelog id');
+    }
+    return dialogue.getDialogueData();
   }
 
   private async startConversation(userInput: string) {
@@ -123,15 +137,17 @@ export class Conversation {
 
     this.saveToProject();
 
-    const messages = this.dialogFlow.map(item => ({
-      role: item.role,
-      content: [
-        {
-          type: 'text',
-          text: item.content,
-        },
-      ],
-    }));
+    const messages = this.dialogFlow
+      .filter(item => item.role !== AgentMessageRoles.NONE)
+      .map(item => ({
+        role: item.role as 'user' | 'assistant',
+        content: [
+          {
+            type: 'text',
+            text: item.content,
+          },
+        ],
+      }));
     const system = messages.shift()!;
     this.agent
       .sendMessages(system.content[0].text, messages)

@@ -56,4 +56,9 @@ export class AppController {
   requestChangelog(@Param('id') id: string) {
     return this.conversationsService.requestChangeLog(id);
   }
+
+  @Post('conversations/:id/apply-changelog')
+  applyChangelog(@Param('id') id: string, @Body() body: { changelogId: string }) {
+    return this.conversationsService.applyChangelog(id, body.changelogId);
+  }
 }

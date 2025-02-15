@@ -11,11 +11,13 @@ export enum DialogRoles {
   INTERSTITIAL = 'interstitial',
   ASSISTANT = 'assistant',
   CHANGELOG = 'changelog',
+  INFO = 'info',
 }
 
 export enum AgentMessageRoles {
   USER = 'user',
   ASSISTANT = 'assistant',
+  NONE = 'none',
 }
 
 export type DialogueData = {

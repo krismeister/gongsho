@@ -5,8 +5,8 @@ import { fillDialogue } from '../utils/fill-dialogue';
 export class BaseDialogue {
   protected description: string;
   protected timestamp: Date;
-  protected id: string;
-  protected dialogueRole: DialogRoles = DialogRoles.SYSTEM;
+  public id: string;
+  public dialogueRole: DialogRoles = DialogRoles.SYSTEM;
   public role: AgentMessageRoles = AgentMessageRoles.ASSISTANT;
   public content = '';
 
@@ -35,6 +35,7 @@ export class BaseDialogue {
     const newDialogue = new BaseDialogue(data.content, {});
     newDialogue.description = data.description;
     newDialogue.timestamp = data.timestamp;
+    newDialogue.id = data.id;
     newDialogue.dialogueRole = data.dialogueRole;
     newDialogue.role = data.role;
     return newDialogue;

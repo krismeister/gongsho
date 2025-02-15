@@ -4,3 +4,4 @@ export function types(): string {
 
 export { AgentMessageRoles, ConversationData, ConversationDetails, ConversationSummary, DialogRoles, DialogueData } from "./conversations";
 
+export { Changelog, ChangeLogFile, ChangelogItem, SearchReplaceBlock } from "./changelog";
