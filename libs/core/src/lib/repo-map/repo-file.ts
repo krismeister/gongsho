@@ -1,6 +1,6 @@
-import { getMimeType } from '../utils/mime-types';
 import { readFile, stat } from 'fs/promises';
 import { basename } from 'path';
+import { calculateChecksum, getMimeType } from '../utils/file';
 
 type FileMetadata = {
   name: string;
@@ -14,12 +14,13 @@ type FileMetadata = {
 
 export class RepoFile {
   private metadata?: FileMetadata;
+  private hash = '';
   private contents?: string;
 
   constructor(
     public path: string,
     public relativePath: string
-  ) {}
+  ) { }
 
   public async loadMetadata(): Promise<FileMetadata> {
     return stat(this.path).then(stats => {
@@ -50,7 +51,6 @@ export class RepoFile {
           await this.loadContents();
         }
       }
-
       return this.contents!;
     } catch (error) {
       console.error(`Error checking file stats for ${this.path}:`, error);
@@ -61,6 +61,7 @@ export class RepoFile {
   private async loadContents(): Promise<string> {
     return readFile(this.path, 'utf8').then(contents => {
       this.contents = contents;
+      this.hash = calculateChecksum(contents);
       return contents || '';
     });
   }
@@ -71,6 +72,10 @@ export class RepoFile {
 
   public getContents() {
     return this.contents;
+  }
+
+  public getHash() {
+    return this.hash;
   }
 
   public getContentsForLlmMessage(): string {

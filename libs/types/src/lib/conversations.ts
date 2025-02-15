@@ -27,11 +27,12 @@ export type DialogData = {
   description: string;
   content: string;
   timestamp: Date;
+  fileHashes: Record<string, string>;
 };
 
 export type ConversationDetails = {
   id: string,
-  files: string[],
+  files: Record<string, string>,
   dialogData: DialogData[];
 }
 

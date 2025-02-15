@@ -13,7 +13,7 @@ export class RepoMapDialog extends BaseDialog {
   }
 
   public static create(): RepoMapDialog {
-    const repoMap = RepoMap.getRepoMapAstText();
+    const repoMap = RepoMap.getProjectFilesList();
     return new RepoMapDialog('', {
       repoMap: repoMap,
     });
@@ -21,10 +21,10 @@ export class RepoMapDialog extends BaseDialog {
   }
 }
 
-const prompt = `Here are summaries of some files present in my git repository.
+const prompt = `Here are the files in my project.
 Do not propose changes to these files, treat them as *read-only*.
-If you need to edit any of these files use *EXAMINE_FILES*.
+If you need to edit or understand any of these files use *EXAMINE_FILES*.
 
-If you understand this message, respond with "How can I help?"
+If you understand this message, respond with "OK"
 
 {{repoMap}}`;

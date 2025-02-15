@@ -5,6 +5,7 @@ import { fillDialog } from '../utils/fill-dialog';
 export class BaseDialog {
   protected description: string;
   protected timestamp: Date;
+  protected fileHashes: Record<string, string> = {};
   public id: string;
   public dialogRole: DialogRoles = DialogRoles.SYSTEM;
   public role: AgentMessageRoles = AgentMessageRoles.ASSISTANT;
@@ -28,17 +29,19 @@ export class BaseDialog {
       description: this.description,
       content: this.content,
       timestamp: this.timestamp,
+      fileHashes: this.fileHashes,
     };
   }
 
   public static fromDialogData(data: DialogData): BaseDialog {
-    const newDialogue = new BaseDialog(data.content, {});
-    newDialogue.description = data.description;
-    newDialogue.timestamp = data.timestamp;
-    newDialogue.id = data.id;
-    newDialogue.dialogRole = data.dialogRole;
-    newDialogue.role = data.role;
-    return newDialogue;
+    const newDialog = new BaseDialog(data.content, {});
+    newDialog.description = data.description;
+    newDialog.timestamp = data.timestamp;
+    newDialog.id = data.id;
+    newDialog.dialogRole = data.dialogRole;
+    newDialog.role = data.role;
+    newDialog.fileHashes = data.fileHashes;
+    return newDialog;
   }
 }
 

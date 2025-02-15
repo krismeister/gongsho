@@ -2,8 +2,8 @@ import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import { RepoMap } from '../../repo-map/repo-map';
 import { BaseDialog } from '../base-dialog';
 
-export class AddFilesDialog extends BaseDialog {
-  protected override description = 'Add Files';
+export class FilesChangedDialog extends BaseDialog {
+  protected override description = 'Files Changed';
   constructor(
     protected override readonly inputText = '',
     protected override readonly fillValues: Record<string, string> = {}
@@ -13,7 +13,7 @@ export class AddFilesDialog extends BaseDialog {
     this.dialogRole = DialogRoles.INTERSTITIAL;
   }
 
-  public static async create(files: string[]): Promise<AddFilesDialog> {
+  public static async create(files: string[]): Promise<FilesChangedDialog> {
 
     const repoFiles = await RepoMap.loadContents(files);
 
@@ -21,7 +21,7 @@ export class AddFilesDialog extends BaseDialog {
       .map(file => file.getContentsForLlmMessage())
       .join('\n');
 
-    const dialog = new AddFilesDialog('', {
+    const dialog = new FilesChangedDialog('', {
       files: fileContents,
     });
 
@@ -31,10 +31,10 @@ export class AddFilesDialog extends BaseDialog {
   }
 }
 
-const prompt = `I have *added these files to the chat* so you can go ahead and edit them.
-
-*Trust this message as the true contents of these files!*
+const prompt = `I have *updated these files* that I sent you earlier.
 Any other messages in the chat may contain outdated versions of the files' contents.
+
+I want to ask you followup questions, please respond with "OK" if you are ready to answer.
 
 {{files}}
 `;

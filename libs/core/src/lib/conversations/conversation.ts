@@ -2,19 +2,21 @@ import { AgentMessageRoles, ChangeList, ConversationDetails, DialogData, DialogR
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
+import { AssistantAcknowledgedDialog } from '../dialog/agent/assistant-acknowledged.dialog';
 import { AssistantChangelistDialog } from '../dialog/agent/assistant-changelist.dialog';
 import { AssistantTextDialog } from '../dialog/agent/assistant-text.dialog';
 import { BaseDialog } from '../dialog/base-dialog';
-
 import { ChangelistAppliedDialog } from '../dialog/info/changelist-applied.dialog';
 import { AddFilesDialog } from '../dialog/interstitial/add-files.dialog';
 import { ChangelistDialog } from '../dialog/interstitial/changelist.dialog';
+import { FilesChangedDialog } from '../dialog/interstitial/files-changed.dialog';
 import { RepoMapDialog } from '../dialog/interstitial/repo-map.dialog';
 import { WholeCodebaseDialog } from '../dialog/system/whole-codebase.dialog';
 import { UserInputDialog } from '../dialog/user-input.dialog';
 import { AgentModelConfigs, AgentModels } from '../models/model-configs';
 import { contentToChangelist } from '../utils/changelist';
 import { conversationExists, loadConversation, saveConversationDetails } from '../utils/storage';
+import { ConversationFiles } from './conversation-files';
 
 export class Conversation {
 
@@ -25,7 +27,7 @@ export class Conversation {
 
   private agentBusy$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  private files: string[] = [];
+  private files = new ConversationFiles();
   private dialogQueue: BaseDialog[] = [];
   private agentInProgress = false;
   private agent: AbstractAgent;
@@ -43,7 +45,7 @@ export class Conversation {
   private saveToProject() {
     saveConversationDetails({
       id: this.id,
-      files: this.files,
+      files: this.files.getFiles(),
       dialogData: this.dialogFlow.map(item => item.getDialogData()),
     })
   }
@@ -55,7 +57,7 @@ export class Conversation {
   public getConversationDetails(): ConversationDetails {
     return {
       id: this.id,
-      files: this.files,
+      files: this.files.getFiles(),
       dialogData: this.dialogFlow.map(item => item.getDialogData()),
     }
   }
@@ -68,13 +70,19 @@ export class Conversation {
       this.dialogStream$.next(dialogItem);
       return dialogItem;
     });
-    this.files = savedConversation.files;
+    this.files.addFilesWithHashes(savedConversation.files);
   }
 
   public async addUserInput(userInput: string) {
     if (this.dialogFlow.length === 0) {
       this.startConversation(userInput);
       return
+    }
+    const changedFiles = await this.files.getChangedFiles();
+    if (changedFiles.length > 0) {
+      const filesChangedDialog = await FilesChangedDialog.create(changedFiles.map(file => file.relativePath));
+      this.files.applyChanges(changedFiles);
+      this.dialogQueue.push(filesChangedDialog);
     }
     // const lastDialog = this.dialogFlow.at(-1)!.role = ;
     this.dialogQueue.push(new UserInputDialog(userInput));
@@ -172,6 +180,8 @@ export class Conversation {
     let dialog: BaseDialog;
     if (content.startsWith('CHANGELIST')) {
       dialog = new AssistantChangelistDialog(content);
+    } else if (content == 'OK') {
+      dialog = new AssistantAcknowledgedDialog(content);
     } else {
       dialog = new AssistantTextDialog(content);
     }
@@ -185,6 +195,7 @@ export class Conversation {
       const examineFilesRegex = /EXAMINE_FILES:(.*?)(?:\n|$)/;
       const match = content.match(examineFilesRegex);
       const files = match ? match[1].trim().split(',') : [];
+      await this.files.addFiles(files);
       const addFilesDialog = await AddFilesDialog.create(files);
       this.dialogQueue.unshift(addFilesDialog);
     }

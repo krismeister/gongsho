@@ -26,12 +26,15 @@ class RepoMapBase {
     return this.fileMap;
   }
 
-  public getRepoMapAstText() {
-    for (const file of Object.values(this.fileMap)) {
-      console.log(file.getMetadata());
-    }
-
+  public getProjectFilesList() {
     return Object.keys(this.fileMap).join('\n');
+  }
+
+  public getFile(relativeFilePath: string) {
+    if (!this.fileMap[relativeFilePath]) {
+      throw new Error(`File ${relativeFilePath} not found in repo map`);
+    }
+    return this.fileMap[relativeFilePath];
   }
 
   public async loadContents(
