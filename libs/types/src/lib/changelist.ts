@@ -1,5 +1,5 @@
 
-export type ChangeLogFile = {
+export type ChangeListFile = {
   path: string;
   relativePath: string;
   content: string;
@@ -10,13 +10,13 @@ export type SearchReplaceBlock = {
   to: string;
 }
 
-export type ChangelogItem = {
-  file: ChangeLogFile;
+export type ChangeListItem = {
+  file: ChangeListFile;
   blocks: SearchReplaceBlock[];
 }
 
-export type Changelog = {
-  changes: ChangelogItem[];
+export type ChangeList = {
+  changes: ChangeListItem[];
 }
 
 

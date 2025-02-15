@@ -10,7 +10,7 @@ export enum DialogRoles {
   SYSTEM = 'system',
   INTERSTITIAL = 'interstitial',
   ASSISTANT = 'assistant',
-  CHANGELOG = 'changelog',
+  CHANGELIST = 'changelist',
   INFO = 'info',
 }
 

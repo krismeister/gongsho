@@ -25,12 +25,12 @@ import { ConversationService } from '../../services/conversation.service';
 })
 export class ApplyChangesButtonComponent {
   @Input() conversationId!: string;
-  @Input() changelogId!: string;
+  @Input() changelistId!: string;
   constructor(private conversationService: ConversationService) { }
 
   applyChanges() {
     console.log('applyChanges', this.conversationId);
-    this.conversationService.applyChangelog(this.conversationId, this.changelogId).subscribe(data => {
+    this.conversationService.applyChangelist(this.conversationId, this.changelistId).subscribe(data => {
       console.log(data);
     });
   }

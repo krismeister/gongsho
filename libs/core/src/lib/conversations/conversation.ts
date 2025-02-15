@@ -1,18 +1,19 @@
-import { AgentMessageRoles, Changelog, ConversationDetails, DialogRoles, DialogueData } from '@gongsho/types';
+import { AgentMessageRoles, ChangeList, ConversationDetails, DialogRoles, DialogueData } from '@gongsho/types';
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
-import { AssistantChangelogDialogue } from '../dialogue/agent/assistant-changelog.dialogue';
+import { AssistantChangelistDialogue } from '../dialogue/agent/assistant-changelist.dialogue';
 import { AssistantTextDialogue } from '../dialogue/agent/assistant-text.dialogue';
 import { BaseDialogue } from '../dialogue/base-dialogue';
-import { ChangelogAppliedDialogue } from '../dialogue/info/changlog-applied';
+
+import { ChangelistAppliedDialogue } from '../dialogue/info/changelist-applied';
 import { AddFilesDialogue } from '../dialogue/interstitial/add-files.dialogue';
-import { ChangelogDialogue } from '../dialogue/interstitial/changelog.dialogue';
+import { ChangelistDialogue } from '../dialogue/interstitial/changelist.dialogue';
 import { RepoMapDialogue } from '../dialogue/interstitial/repo-map.dialogue';
 import { WholeCodebaseDialogue } from '../dialogue/system/whole-codebase.dialogue';
 import { UserInputDialogue } from '../dialogue/user-input.dialogue';
 import { AgentModelConfigs, AgentModels } from '../models/model-configs';
-import { contentToChangeLog } from '../utils/changelog';
+import { contentToChangelist } from '../utils/changelist';
 import { conversationExists, loadConversation, saveConversationDetails } from '../utils/storage';
 
 export class Conversation {
@@ -80,26 +81,26 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
-  public async addInfoDialogue(type: 'changelog-applied') {
+  public async addInfoDialogue(type: 'changelist-applied') {
     console.log('adding info dialogue', type);
-    const infoDialogue = new ChangelogAppliedDialogue();
+    const infoDialogue = new ChangelistAppliedDialogue();
 
     this.dialogFlow.push(infoDialogue);
     this.dialogueStream$.next(infoDialogue);
     this.saveToProject();
   }
 
-  public async requestChangeLog() {
-    this.dialogueQueue.push(new ChangelogDialogue());
+  public async requestChangelist() {
+    this.dialogueQueue.push(new ChangelistDialogue());
     this.sendNextQueueItemToAgent();
   }
 
-  public async getChangelogResponse(id: string): Promise<Changelog> {
+  public async getChangelistResponse(id: string): Promise<ChangeList> {
     const dialogue = this.dialogFlow.find(dialogue => dialogue.id === id);
-    if (dialogue?.dialogueRole !== DialogRoles.CHANGELOG) {
-      throw new Error('Invalid changelog id');
+    if (dialogue?.dialogueRole !== DialogRoles.CHANGELIST) {
+      throw new Error('Invalid changelist id');
     }
-    return contentToChangeLog(dialogue.getDialogueData().content);
+    return contentToChangelist(dialogue.getDialogueData().content);
   }
 
   private async startConversation(userInput: string) {
@@ -169,8 +170,8 @@ export class Conversation {
     const content = response.content[response.content.length - 1].text;
 
     let dialogue: BaseDialogue;
-    if (content.startsWith('CHANGELOG')) {
-      dialogue = new AssistantChangelogDialogue(content);
+    if (content.startsWith('CHANGELIST')) {
+      dialogue = new AssistantChangelistDialogue(content);
     } else {
       dialogue = new AssistantTextDialogue(content);
     }

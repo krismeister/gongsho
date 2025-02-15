@@ -7,5 +7,5 @@ export function core(): string {
 export { gongshoConfig } from "./config/config";
 export { Conversations } from "./conversations/conversations";
 export { initializeGongsho } from "./startup";
-export { writeChangeLogToFiles } from "./utils/changelog";
+export { writeChangelistToFiles } from "./utils/changelist";
 

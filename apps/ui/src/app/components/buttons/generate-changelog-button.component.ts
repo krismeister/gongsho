@@ -19,7 +19,7 @@ import { ConversationService } from '../../services/conversation.service';
   template: `
     <button hlmBtn (click)="generateChangelist()">
       <ng-icon hlm size="sm" class="mr-2" name="lucideListX" />
-      Generate Changelog
+      Generate Changelist
     </button>
   `
 })
@@ -29,7 +29,7 @@ export class GenerateChangelogButtonComponent {
   constructor(private conversationService: ConversationService) { }
 
   generateChangelist() {
-    this.conversationService.requestChangelog(this.conversationId).subscribe(data => {
+    this.conversationService.requestChangelist(this.conversationId).subscribe(data => {
       console.log(data);
     });
   }

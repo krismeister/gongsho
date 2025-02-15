@@ -79,12 +79,12 @@ type DialogueDataWithMessageblocks = DialogueData & { blocks: MessageBlock[] }
       </div>
     }
 
-    <ng-container *ngIf="lastDialogIsChangelog$ | async as changelog">
-      @if (changelog.isChangelog) {
+    <ng-container *ngIf="lastDialogIsChangelist$ | async as changelist">
+      @if (changelist.isChangelist) {
         <div class="py-4 flex justify-center">
           <app-apply-changes-button 
             [conversationId]="conversationId"
-            [changelogId]="changelog.changelogId"
+            [changelistId]="changelist.changelistId"
           />
         </div>
       }
@@ -105,7 +105,7 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
   dialogueData: Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]> = [];
   waitingOnAssistant$!: Observable<boolean>;
   lastDialogHasChanges$!: Observable<boolean>
-  lastDialogIsChangelog$!: Observable<{ changelogId: string, isChangelog: boolean }>
+  lastDialogIsChangelist$!: Observable<{ changelistId: string, isChangelist: boolean }>
   error = false;
 
   constructor(private conversationService: ConversationService) {
@@ -132,7 +132,8 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
 
     this.groupedStream$ = this.streamWithBlocks$.pipe(
       scan((acc: Array<DialogueDataWithMessageblocks | DialogueDataWithMessageblocks[]>, current: DialogueDataWithMessageblocks) => {
-        if (current.dialogueRole === DialogRoles.SYSTEM || current.dialogueRole === DialogRoles.INTERSTITIAL || current.dialogueRole === DialogRoles.CHANGELOG) {
+        if (current.dialogueRole === DialogRoles.SYSTEM ||
+          current.dialogueRole === DialogRoles.INTERSTITIAL || current.dialogueRole === DialogRoles.CHANGELIST) {
           // If last item is an array, add to it
           if (acc.length > 0 && Array.isArray(acc[acc.length - 1])) {
             (acc[acc.length - 1] as DialogueDataWithMessageblocks[]).push(current);
@@ -152,16 +153,16 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
       map((dialogueData) => {
         return (
           dialogueData.blocks.some(block => block.type === BlockTypes.REPLACE) &&
-          dialogueData.dialogueRole !== DialogRoles.CHANGELOG
+          dialogueData.dialogueRole !== DialogRoles.CHANGELIST
         )
       })
     );
 
-    this.lastDialogIsChangelog$ = this.stream$.pipe(
+    this.lastDialogIsChangelist$ = this.stream$.pipe(
       map((dialogueData) => {
         return {
-          changelogId: dialogueData.id,
-          isChangelog: dialogueData.dialogueRole === DialogRoles.CHANGELOG
+          changelistId: dialogueData.id,
+          isChangelist: dialogueData.dialogueRole === DialogRoles.CHANGELIST
         }
       }),
     );

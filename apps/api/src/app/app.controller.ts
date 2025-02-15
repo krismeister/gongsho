@@ -52,13 +52,13 @@ export class AppController {
     );
   }
 
-  @Post('conversations/:id/request-changelog')
-  requestChangelog(@Param('id') id: string) {
-    return this.conversationsService.requestChangeLog(id);
+  @Post('conversations/:id/request-changelist')
+  requestChangelist(@Param('id') id: string) {
+    return this.conversationsService.requestChangelist(id);
   }
 
-  @Post('conversations/:id/apply-changelog')
-  applyChangelog(@Param('id') id: string, @Body() body: { changelogId: string }) {
-    return this.conversationsService.applyChangelog(id, body.changelogId);
+  @Post('conversations/:id/apply-changelist')
+  applyChangelist(@Param('id') id: string, @Body() body: { changelistId: string }) {
+    return this.conversationsService.applyChangelist(id, body.changelistId);
   }
 }

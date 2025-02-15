@@ -23,7 +23,8 @@ import { MessageBlocksComponent } from '../message-blocks/message-blocks.compone
   providers: [provideIcons({ lucideUserRoundPen, lucideBot, lucideChevronDown, lucideInfo })],
   template: `
     <div [ngClass]="{
-      'bg-gray-50 dark:bg-transparent': dialog.role === 'user' || dialog.role === 'none',
+      'bg-gray-50 dark:bg-transparent': dialog.role === 'user',
+      'bg-transparent border-b border-border':dialog.role === 'none',
       'bg-blue-50 dark:bg-gray-900': dialog.role === 'assistant'
     }" class="p-4 my-2 rounded-lg">
       <div class="flex items-start">

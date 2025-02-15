@@ -1,4 +1,4 @@
-import { Conversations, writeChangeLogToFiles } from '@gongsho/core';
+import { Conversations, writeChangelistToFiles } from '@gongsho/core';
 import { ConversationData, ConversationSummary, DialogueData } from '@gongsho/types';
 import { Injectable } from '@nestjs/common';
 import { concatMap, from, Observable, tap, throwError } from 'rxjs';
@@ -55,17 +55,17 @@ export class ConversationsService {
     );
   }
 
-  async requestChangeLog(id: string): Promise<{ message: string }> {
+  async requestChangelist(id: string): Promise<{ message: string }> {
     const conversation = await Conversations.getConversation(id)
-    await conversation.requestChangeLog();
+    await conversation.requestChangelist();
     return { message: 'success' };
   }
 
-  async applyChangelog(id: string, changelogId: string): Promise<{ message: string }> {
+  async applyChangelist(id: string, changelistId: string): Promise<{ message: string }> {
     const conversation = await Conversations.getConversation(id)
-    const changeLog = await conversation.getChangelogResponse(changelogId);
-    await writeChangeLogToFiles(changeLog);
-    await conversation.addInfoDialogue('changelog-applied');
+    const changeList = await conversation.getChangelistResponse(changelistId);
+    await writeChangelistToFiles(changeList);
+    await conversation.addInfoDialogue('changelist-applied');
     return { message: 'success' };
   }
 

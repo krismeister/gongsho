@@ -40,12 +40,12 @@ export class ConversationService {
     );
   }
 
-  requestChangelog(conversationId: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/request-changelog`, {});
+  requestChangelist(conversationId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/request-changelist`, {});
   }
 
-  applyChangelog(conversationId: string, changelogId: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/apply-changelog`, { changelogId });
+  applyChangelist(conversationId: string, changelistId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/apply-changelist`, { changelistId });
   }
 
 } 
