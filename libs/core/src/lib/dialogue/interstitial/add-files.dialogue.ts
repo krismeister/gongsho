@@ -1,4 +1,5 @@
 import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
+import { RepoMap } from '../../repo-map/repo-map';
 import { BaseDialogue } from '../base-dialogue';
 
 export class AddFilesDialogue extends BaseDialogue {
@@ -10,6 +11,21 @@ export class AddFilesDialogue extends BaseDialogue {
     super(prompt, fillValues);
     this.role = AgentMessageRoles.USER;
     this.dialogueRole = DialogRoles.INTERSTITIAL;
+  }
+
+  public static async create(files: string[]): Promise<AddFilesDialogue> {
+
+    const repoFiles = await RepoMap.loadContents(files);
+
+    const fileContents = Object.values(repoFiles)
+      .map(file => file.getContentsForLlmMessage())
+      .join('\n');
+
+    const dialogue = new AddFilesDialogue('', {
+      files: fileContents,
+    });
+
+    return dialogue
   }
 }
 

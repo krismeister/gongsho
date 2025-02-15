@@ -1,4 +1,4 @@
-import { Conversations, writeDialogChangeLogToFile } from '@gongsho/core';
+import { Conversations, writeChangeLogToFiles } from '@gongsho/core';
 import { ConversationData, ConversationSummary, DialogueData } from '@gongsho/types';
 import { Injectable } from '@nestjs/common';
 import { concatMap, from, Observable, tap, throwError } from 'rxjs';
@@ -63,8 +63,8 @@ export class ConversationsService {
 
   async applyChangelog(id: string, changelogId: string): Promise<{ message: string }> {
     const conversation = await Conversations.getConversation(id)
-    const dialogDataChange = await conversation.getChangelogResponse(changelogId);
-    await writeDialogChangeLogToFile(dialogDataChange);
+    const changeLog = await conversation.getChangelogResponse(changelogId);
+    await writeChangeLogToFiles(changeLog);
     await conversation.addInfoDialogue('changelog-applied');
     return { message: 'success' };
   }

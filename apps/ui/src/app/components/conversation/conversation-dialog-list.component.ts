@@ -167,9 +167,9 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
     );
 
     this.waitingOnAssistant$ = this.streamWithBlocks$.pipe(
-      tap((data) => console.log('waiting on assistant', data)),
+      tap((data) => console.log('waiting on assistant', data.role, data.role !== AgentMessageRoles.ASSISTANT)),
       map((dialogueData) => {
-        return dialogueData.role === AgentMessageRoles.USER || dialogueData.role === AgentMessageRoles.NONE
+        return dialogueData.role === AgentMessageRoles.USER
       }),
       distinctUntilChanged(),
       tap((data) => console.log('waiting on assistant 2', data)),

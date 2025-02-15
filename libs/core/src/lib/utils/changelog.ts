@@ -1,5 +1,5 @@
 import { BlockTypes, parseTextToBlocks, ReplaceBlock } from "@gongsho/text-to-blocks";
-import { Changelog, ChangeLogFile, ChangelogItem, DialogueData } from "@gongsho/types";
+import { Changelog, ChangeLogFile, ChangelogItem } from "@gongsho/types";
 import { readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { gongshoConfig } from "../config/config";
@@ -39,7 +39,7 @@ export const contentToChangeLog = async (content: string): Promise<Changelog> =>
   }
 };
 
-export const writeChangeLogToFile = async (changeLog: Changelog) => {
+export const writeChangeLogToFiles = async (changeLog: Changelog) => {
   for (const item of changeLog.changes) {
     try {
       let newContent = item.file.content;
@@ -52,10 +52,4 @@ export const writeChangeLogToFile = async (changeLog: Changelog) => {
       throw error;
     }
   }
-}
-
-
-export const writeDialogChangeLogToFile = async (dialog: DialogueData) => {
-  const changeLog = await contentToChangeLog(dialog.content);
-  await writeChangeLogToFile(changeLog);
 }

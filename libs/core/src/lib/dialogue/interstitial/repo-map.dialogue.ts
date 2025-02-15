@@ -1,6 +1,6 @@
 import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
+import { RepoMap } from '../../repo-map/repo-map';
 import { BaseDialogue } from '../base-dialogue';
-
 export class RepoMapDialogue extends BaseDialogue {
   protected override description = 'Repo Map';
   constructor(
@@ -10,6 +10,14 @@ export class RepoMapDialogue extends BaseDialogue {
     super(prompt, fillValues);
     this.role = AgentMessageRoles.USER;
     this.dialogueRole = DialogRoles.INTERSTITIAL;
+  }
+
+  public static create(): RepoMapDialogue {
+    const repoMap = RepoMap.getRepoMapAstText();
+    return new RepoMapDialogue('', {
+      repoMap: repoMap,
+    });
+
   }
 }
 

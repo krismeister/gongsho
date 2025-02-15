@@ -83,6 +83,8 @@ Open the web interface at `http://localhost:4200`
 
 ## Bugs
 
+-[ ] Add new file creation, during conversation
+
 - [ ] Theres an extra conversations load `http://localhost:4200/api/conversations/` on the conversation details page
 - [ ] Handle conversation start when server has an error, better handling of clearing text area.
 - [ ] Deal with Agent errors better.

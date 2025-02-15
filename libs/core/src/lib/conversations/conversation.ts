@@ -1,4 +1,4 @@
-import { AgentMessageRoles, ConversationDetails, DialogRoles, DialogueData } from '@gongsho/types';
+import { AgentMessageRoles, Changelog, ConversationDetails, DialogRoles, DialogueData } from '@gongsho/types';
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
 import { ClaudeAgent } from '../agents/claude-agent';
@@ -12,7 +12,7 @@ import { RepoMapDialogue } from '../dialogue/interstitial/repo-map.dialogue';
 import { WholeCodebaseDialogue } from '../dialogue/system/whole-codebase.dialogue';
 import { UserInputDialogue } from '../dialogue/user-input.dialogue';
 import { AgentModelConfigs, AgentModels } from '../models/model-configs';
-import { RepoMap } from '../repo-map/repo-map';
+import { contentToChangeLog } from '../utils/changelog';
 import { conversationExists, loadConversation, saveConversationDetails } from '../utils/storage';
 
 export class Conversation {
@@ -75,6 +75,7 @@ export class Conversation {
       this.startConversation(userInput);
       return
     }
+    // const lastDialogue = this.dialogFlow.at(-1)!.role = ;
     this.dialogueQueue.push(new UserInputDialogue(userInput));
     this.sendNextQueueItemToAgent();
   }
@@ -93,20 +94,17 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
-  public async getChangelogResponse(id: string): Promise<DialogueData> {
-    debugger;
+  public async getChangelogResponse(id: string): Promise<Changelog> {
     const dialogue = this.dialogFlow.find(dialogue => dialogue.id === id);
     if (dialogue?.dialogueRole !== DialogRoles.CHANGELOG) {
       throw new Error('Invalid changelog id');
     }
-    return dialogue.getDialogueData();
+    return contentToChangeLog(dialogue.getDialogueData().content);
   }
 
   private async startConversation(userInput: string) {
     const systemDialogue = new WholeCodebaseDialogue();
-    const repoMapDialogue = new RepoMapDialogue('', {
-      repoMap: RepoMap.getRepoMapAstText(),
-    });
+    const repoMapDialogue = RepoMapDialogue.create()
 
     this.dialogFlow.push(systemDialogue);
     this.dialogueStream$.next(systemDialogue);
@@ -186,17 +184,8 @@ export class Conversation {
       const examineFilesRegex = /EXAMINE_FILES:(.*?)(?:\n|$)/;
       const match = content.match(examineFilesRegex);
       const files = match ? match[1].trim().split(',') : [];
-
-      const repoFiles = await RepoMap.loadContents(files);
-
-      const fileContents = Object.values(repoFiles)
-        .map(file => file.getContentsForLlmMessage())
-        .join('\n');
-
-      const dialogue = new AddFilesDialogue('', {
-        files: fileContents,
-      });
-      this.dialogueQueue.unshift(dialogue);
+      const addFilesDialogue = await AddFilesDialogue.create(files);
+      this.dialogueQueue.unshift(addFilesDialogue);
     }
 
     if (this.dialogueQueue.length > 0) {
