@@ -3,7 +3,8 @@ export const BlockTypes = {
   TEXT: 'text',
   REPLACE: 'replace',
   BASH: 'bash',
-  EXAMINE: 'examine'
+  EXAMINE: 'examine',
+  BACKTICK_CODE: 'backtick_code'
 } as const;
 
 // Create a type from the values
@@ -38,8 +39,14 @@ export interface ExamineBlock extends BaseMessageBlock {
   files: string[];
 }
 
+export interface BacktickCodeBlock extends BaseMessageBlock {
+  type: typeof BlockTypes.BACKTICK_CODE;
+  content: string;
+  language: string;
+}
+
 // Union type of all possible blocks
-export type MessageBlock = TextBlock | BashBlock | ReplaceBlock | ExamineBlock;
+export type MessageBlock = TextBlock | BashBlock | ReplaceBlock | ExamineBlock | BacktickCodeBlock;
 
 export const parseTextToBlocks = (message: string): MessageBlock[] => {
   const blocks: MessageBlock[] = [];
@@ -111,6 +118,28 @@ export const parseTextToBlocks = (message: string): MessageBlock[] => {
         files: filesContent.split(',').map(f => f.trim())
       })
     });
+  }
+
+  // Find general backtick code blocks (should run last to not interfere with other patterns)
+  const backtickPattern = /```(\w*)\n([\s\S]*?)```/g;
+  while ((match = backtickPattern.exec(message)) !== null) {
+    const [fullMatch, language, content] = match;
+    // Skip if this match overlaps with any existing matches
+    const overlaps = allMatches.some(existing =>
+      (match && match.index >= existing.index && match.index < existing.index + existing.length) ||
+      (match && existing.index >= match.index && existing.index < match.index + fullMatch.length)
+    );
+    if (!overlaps) {
+      allMatches.push({
+        index: match.index,
+        length: fullMatch.length,
+        process: () => ({
+          type: BlockTypes.BACKTICK_CODE,
+          content: content.trimEnd(),
+          language: language || 'text'
+        })
+      });
+    }
   }
 
   // Sort matches by their position in the text

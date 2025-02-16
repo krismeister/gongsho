@@ -169,4 +169,40 @@ const b = 2;
       }
     ]);
   });
+
+  it('should parse general backtick code blocks', () => {
+    const input = `Here's an example:
+\`\`\`typescript
+const x = 1;
+const y = 2;
+\`\`\`
+
+And another without language:
+\`\`\`
+plain text
+multiple lines
+\`\`\``;
+
+    const result = parseTextToBlocks(input);
+
+    expect(result).toEqual([
+      {
+        type: 'text',
+        content: "Here's an example:"
+      },
+      {
+        type: 'backtick_code',
+        content: "const x = 1;\nconst y = 2;",
+        language: "typescript"
+      },
+      {
+        type: 'text',
+        content: "And another without language:"
+      }, {
+        type: 'backtick_code',
+        content: "plain text\nmultiple lines",
+        language: "text"
+      }
+    ]);
+  });
 });

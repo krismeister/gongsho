@@ -1,6 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { BlockTypes, MessageBlock } from "@gongsho/text-to-blocks";
 import { BashBlockComponent } from "./bash-block.component";
+import { CodeBlockComponent } from "./code-block.component";
 import { ExamineBlockComponent } from "./examine-block.component";
 import { ReplaceBlockComponent } from "./replace-block.component";
 import { TextBlockComponent } from "./text-block.component";
@@ -12,7 +13,8 @@ import { TextBlockComponent } from "./text-block.component";
     TextBlockComponent,
     ReplaceBlockComponent,
     BashBlockComponent,
-    ExamineBlockComponent
+    ExamineBlockComponent,
+    CodeBlockComponent
   ],
   template: `
     <div class="message-blocks">
@@ -38,6 +40,11 @@ import { TextBlockComponent } from "./text-block.component";
               [block]="block"
             ></app-examine-block>
           }
+          @case (BlockTypes.BACKTICK_CODE) {
+            <app-code-block
+              [block]="block"
+            ></app-code-block>
+          } 
         }
       }
     </div>
