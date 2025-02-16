@@ -34,6 +34,13 @@ export const getMimeType = (path: string) => {
   return mimeTypes[extension] || '';
 };
 
+export const getContentsForLlmMessage = (relativePath: string, contents: string) => {
+  const mimeType = getMimeType(relativePath);
+  return `${relativePath}
+\`\`\`${mimeType}
+${contents}
+\`\`\``;
+}
 
 export const calculateChecksum = (contents: string) => {
   return crypto.createHash('md5').update(contents).digest('hex');

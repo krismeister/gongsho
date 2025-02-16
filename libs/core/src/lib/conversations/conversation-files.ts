@@ -1,7 +1,6 @@
 import { RepoMap } from '../repo-map/repo-map';
 
 interface FileRecord {
-  path: string;
   relativePath: string;
   fileHash: string;
 }
@@ -10,75 +9,70 @@ interface ChangedFile {
   relativePath: string;
   oldHash: string;
   newHash: string;
+  deleted?: boolean;
 }
 
 export class ConversationFiles {
   private files: Record<string, FileRecord> = {};
 
   async addFiles(relativePaths: string[]) {
-    const fileLoadPromises: Promise<void>[] = []
-    for (const relativePath of relativePaths) {
-      if (!this.files[relativePath]) {
-        const repoFile = RepoMap.getFile(relativePath);
-        const filePromise = repoFile.loadLatestContents().then(
-          () => {
-            this.files[relativePath] = {
-              path: repoFile.path,
-              relativePath,
-              fileHash: repoFile.getHash(),
-            };
-          }
-        )
-        fileLoadPromises.push(filePromise)
-      }
+
+    const newFiles = relativePaths.filter(relativePath => !this.files[relativePath]);
+
+    for (const relativePath of newFiles) {
+      this.files[relativePath] = {
+        relativePath,
+        fileHash: '',
+      };
     }
-    await Promise.all(fileLoadPromises);
   }
 
   addFilesWithHashes(relativePaths: Record<string, string>) {
     for (const [relativePath, fileHash] of Object.entries(relativePaths)) {
-      if (!this.files[relativePath]) {
-        const repoFile = RepoMap.getFile(relativePath);
-        this.files[relativePath] = {
-          path: repoFile.path,
-          relativePath,
-          fileHash,
-        };
-      }
+      this.files[relativePath] = {
+        relativePath,
+        fileHash,
+      };
+    }
+  }
+
+  removeFiles(relativePaths: string[]) {
+    for (const relativePath of relativePaths) {
+      delete this.files[relativePath];
     }
   }
 
   async getChangedFiles(): Promise<ChangedFile[]> {
     const changedFiles: ChangedFile[] = [];
+    const latestFiles = await RepoMap.loadContents(Object.keys(this.files));
 
-    const fileLoadPromises: Promise<void>[] = [];
-    for (const file of Object.values(this.files)) {
-      const repoFile = RepoMap.getFile(file.relativePath);
-
-
-      const filePromise = repoFile.loadLatestContents().then(() => {
-        const currentHash = repoFile.getHash();
-        if (currentHash !== file.fileHash) {
-          changedFiles.push({
-            relativePath: file.relativePath,
-            oldHash: file.fileHash,
-            newHash: currentHash,
-          });
-        }
-      });
-
-      fileLoadPromises.push(filePromise);
-    }
-
-    await Promise.all(fileLoadPromises);
-
+    for (const [relativePath, file] of Object.entries(latestFiles)) {
+      if (!file) {
+        changedFiles.push({
+          relativePath,
+          oldHash: '',
+          newHash: '',
+          deleted: true,
+        });
+      } else if (this.files[file.relativePath].fileHash != file.hash) {
+        changedFiles.push({
+          relativePath: file.relativePath,
+          oldHash: this.files[file.relativePath].fileHash,
+          newHash: file.hash,
+        });
+      }
+    };
     return changedFiles;
   }
 
   applyChanges(changedFiles: ChangedFile[]): void {
     for (const change of changedFiles) {
       if (this.files[change.relativePath]) {
-        this.files[change.relativePath].fileHash = change.newHash;
+        if (change.deleted) {
+          delete this.files[change.relativePath];
+        } else {
+          this.files[change.relativePath].fileHash = change.newHash;
+        }
       }
     }
   }

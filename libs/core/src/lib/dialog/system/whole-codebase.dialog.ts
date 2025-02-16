@@ -76,7 +76,6 @@ Examples of when to suggest shell commands:
 
 - If you changed a CLI program, suggest the command to run it to see the new behavior.
 - If you added a test, suggest how to run it with the testing tool used by the project.
-- Suggest OS-appropriate commands to delete or rename files/directories, or other file operations.
 - If your code changes add new dependencies, suggest the command to install them.
 - Etc.
 
@@ -180,10 +179,10 @@ main() {
 }
 \`\`\`
 
-## ASSISTANT: To make this change we need to modify \`main.py\` and make a new file \`hello.py\`:
+## ASSISTANT: To make this change we need to modify \`main.ts\` and make a new file \`hello.ts\`:
 
-1. Make a new hello.py file with hello() in it.
-2. Remove hello() from main.py and replace it with an import.
+1. Make a new hello.ts file with hello() in it.
+2. Remove hello() from main.ts and replace it with an import.
 
 Here are the *SEARCH/REPLACE* blocks:
 
@@ -215,7 +214,7 @@ import { hello } from './hello';
 Every *SEARCH/REPLACE block* must use this format:
 1. The *FULL* file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
 2. Base any *SEARCH/REPLACE* on the original file contents you were given.
-3. The opening fence and code language, eg: \`\`\`python
+3. The opening fence and code language, eg: \`\`\`typescript
 4. The start of search block: <<<<<<< SEARCH
 5. A contiguous chunk of lines to search for in the existing source code
 6. The dividing line: =======
@@ -239,6 +238,39 @@ Do not include long runs of unchanging lines in *SEARCH/REPLACE* blocks.
 
 Only create *SEARCH/REPLACE* blocks for files that the user has added to the chat!
 
+If you want to rename a file submit two SEARCH/REPLACE blocks:
+
+1. The first *SEARCH/REPLACE* block with the entire content removed.
+2. The second *SEARCH/REPLACE* block the new file contents.
+
+For instance to rename \`src/info.ts\` to \`src/greetings.ts\` use these SEARCH/REPLACE blocks:
+
+src/info.ts
+\`\`\`typescript
+<<<<<<< SEARCH
+import { formattedTime } from './utils/time';
+
+export function hello(): void {
+   // Print a greeting
+   console.log(\`hello it is \${formattedTime()} \`);
+}
+=======
+>>>>>>> REPLACE
+\`\`\`
+
+src/utils/greetings.ts
+\`\`\`typescript
+<<<<<<< SEARCH
+=======
+import { formattedTime } from './time';
+
+export function hello(): void {
+   // Print a greeting
+   console.log(\`hello it is \${formattedTime()} \`);
+}
+>>>>>>> REPLACE
+\`\`\`
+
 To move code within a file, use 2 *SEARCH/REPLACE* blocks: 1 to delete it from its current location, 1 to insert it in the new location.
 
 Pay attention to which filenames the user wants you to edit, especially if they are asking you to create a new file.
@@ -254,6 +286,5 @@ Examples of when to suggest shell commands:
 
 - If you changed a CLI program, suggest the command to run it to see the new behavior.
 - If you added a test, suggest how to run it with the testing tool used by the project.
-- Suggest OS-appropriate commands to delete or rename files/directories, or other file operations.
 - If your code changes add new dependencies, suggest the command to install them.
 - Etc.`;

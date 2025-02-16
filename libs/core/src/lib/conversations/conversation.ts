@@ -79,6 +79,7 @@ export class Conversation {
       return
     }
     const changedFiles = await this.files.getChangedFiles();
+    debugger
     if (changedFiles.length > 0) {
       const filesChangedDialog = await FilesChangedDialog.create(changedFiles.map(file => file.relativePath));
       this.files.applyChanges(changedFiles);
@@ -109,6 +110,10 @@ export class Conversation {
       throw new Error('Invalid changelist id');
     }
     return contentToChangelist(dialog.getDialogData().content);
+  }
+
+  public async addFiles(files: string[]) {
+    await this.files.addFiles(files);
   }
 
   private async startConversation(userInput: string) {

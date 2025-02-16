@@ -65,6 +65,7 @@ export class ConversationsService {
     const conversation = await Conversations.getConversation(id)
     const changeList = await conversation.getChangelistResponse(changelistId);
     await writeChangelistToFiles(changeList);
+    await conversation.addFiles(changeList.changes.map(change => change.file.relativePath));
     await conversation.addInfoDialog('changelist-applied');
     return { message: 'success' };
   }

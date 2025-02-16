@@ -1,5 +1,6 @@
 import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import { RepoMap } from '../../repo-map/repo-map';
+import { deletesAndUpdates } from '../../utils/dialog';
 import { BaseDialog } from '../base-dialog';
 
 export class AddFilesDialog extends BaseDialog {
@@ -13,19 +14,18 @@ export class AddFilesDialog extends BaseDialog {
     this.dialogRole = DialogRoles.INTERSTITIAL;
   }
 
-  public static async create(files: string[]): Promise<AddFilesDialog> {
+  public static async create(filePaths: string[]): Promise<AddFilesDialog> {
+    debugger;
 
-    const repoFiles = await RepoMap.loadContents(files);
+    const repoFiles = await RepoMap.loadContents(filePaths);
 
-    const fileContents = Object.values(repoFiles)
-      .map(file => file.getContentsForLlmMessage())
-      .join('\n');
-
+    const { files, fileHashes } = deletesAndUpdates(repoFiles);
     const dialog = new AddFilesDialog('', {
-      files: fileContents,
+      deletes: '',
+      files,
     });
 
-    dialog.fileHashes = Object.fromEntries(files.map(file => [file, repoFiles[file].getHash()]));
+    dialog.fileHashes = fileHashes;
 
     return dialog
   }
@@ -35,6 +35,6 @@ const prompt = `I have *added these files to the chat* so you can go ahead and e
 
 *Trust this message as the true contents of these files!*
 Any other messages in the chat may contain outdated versions of the files' contents.
-
+{{deletes}}
 {{files}}
 `;

@@ -1,5 +1,6 @@
 import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import { RepoMap } from '../../repo-map/repo-map';
+import { deletesAndUpdates } from '../../utils/dialog';
 import { BaseDialog } from '../base-dialog';
 
 export class FilesChangedDialog extends BaseDialog {
@@ -13,28 +14,31 @@ export class FilesChangedDialog extends BaseDialog {
     this.dialogRole = DialogRoles.INTERSTITIAL;
   }
 
-  public static async create(files: string[]): Promise<FilesChangedDialog> {
+  public static async create(filePaths: string[]): Promise<FilesChangedDialog> {
 
-    const repoFiles = await RepoMap.loadContents(files);
+    const repoFiles = await RepoMap.loadContents(filePaths);
+    const { files, deletedFiles, fileHashes } = deletesAndUpdates(repoFiles);
 
-    const fileContents = Object.values(repoFiles)
-      .map(file => file.getContentsForLlmMessage())
-      .join('\n');
+    let deletes = '';
+    if (deletedFiles) {
+      deletes = `These files have been deleted\n${deletedFiles}\n`;
+    }
 
     const dialog = new FilesChangedDialog('', {
-      files: fileContents,
+      deletes,
+      files
     });
 
-    dialog.fileHashes = Object.fromEntries(files.map(file => [file, repoFiles[file].getHash()]));
+    dialog.fileHashes = fileHashes
 
     return dialog
   }
 }
 
-const prompt = `I have *updated these files* that I sent you earlier.
-Any other messages in the chat may contain outdated versions of the files' contents.
+const prompt = `I have *updated or deleted these files* that I sent you earlier.
+Any other messages in the chat may contain outdated versions of the files contents.
 
 I want to ask you followup questions, please respond with "OK" if you are ready to answer.
-
+{{deletes}}
 {{files}}
 `;

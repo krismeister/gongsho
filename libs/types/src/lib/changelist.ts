@@ -17,6 +17,7 @@ export type ChangeListItem = {
 
 export type ChangeList = {
   changes: ChangeListItem[];
+  filesForDelete: string[];
 }
 
 

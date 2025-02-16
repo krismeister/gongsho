@@ -1,6 +1,6 @@
 import { AgentMessageRoles, DialogData, DialogRoles } from '@gongsho/types';
 import { v4 as uuidv4 } from 'uuid';
-import { fillDialog } from '../utils/fill-dialog';
+import { fillDialog } from '../utils/dialog';
 
 export class BaseDialog {
   protected description: string;
