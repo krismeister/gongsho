@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Backend",
+      "name": "Debug API",
       "type": "node",
       "request": "launch",
       "args": ["apps/api/src/main.ts"],
@@ -19,6 +19,35 @@
         "NODE_ENV": "local",
         "NODE_PORT": "8000",
         "TS_NODE_PROJECT": "apps/api/tsconfig.app.json"
+      },
+      "sourceMaps": true,
+      "console": "internalConsole",
+      "outputCapture": "std",
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ]
+    },
+
+    {
+      "name": "Debug Project API",
+      "type": "node",
+      "request": "launch",
+      "args": ["apps/api/src/main.ts"],
+      "runtimeArgs": [
+        "--require",
+        "ts-node/register",
+        "--require",
+        "tsconfig-paths/register"
+      ],
+      "envFile": "${workspaceFolder}/local.env",
+      "cwd": "${workspaceRoot}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "NODE_ENV": "local",
+        "NODE_PORT": "8000",
+        "TS_NODE_PROJECT": "apps/api/tsconfig.app.json",
+        "PROJECT_ROOT": "project"
       },
       "sourceMaps": true,
       "console": "internalConsole",

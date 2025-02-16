@@ -1,6 +1,6 @@
 import fs from 'fs';
-import path from 'path';
 import ignore from 'ignore';
+import path from 'path';
 import { PROJECT_ROOT } from './config';
 
 const ig = ignore();
@@ -27,11 +27,16 @@ try {
     projectIgnoreContent = fs.readFileSync(projectIgnorePath, 'utf8');
   }
 
-  (projectIgnoreContent || configIgnoreContent)
-    .split('\n')
-    .map((line: string) => line.trim())
-    .filter((line: string) => line && !line.startsWith('#'))
-    .forEach((line: string) => ig.add(line));
+  console.log('ignore file:', projectIgnoreContent);
+  console.log('configIgnoreContent', configIgnoreContent);
+
+  ig.add(projectIgnoreContent)
+
+  // (projectIgnoreContent || configIgnoreContent)
+  //   .split('\n')
+  //   .map((line: string) => line.trim())
+  //   .filter((line: string) => line && !line.startsWith('#'))
+  //   .forEach((line: string) => ig.add(line));
 } catch (error) {
   console.warn(`Warning: Error reading .gongshoignore file(s): ${error}`);
 }

@@ -200,7 +200,7 @@ export class Conversation {
       const examineFilesRegex = /EXAMINE_FILES:(.*?)(?:\n|$)/;
       const match = content.match(examineFilesRegex);
       const files = match ? match[1].trim().split(',') : [];
-      await this.files.addFiles(files);
+      await this.files.addFiles(files, true);
       const addFilesDialog = await AddFilesDialog.create(files);
       this.dialogQueue.unshift(addFilesDialog);
     }

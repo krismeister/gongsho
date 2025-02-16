@@ -15,7 +15,7 @@ interface ChangedFile {
 export class ConversationFiles {
   private files: Record<string, FileRecord> = {};
 
-  async addFiles(relativePaths: string[]) {
+  async addFiles(relativePaths: string[], updateHashes = false) {
 
     const newFiles = relativePaths.filter(relativePath => !this.files[relativePath]);
 
@@ -24,6 +24,13 @@ export class ConversationFiles {
         relativePath,
         fileHash: '',
       };
+    }
+
+    if (updateHashes) {
+      const contents = await RepoMap.loadContents(relativePaths);
+      for (const relativePath of relativePaths) {
+        this.files[relativePath].fileHash = contents[relativePath]?.hash ?? '';
+      }
     }
   }
 
