@@ -11,13 +11,12 @@ bashPreBuild() {
   cp -r dist/apps/api/. publish/api
   mkdir -p publish/api/browser
   cp -r dist/apps/ui/browser/. publish/api/browser
+
+  printf "\n\nAre all these dependencies in the publish/api/package.json?\n"
+  grep -n "module.exports = " publish/api/main.js
 }
 
-bashPreBuild
+## import this file in other scripts
+## source ./build.sh
 
-printf "\n\nAre all these dependencies in the publish/api/package.json?\n"
-grep -n "module.exports = " publish/api/main.js
-
-printf "\n\n"
-
-# npx nx release
+npx nx release
