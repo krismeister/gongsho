@@ -67,3 +67,20 @@ Running jest natively:
 ```
 npx jest --config libs/text-to-blocks/jest.config.ts libs/text-to-blocks
 ```
+
+### Updating Packages:
+
+```
+npx nx migrate latest --interactive
+
+npx nx migrate --run-migrations --if-exists
+
+```
+
+** NOTE** we had to install an old version of @nestjs/serve-static.
+
+```
+npm install @nestjs/serve-static@10.4.15
+```
+
+Because the latest version needs a newer nestjs than nx supports.
