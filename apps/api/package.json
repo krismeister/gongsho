@@ -1,0 +1,12 @@
+{
+  "name": "gongsho",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@nestjs/common": "^10.0.2",
+    "@nestjs/core": "^10.0.2",
+    "@nestjs/platform-express": "^10.0.2",
+    "@nestjs/serve-static": "^4.0.2"
+  }
+}

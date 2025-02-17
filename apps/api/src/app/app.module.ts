@@ -11,7 +11,7 @@ import { ConversationsService } from './conversations.service';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../ui/browser'),
+      rootPath: join(__dirname, './browser'),
     }),
   ],
   controllers: [AppController],

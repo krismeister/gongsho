@@ -17,8 +17,8 @@
     "baseUrl": ".",
     "paths": {
       "@gongsho/core": ["libs/core/src/index.ts"],
-      "@gongsho/types": ["libs/types/src/index.ts"],
       "@gongsho/text-to-blocks": ["libs/text-to-blocks/src/index.ts"],
+      "@gongsho/types": ["libs/types/src/index.ts"],
       "@spartan-ng/ui-accordion-helm": [
         "libs/ui/spartan-ng/ui-accordion-helm/src/index.ts"
       ],

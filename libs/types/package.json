@@ -1,7 +1,7 @@
 {
   "name": "@gongsho/types",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",

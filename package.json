@@ -12,7 +12,7 @@
     "test:ui": "nx test ui",
     "test:text-to-blocks": "nx test text-to-blocks"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@anthropic-ai/sdk": "^0.36.2",
     "@nestjs/common": "^10.0.2",
