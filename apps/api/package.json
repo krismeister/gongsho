@@ -8,5 +8,15 @@
     "@nestjs/core": "^10.0.2",
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/serve-static": "^4.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krismeister/gongsho.git"
+  },
+  "keywords": [
+    "ai",
+    "nestjs",
+    "nx"
+  ],
+  "bin": "./main.js"
 }

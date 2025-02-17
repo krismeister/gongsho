@@ -11,12 +11,16 @@ bashPreBuild() {
   cp -r dist/apps/api/. publish/api
   mkdir -p publish/api/browser
   cp -r dist/apps/ui/browser/. publish/api/browser
+  cp apps/api/.npmignore publish/api/.npmignore
+  cp README.md publish/api/README.md
+
+  # inject the bin field into main.js
+  sed -i '1i #!/usr/bin/env node' publish/api/main.js
 
   printf "\n\nAre all these dependencies in the publish/api/package.json?\n"
   grep -n "module.exports = " publish/api/main.js
 }
 
-## import this file in other scripts
-## source ./build.sh
+bashPreBuild
 
-npx nx release
+# npx nx release

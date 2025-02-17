@@ -4,6 +4,28 @@ Simple NPM library to generate code with LLMs. Use NPM install, then run the sta
 
 [![Gongsho Conversation Page](screenshots/conversation-page_thumb.png)](screenshots/conversation-page.png)
 
+## Install and Run
+
+You can either install gongsho in a project or globally
+
+```bash
+# install in a project
+npm install gongsho
+
+# install globally
+npm install -g gongsho
+```
+
+### Run
+
+```bash
+# If you have an ANTHROPIC_API_KEY env variable in your bash profile.
+ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY npx gongsho
+
+```
+
+## Dev
+
 This product is still in early development. But you can try it out running in development mode.
 
 Copy the `.env` file.
