@@ -85,7 +85,7 @@ Running jest natively:
 npx jest --config libs/text-to-blocks/jest.config.ts libs/text-to-blocks
 ```
 
-### Updating Packages:
+### Updating Packages
 
 ```
 npx nx migrate latest --interactive

@@ -7,5 +7,21 @@
   "editor.lineNumbers": "on",
   "editor.trimAutoWhitespace": true,
   "editor.tabSize": 2,
-  "cSpell.words": ["gongsho", "gongshoignore", "gitignore", "npmignore"]
+  "cSpell.words": [
+    "gongsho",
+    "gongshoignore",
+    "gitignore",
+    "npmignore",
+    "healthcheck"
+  ],
+  "cSpell.ignorePaths": [
+    "package-lock.json",
+    "node_modules",
+    "vscode-extension",
+    ".git/{info,lfs,logs,refs,objects}/**",
+    ".git/{index,*refs,*HEAD}",
+    ".vscode",
+    ".vscode-insiders",
+    "nx.json"
+  ]
 }

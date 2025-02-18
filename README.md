@@ -66,7 +66,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
 - [x] Read env variables for claude api key, github token, etc.
 - [x] Add a web interface to run gongsho
 - [ ] Add docs on configuration
-- [ ] Add support for multple LLMs
+- [ ] Add support for multiple LLMs
 
 ### MVP
 
@@ -78,10 +78,10 @@ When you have many files in a project you can create a `.gongshoignore` file to 
 
 - LLM
 
-  - [x] Make initial prompt asking if codebase explenation is required
+  - [x] Make initial prompt asking if codebase explanation is required
   - [x] Make interstitial
-  - [x] Pass full text of files to LLM if explenation is required
-  - [x] Save/Load convdersation to/from file
+  - [x] Pass full text of files to LLM if explanation is required
+  - [x] Save/Load conversation to/from file
   - [ ] increase performance on large projects
 
 - UI
@@ -99,7 +99,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [x] Add addUserInput endpoint
   - [x] Add stream conversation endpoint (SSE/ws)
   - [x] Add getChanges to a conversation
-  - [ ] Add getFiles endopint
+  - [ ] Add getFiles endpoint
 
 ### Assistant TODOs
 
@@ -107,7 +107,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
 - [x] Take claude's response and apply it to the project folder
 - [x] Add basic RepoMap with simple list of files
 - [x] Add aider like prompts to gongsho
-- [x] Impliment RepoMap similar to [Aider Repo-Map](https://github.com/jxnl/aider/blob/main/aider/repo_map.py)
+- [x] Implement RepoMap similar to [Aider Repo-Map](https://github.com/jxnl/aider/blob/main/aider/repo_map.py)
 - [ ] Research Tree-Splitter to give more context to LLM
 - [ ] Research Token size limits for user input and repo-maps
 

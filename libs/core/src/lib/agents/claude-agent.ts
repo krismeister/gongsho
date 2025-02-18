@@ -24,7 +24,7 @@ export class ClaudeAgent extends AbstractAgent {
       max_tokens: this.modelConfig.maxTokens,
       temperature: 1,
       system: system,
-      // TODO deal with tool reponses correctly.
+      // TODO deal with tool responses correctly.
       messages: messages.map(msg => ({
         role: msg.role,
         content: msg.content.map(c => ({

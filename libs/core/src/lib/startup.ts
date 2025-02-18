@@ -14,7 +14,7 @@ export const initializeGongsho = async () => {
   if (totalFiles > gongshoConfig.maxFiles) {
     const message = `
     This project has ${totalFiles} files, which is more than gongsho was tested with.
-    Please check the .gitshoignore file to see if you can reduce the number of files.
+    Please check the .gongshoignore file to see if you can reduce the number of files.
     Or run gongsho within a sub-directory of the project.
     If you are sure you want to proceed, you can set the GONGSHO_MAX_FILES_WARNING environment variable to a larger number.
     `
