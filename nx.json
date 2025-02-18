@@ -110,6 +110,15 @@
         "packageRoot": "publish/{projectName}",
         "currentVersionResolver": "git-tag"
       }
+    },
+    "changelog": {
+      "workspaceChangelog": {
+        "renderOptions": {
+          "authors": false,
+          "commitReferences": true,
+          "versionTitleDate": false
+        }
+      }
     }
   }
 }
