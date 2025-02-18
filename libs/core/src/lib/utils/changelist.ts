@@ -12,7 +12,7 @@ export const contentToChangelist = async (content: string): Promise<ChangeList> 
   const files: Record<string, ChangeListFile> = {}
 
   searchReplaceBlocks.forEach(block => {
-    const absolutePath = path.resolve(gongshoConfig.PROJECT_ROOT, block.file);
+    const absolutePath = path.resolve(gongshoConfig.projectRoot, block.file);
     if (files[block.file]) {
       return;
     }
@@ -36,7 +36,7 @@ export const contentToChangelist = async (content: string): Promise<ChangeList> 
   })
 
   const changes: ChangeListItem[] = Object.entries(files).map(([key, value]) => {
-    const relativePath = path.relative(gongshoConfig.PROJECT_ROOT, key);
+    const relativePath = path.relative(gongshoConfig.projectRoot, key);
     return {
       file: value,
       blocks: searchReplaceBlocks.filter(block => block.file === relativePath).map(block => ({

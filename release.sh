@@ -23,4 +23,10 @@ bashPreBuild() {
 
 bashPreBuild
 
-# npx nx release
+npx nx release --skip-publish
+
+read -p "Verify the CHANGELOG and Publish directory is correct"
+
+# publish the package
+cd publish/api
+npm publish

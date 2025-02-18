@@ -9,7 +9,7 @@ export class ClaudeAgent extends AbstractAgent {
   constructor(modelConfig: AgentModelConfig) {
     super(modelConfig);
     this.anthropic = new Anthropic({
-      apiKey: gongshoConfig.ANTHROPIC_API_KEY ?? '',
+      apiKey: gongshoConfig.anthropicApiKey ?? '',
     });
   }
 

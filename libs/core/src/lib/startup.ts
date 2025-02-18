@@ -11,9 +11,7 @@ export const initializeGongsho = async () => {
   const files = RepoMap.getProjectFilesList()
   const totalFiles = (files.match(/\n/g) || []).length + 1;
 
-  console.log('project total files', totalFiles)
-
-  if (totalFiles > gongshoConfig.GONGSHO_MAX_FILES_WARNING) {
+  if (totalFiles > gongshoConfig.maxFiles) {
     const message = `
     This project has ${totalFiles} files, which is more than gongsho was tested with.
     Please check the .gitshoignore file to see if you can reduce the number of files.

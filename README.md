@@ -1,6 +1,8 @@
 # gongsho
 
-Simple NPM library to generate code with LLMs. Use NPM install, then run the start command to open the gongsho web interface.
+An NPM library to add AI CodeGen to your typescript project. Simply install `npm i gongsho` then run the start command to open the gongsho web interface. It reads your project files and allows you to have a conversation with the LLM to generate code.
+
+Gongsho currently uses Claude 3.5 Sonnet, you'll need an Anthropic API key to use it.
 
 [![Gongsho Conversation Page](screenshots/conversation-page_thumb.png)](screenshots/conversation-page.png)
 
@@ -16,34 +18,45 @@ npm install gongsho
 npm install -g gongsho
 ```
 
-### Run
+You'll need to get an Anthropic API key from [Anthropic](https://console.anthropic.com/settings/keys) and pass it to gongsho.
 
 ```bash
 # If you have an ANTHROPIC_API_KEY env variable in your bash profile.
-ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY npx gongsho
-
+npx gongsho anthropic-api-key=$ANTHROPIC_API_KEY
 ```
 
-## Dev
+## Configuration
 
-This product is still in early development. But you can try it out running in development mode.
+The following options are available to configure gongsho:
 
-Copy the `.env` file.
+- **ANTHROPIC_API_KEY** (required) get your key from [Anthropic](https://console.anthropic.com/settings/keys)
+- **PORT** (optional) default is 3030
+- **MAX_FILES** (optional) You'll get a warning if your project has more files than this. Default is 800.
 
-```
-cp .env.example .env
-```
+You can either pass them in as **flags** or as an **`.env`** file.
 
-Add an anthropic api key to the `.env` file.
+Pass as flags example:
 
-Start the API and UI:
-
-```
-npm run start:api
-npm run start:ui
+```bash
+npx gongsho --anthropicApiKey=$ANTHROPIC_API_KEY --port=3030
 ```
 
-Open the web interface at `http://localhost:4200`
+Point to an `.env` file:
+
+```bash
+npx gongsho --envFile=.env.gongsho
+```
+
+```bash
+# .env.gongsho
+ANTHROPIC_API_KEY=sk-ant-api03-Iw....
+PORT=3030
+MAX_FILES=800
+```
+
+### .gongshoignore
+
+When you have many files in a project you can create a `.gongshoignore` file to exclude files from the conversation. This will greatly improve performance. When you don't create a custom `.gongshoignore` file, gongsho will use the `.gitignore` file.
 
 ## TODOs
 
@@ -60,20 +73,21 @@ Open the web interface at `http://localhost:4200`
 - [ ] MVP
 
   - [x] NX project with Angular and NestJS
-  - [ ] Point to real project instead of projects directory
-  - [ ] Build NPM package
+  - [x] Point to real project instead of projects directory
+  - [x] Build NPM package
 
-- [ ] LLM
+- LLM
 
   - [x] Make initial prompt asking if codebase explenation is required
   - [x] Make interstitial
   - [x] Pass full text of files to LLM if explenation is required
   - [x] Save/Load convdersation to/from file
+  - [ ] increase performance on large projects
 
-- [ ] UI
+- UI
 
   - [ ] Add diff viewer of changes
-  - [ ] Add abilty to add files manually to the conversation
+  - [ ] Add ability to add files manually to the conversation
   - [x] Add apply button to apply changes to the project
   - [x] event stream
   - [ ] UI to see your history
@@ -105,11 +119,11 @@ Open the web interface at `http://localhost:4200`
 
 ## Bugs
 
--[ ] Add new file creation, during conversation
-
+- [x] Add new file creation, during conversation
+- [ ] Agent dropdown on textarea not hooked in, make textarea only clear when successfully applied
 - [ ] Theres an extra conversations load `http://localhost:4200/api/conversations/` on the conversation details page
 - [ ] Handle conversation start when server has an error, better handling of clearing text area.
-- [ ] Deal with Agent errors better.
+- [ ] Deal with Agent errors better
 
 ## Backlog
 

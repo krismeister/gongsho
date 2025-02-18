@@ -1,4 +1,21 @@
-some handy shortcuts:
+This product is still in early development. But you can try it out running in development mode.
+
+Copy the `.env` file.
+
+```
+cp .env.example .env
+```
+
+Add an anthropic api key to the `.env` file.
+
+Start the API and UI:
+
+```
+npm run start:api
+npm run start:ui
+```
+
+Open the web interface at `http://localhost:3030`
 
 # show project dependencies
 

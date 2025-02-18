@@ -98,6 +98,13 @@
       "!@gongsho/types",
       "!@gongsho/text-to-blocks"
     ],
+    "conventionalCommits": {
+      "types": {
+        "docs": {
+          "semverBump": "none"
+        }
+      }
+    },
     "version": {
       "generatorOptions": {
         "packageRoot": "publish/{projectName}",

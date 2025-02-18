@@ -1,25 +1,65 @@
 import * as dotenv from 'dotenv';
 import path from 'path';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 export const PROJECT_ROOT = path.resolve('/', process.cwd(), process.env['PROJECT_ROOT'] ?? '');
 console.log('PROJECT_ROOT', PROJECT_ROOT);
 
-// by default it loads the .env file in the root of the project
-// const localEnvPath = path.resolve(process.cwd(), '.env');
-dotenv.config({ debug: true })
 
-export interface GongshoConfig {
-  ANTHROPIC_API_KEY?: string;
-  PROJECT_ROOT: string;
-  GONGSHO_DIR: string;
-  GONGSHO_MAX_FILES_WARNING: number;
+yargs(hideBin(process.argv))
+  .option('port', {
+    description: 'The port on which the app will be running',
+    default: 3030,
+    type: 'number'
+  })
+  .option('anthropicApiKey', {
+    description: 'Anthropic API key for Claude integration',
+    type: 'string',
+  })
+  .option('maxFiles', {
+    description: 'Max files used as a warning',
+    default: 800,
+    type: 'number',
+    required: false
+  })
+  .option('envFile', {
+    description: 'Configure with an external .env file',
+    default: '.env',
+    type: 'string',
+    required: false
+  })
+  .parse()
+
+interface CliFlags {
+  port?: number;
+  anthropicApiKey: string;
+  maxFiles?: number;
+  envFile?: string;
+}
+
+const flags = yargs.argv as unknown as CliFlags;
+
+
+if (flags.envFile) {
+  const envPath = path.resolve(PROJECT_ROOT, flags.envFile);
+  dotenv.config({ path: envPath, debug: true })
+}
+
+interface GongshoConfig {
+  anthropicApiKey: string;
+  port: number;
+  projectRoot: string;
+  gongshoDir: string;
+  maxFiles: number;
 }
 
 export const gongshoConfig: GongshoConfig = {
-  ANTHROPIC_API_KEY: process.env['ANTHROPIC_API_KEY'] ?? '',
-  PROJECT_ROOT: PROJECT_ROOT,
-  GONGSHO_DIR: path.resolve(PROJECT_ROOT, '.gongsho'),
-  GONGSHO_MAX_FILES_WARNING: parseInt(process.env['GONGSHO_MAX_FILES_WARNING'] ?? '2000'),
+  anthropicApiKey: flags.anthropicApiKey ?? process.env['ANTHROPIC_API_KEY'] ?? '',
+  port: flags.port ?? parseInt(process.env['PORT'] ?? '3030'),
+  projectRoot: PROJECT_ROOT,
+  gongshoDir: path.resolve(PROJECT_ROOT, '.gongsho'),
+  maxFiles: flags.maxFiles ?? parseInt(process.env['MAX_FILES'] ?? '800'),
 };
 
 export const verifyConfig = () => {
@@ -28,8 +68,8 @@ export const verifyConfig = () => {
     console.log(`  Config ${key} found: ${!!value}`);
   });
 
-  if (gongshoConfig.ANTHROPIC_API_KEY === '') {
-    throw new Error('ANTHROPIC_API_KEY is missing');
+  if (gongshoConfig.anthropicApiKey === '') {
+    throw new Error('anthropicApiKey is missing');
   }
 }
 

@@ -107,4 +107,4 @@ class RepoMapBase {
   }
 }
 
-export const RepoMap = new RepoMapBase(gongshoConfig.PROJECT_ROOT);
+export const RepoMap = new RepoMapBase(gongshoConfig.projectRoot);
