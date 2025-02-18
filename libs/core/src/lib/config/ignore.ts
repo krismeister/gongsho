@@ -7,38 +7,37 @@ const ig = ignore();
 ig.add('.DS_Store');
 ig.add('Thumbs.db');
 ig.add('node_modules');
+ig.add('.gongsho');
+ig.add('.gongshoignore');
+ig.add('.gitignore');
+ig.add('dist');
+ig.add('.vscode');
+ig.add('.idea');
+ig.add('coverage');
+ig.add('*.log');
+ig.add('.angular');
 
-// Try to read .gongshoignore from config directory
-const configIgnorePath = path.resolve(__dirname, '.gongshoignore');
-// Try to read .gongshoignore from project root
-const projectIgnorePath = path.resolve(PROJECT_ROOT, '.gongshoignore');
+const gongshoIgnorePath = path.resolve(PROJECT_ROOT, '.gongshoignore');
+const gitIgnorePath = path.resolve(PROJECT_ROOT, '.gitignore');
 
 try {
-  let configIgnoreContent = '';
-  let projectIgnoreContent = '';
+  let gongshoIgnoreContent = '';
+  let gitIgnoreContent = '';
 
   // Read and add patterns from config directory if exists
-  if (fs.existsSync(configIgnorePath)) {
-    configIgnoreContent = fs.readFileSync(configIgnorePath, 'utf8');
+  if (fs.existsSync(gongshoIgnorePath)) {
+    gongshoIgnoreContent = fs.readFileSync(gongshoIgnorePath, 'utf8');
   }
 
   // Read and add patterns from project root if exists
-  if (fs.existsSync(projectIgnorePath)) {
-    projectIgnoreContent = fs.readFileSync(projectIgnorePath, 'utf8');
+  if (fs.existsSync(gitIgnorePath)) {
+    gitIgnoreContent = fs.readFileSync(gitIgnorePath, 'utf8');
   }
 
-  console.log('ignore file:', projectIgnoreContent);
-  console.log('configIgnoreContent', configIgnoreContent);
+  ig.add(gongshoIgnoreContent || gitIgnoreContent)
 
-  ig.add(projectIgnoreContent)
-
-  // (projectIgnoreContent || configIgnoreContent)
-  //   .split('\n')
-  //   .map((line: string) => line.trim())
-  //   .filter((line: string) => line && !line.startsWith('#'))
-  //   .forEach((line: string) => ig.add(line));
 } catch (error) {
-  console.warn(`Warning: Error reading .gongshoignore file(s): ${error}`);
+  console.warn(`Warning: Error reading .gongshoignore or .gitignore file(s): ${error}`);
 }
 
 export const shouldIgnore = (filePath: string): boolean => {

@@ -60,7 +60,7 @@ Angular Spartan
 npx nx g @spartan-ng/cli:healthcheck
 ```
 
-Retheme:
+Theme:
 
 ```
 npx nx g @spartan-ng/cli:ui-theme

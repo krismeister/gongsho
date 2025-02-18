@@ -8,8 +8,7 @@
     "@nestjs/core": "^10.0.2",
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/serve-static": "^4.0.2",
-    "open": "^10.1.0",
-    "yargs": "^17.7.2"
+    "open": "^10.1.0"
   },
   "repository": {
     "type": "git",

@@ -56,7 +56,7 @@ MAX_FILES=800
 
 ### .gongshoignore
 
-When you have many files in a project you can create a `.gongshoignore` file to exclude files from the conversation. This will greatly improve performance. When you don't create a custom `.gongshoignore` file, gongsho will use the `.gitignore` file.
+When you have many files in a project you can create a `.gongshoignore` file to exclude files from the conversation. This will greatly improve performance. When you don't create a custom `.gongshoignore` file, gongsho will use the `.gitignore` file. There are additional some _sensible defaults_ that will always be ignored.
 
 ## TODOs
 
