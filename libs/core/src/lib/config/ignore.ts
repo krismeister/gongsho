@@ -1,7 +1,7 @@
 import fs from 'fs';
 import ignore from 'ignore';
 import path from 'path';
-import { PROJECT_ROOT } from './config';
+import { gongshoConfig } from './config';
 
 const ig = ignore();
 ig.add('.DS_Store');
@@ -20,8 +20,8 @@ ig.add('.nx')
 ig.add('.git')
 
 
-const gongshoIgnorePath = path.resolve(PROJECT_ROOT, '.gongshoignore');
-const gitIgnorePath = path.resolve(PROJECT_ROOT, '.gitignore');
+const gongshoIgnorePath = path.resolve(gongshoConfig.projectRoot, '.gongshoignore');
+const gitIgnorePath = path.resolve(gongshoConfig.projectRoot, '.gitignore');
 
 try {
   let gongshoIgnoreContent = '';
@@ -45,6 +45,6 @@ try {
 
 export const shouldIgnore = (filePath: string): boolean => {
   // Convert absolute path to relative path from project root
-  const relativePath = path.relative(PROJECT_ROOT, filePath);
+  const relativePath = path.relative(gongshoConfig.projectRoot, filePath);
   return ig.ignores(relativePath);
 };

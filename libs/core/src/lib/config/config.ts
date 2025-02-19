@@ -1,45 +1,43 @@
 import * as dotenv from 'dotenv';
+import { statSync } from 'fs';
 import path from 'path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-export const PROJECT_ROOT = path.resolve('/', process.cwd(), process.env['PROJECT_ROOT'] ?? '');
-console.log('PROJECT_ROOT', PROJECT_ROOT);
-
-
 yargs(hideBin(process.argv))
   .option('port', {
     description: 'The port on which the app will be running',
-    default: 3030,
     type: 'number'
   })
   .option('anthropicApiKey', {
     description: 'Anthropic API key for Claude integration',
-    type: 'string',
+    type: 'string'
   })
   .option('maxFiles', {
     description: 'Max files used as a warning',
-    default: 800,
-    type: 'number',
-    required: false
+    type: 'number'
   })
   .option('envFile', {
     description: 'Configure with an external .env file',
-    default: '.env',
-    type: 'string',
-    required: false
+    type: 'string'
+  })
+  .option('projectPath', {
+    description: 'The path to the project root',
+    type: 'string'
   })
   .parse()
 
 interface CliFlags {
   port?: number;
-  anthropicApiKey: string;
+  anthropicApiKey?: string;
   maxFiles?: number;
   envFile?: string;
+  projectPath?: string;
 }
 
 const flags = yargs.argv as unknown as CliFlags;
 
+const PROJECT_ROOT = path.resolve('/', process.cwd(), flags.projectPath ?? process.env['PROJECT_PATH'] ?? '.');
 
 if (flags.envFile) {
   const envPath = path.resolve(PROJECT_ROOT, flags.envFile);
@@ -71,7 +69,12 @@ export const verifyConfig = () => {
   if (gongshoConfig.anthropicApiKey === '') {
     throw new Error('anthropicApiKey is missing');
   }
+  try {
+    if (!statSync(gongshoConfig.projectRoot).isDirectory()) {
+      throw new Error(`path is not a directory: ${gongshoConfig.projectRoot}`);
+    }
+  } catch (error) {
+    console.warn(`path is not a directory: ${gongshoConfig.projectRoot} \n ${error}`);
+    throw error;
+  }
 }
-
-
-

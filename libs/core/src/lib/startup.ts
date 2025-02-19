@@ -7,6 +7,9 @@ export const initializeGongsho = async () => {
   await Conversations.load();
   await RepoMap.buildFileMap();
 
+  console.log(`Gongsho Project Root:
+    ${gongshoConfig.projectRoot}
+  `);
   // Debug qty of files
   const files = RepoMap.getProjectFilesList()
   const totalFiles = (files.match(/\n/g) || []).length + 1;

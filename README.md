@@ -41,19 +41,20 @@ The following options are available to configure gongsho:
 - **ANTHROPIC_API_KEY** (required) get your key from [Anthropic](https://console.anthropic.com/settings/keys)
 - **PORT** (optional) default is 3030
 - **MAX_FILES** (optional) You'll get a warning if your project has more files than this. Default is 800.
+- **PROJECT_PATH** (optional) The path to the project root. Default is the current working directory.
 
 You can either pass them in as **flags** or as an **`.env`** file.
 
 Pass as flags example:
 
 ```bash
-npx gongsho --anthropicApiKey=$ANTHROPIC_API_KEY --port=3030
+npx gongsho --anthropic-api-key=$ANTHROPIC_API_KEY --port=3030
 ```
 
 Point to an `.env` file:
 
 ```bash
-npx gongsho --envFile=.env.gongsho
+npx gongsho --env-file=.env.gongsho
 ```
 
 ```bash
