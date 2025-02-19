@@ -23,9 +23,11 @@ bashPreBuild() {
 
 bashPreBuild
 
+read -p "Verify the publish directory is correct"
+
 npx nx release --skip-publish
 
-read -p "Verify the CHANGELOG and Publish directory is correct"
+read -p "Verify the CHANGELOG.md is correct"
 
 # publish the package
 cd publish/api

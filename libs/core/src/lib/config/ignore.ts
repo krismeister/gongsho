@@ -15,7 +15,10 @@ ig.add('.vscode');
 ig.add('.idea');
 ig.add('coverage');
 ig.add('*.log');
-ig.add('.angular');
+ig.add('.angular')
+ig.add('.nx')
+ig.add('.git')
+
 
 const gongshoIgnorePath = path.resolve(PROJECT_ROOT, '.gongshoignore');
 const gitIgnorePath = path.resolve(PROJECT_ROOT, '.gitignore');
