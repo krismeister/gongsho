@@ -126,6 +126,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [ ] Highlight code snippet and ask for a change
   - [ ] Add "Explain My Project" feature
   - [ ] Add "Rules" feature for the AI to follow
+  - [ ] Facilitate update with UI notification to update gongsho [Gong Update Feed](https://registry.npmjs.org/-/package/gongsho/dist-tags) + [Compare Versions](https://www.npmjs.com/package/compare-versions)
 
 - Bugs
 
