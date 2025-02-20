@@ -102,6 +102,23 @@
       "types": {
         "docs": {
           "semverBump": "none"
+        },
+        "chore": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "refactor": {
+          "semverBump": "none"
+        },
+        "perf": {
+          "semverBump": "none"
+        },
+        "test": {
+          "semverBump": "none"
+        },
+        "style": {
+          "semverBump": "none"
         }
       }
     },
