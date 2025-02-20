@@ -1,4 +1,4 @@
-import { DialogData } from '@gongsho/types';
+import { AgentModels, DialogData } from '@gongsho/types';
 import { Body, Controller, Get, Param, Post, Sse } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -34,13 +34,13 @@ export class AppController {
   }
 
   @Post('conversations')
-  createConversation(@Body() body: { input?: string }) {
-    return this.conversationsService.createConversation(body.input);
+  createConversation(@Body() body: { input?: string, model: AgentModels }) {
+    return this.conversationsService.createConversation(body.input, body.model);
   }
 
   @Post('conversations/:id/user-input')
-  addUserInput(@Param('id') id: string, @Body() body: { input: string }) {
-    return this.conversationsService.addUserInput(id, body.input);
+  addUserInput(@Param('id') id: string, @Body() body: { input: string, model: AgentModels }) {
+    return this.conversationsService.addUserInput(id, body.input, body.model);
   }
 
   @Sse('conversations/:id/stream')

@@ -12,7 +12,8 @@
     "gongshoignore",
     "gitignore",
     "npmignore",
-    "healthcheck"
+    "healthcheck",
+    "uuidv4"
   ],
   "cSpell.ignorePaths": [
     "package-lock.json",

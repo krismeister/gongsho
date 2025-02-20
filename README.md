@@ -75,7 +75,6 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [x] NX project with Angular and NestJS
   - [x] Point to real project instead of projects directory
   - [x] Build NPM package
-  - [ ] Allow switching between agents
   - [ ] Show tokens used and cost estimate
 
 - LLM
@@ -91,10 +90,12 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [ ] Fix the apply button - for errors and for clearing
   - [ ] Add diff viewer of changes
   - [ ] Add ability to add files manually to the conversation
+  - [x] Allow switching between agents
   - [x] Add apply button to apply changes to the project
   - [x] event stream
   - [ ] event fragments
   - [ ] UI to see your history
+  - [ ] Research converting to [Vercel AI SDK](https://www.npmjs.com/package/ai)
 
 - Server
 
@@ -123,6 +124,8 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [ ] Browse the codebase
   - [ ] Highlight code snippet and explain it
   - [ ] Highlight code snippet and ask for a change
+  - [ ] Add "Explain My Project" feature
+  - [ ] Add "Rules" feature for the AI to follow
 
 - Bugs
 

@@ -1,15 +1,21 @@
-import { AgentMessageRoles, DialogRoles } from "@gongsho/types";
+import { AgentMessageRoles, AgentModels, DialogRoles } from "@gongsho/types";
 import { BaseDialog } from "../base-dialog";
 
 export class ChangelistDialog extends BaseDialog {
+
   constructor(
     protected override readonly inputText = '',
-    protected override readonly fillValues: Record<string, string> = {}
+    protected override readonly fillValues: Record<string, string> = {},
+    protected override readonly agent: AgentModels
   ) {
-    super(prompt, fillValues);
+    super(inputText, fillValues, agent);
     this.role = AgentMessageRoles.USER;
     this.dialogRole = DialogRoles.INTERSTITIAL;
     this.description = 'Request A Changelist';
+  }
+
+  static create(agent: AgentModels): ChangelistDialog {
+    return new ChangelistDialog(prompt, {}, agent);
   }
 }
 

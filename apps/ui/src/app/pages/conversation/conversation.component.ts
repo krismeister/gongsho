@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ConversationSummary } from '@gongsho/types';
+import { AgentModels, ConversationSummary } from '@gongsho/types';
 import { map, Observable } from 'rxjs';
 import { ConversationDialogListComponent } from '../../components/conversation/conversation-dialog-list.component';
 import { ConversationTextareaComponent } from '../../components/conversation/conversation-textarea.component';
@@ -31,7 +31,7 @@ export class ConversationComponent implements OnInit {
     this.conversationId = this.route.snapshot.paramMap.get('id') || '';
   }
 
-  handleSubmit(message: string) {
-    this.conversationService.addUserInput(this.conversationId, message).subscribe();
+  handleSubmit(message: { message: string, model: AgentModels }) {
+    this.conversationService.addUserInput(this.conversationId, message.message, message.model).subscribe();
   }
 }

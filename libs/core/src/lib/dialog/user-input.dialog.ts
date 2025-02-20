@@ -1,4 +1,4 @@
-import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
+import { AgentMessageRoles, AgentModels, DialogRoles } from '@gongsho/types';
 import { BaseDialog } from './base-dialog';
 
 export class UserInputDialog extends BaseDialog {
@@ -6,9 +6,10 @@ export class UserInputDialog extends BaseDialog {
 
   constructor(
     protected override readonly inputText: string,
-    protected override readonly fillValues: Record<string, string> = {}
+    protected override readonly fillValues: Record<string, string>,
+    protected override readonly agent: AgentModels
   ) {
-    super(inputText, fillValues);
+    super(inputText, fillValues, agent);
     this.role = AgentMessageRoles.USER;
     this.dialogRole = DialogRoles.USER;
   }

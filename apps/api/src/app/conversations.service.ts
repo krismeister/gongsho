@@ -1,5 +1,5 @@
 import { Conversations, writeChangelistToFiles } from '@gongsho/core';
-import { ConversationData, ConversationSummary, DialogData } from '@gongsho/types';
+import { AgentModels, ConversationData, ConversationSummary, DialogData } from '@gongsho/types';
 import { Injectable } from '@nestjs/common';
 import { concatMap, from, Observable, tap, throwError } from 'rxjs';
 @Injectable()
@@ -19,22 +19,22 @@ export class ConversationsService {
     };
   }
 
-  async createConversation(input: string): Promise<ConversationSummary> {
+  async createConversation(input: string, agent: AgentModels): Promise<ConversationSummary> {
     if (!input) {
       throw new Error('Input is required');
     }
     const summary = await Conversations.createConversation(input);
     const conversation = await Conversations.getConversation(summary.id);
-    conversation.addUserInput(input);
+    conversation.addUserInput(input, agent);
     return summary;
   }
 
-  async addUserInput(id: string, input: string): Promise<{ message: string }> {
+  async addUserInput(id: string, input: string, agent: AgentModels): Promise<{ message: string }> {
     if (!input || !id) {
       throw new Error('Input and id are required');
     }
     const conversation = await Conversations.getConversation(id);
-    await conversation.addUserInput(input);
+    await conversation.addUserInput(input, agent);
     return { message: 'success' };
   }
 

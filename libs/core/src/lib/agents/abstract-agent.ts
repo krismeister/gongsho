@@ -1,4 +1,4 @@
-import { AgentModelConfig } from '../models/model-configs';
+import { AgentModelConfig, AgentModels } from '@gongsho/types';
 
 export type AgentMessage = {
   role: 'user' | 'assistant';
@@ -39,9 +39,10 @@ export type AgentRequest = {
 };
 
 export abstract class AbstractAgent {
-  constructor(protected readonly modelConfig: AgentModelConfig) {}
+  constructor(protected readonly modelConfig: AgentModelConfig) { }
   abstract sendMessages(
     system: string,
-    messages: AgentMessage[]
+    messages: AgentMessage[],
+    model: AgentModels
   ): Promise<AgentResponse>;
 }

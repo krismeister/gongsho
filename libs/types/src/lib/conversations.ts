@@ -1,3 +1,4 @@
+import { AgentModels } from "./agents";
 
 export type ConversationSummary = {
   id: string;
@@ -28,6 +29,7 @@ export type DialogData = {
   content: string;
   timestamp: Date;
   fileHashes: Record<string, string>;
+  agent?: AgentModels;
 };
 
 export type ConversationDetails = {

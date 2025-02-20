@@ -1,7 +1,7 @@
-import { AgentMessageRoles, ChangeList, ConversationDetails, DialogData, DialogRoles } from '@gongsho/types';
+import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogRoles } from '@gongsho/types';
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
-import { AbstractAgent, AgentResponse } from '../agents/abstract-agent';
-import { ClaudeAgent } from '../agents/claude-agent';
+import { AgentResponse } from '../agents/abstract-agent';
+import { getAgent } from '../agents/agents';
 import { AssistantAcknowledgedDialog } from '../dialog/agent/assistant-acknowledged.dialog';
 import { AssistantChangelistDialog } from '../dialog/agent/assistant-changelist.dialog';
 import { AssistantTextDialog } from '../dialog/agent/assistant-text.dialog';
@@ -13,9 +13,8 @@ import { FilesChangedDialog } from '../dialog/interstitial/files-changed.dialog'
 import { RepoMapDialog } from '../dialog/interstitial/repo-map.dialog';
 import { WholeCodebaseDialog } from '../dialog/system/whole-codebase.dialog';
 import { UserInputDialog } from '../dialog/user-input.dialog';
-import { AgentModelConfigs, AgentModels } from '../models/model-configs';
 import { contentToChangelist } from '../utils/changelist';
-import { conversationExists, loadConversation, saveConversationDetails } from '../utils/storage';
+import { loadConversation, saveConversationDetails } from '../utils/storage';
 import { ConversationFiles } from './conversation-files';
 
 export class Conversation {
@@ -30,16 +29,11 @@ export class Conversation {
   private files = new ConversationFiles();
   private dialogQueue: BaseDialog[] = [];
   private agentInProgress = false;
-  private agent: AbstractAgent;
 
   constructor(
     public id: string,
     public startingInput?: string
   ) {
-    this.agent = new ClaudeAgent(AgentModelConfigs[AgentModels.CLAUDE_3_SONNET]);
-    if (!conversationExists(this.id)) {
-      this.saveToProject()
-    }
   }
 
   private saveToProject() {
@@ -73,20 +67,19 @@ export class Conversation {
     this.files.addFilesWithHashes(savedConversation.files);
   }
 
-  public async addUserInput(userInput: string) {
+  public async addUserInput(userInput: string, agent: AgentModels) {
     if (this.dialogFlow.length === 0) {
-      this.startConversation(userInput);
+      this.startConversation(userInput, agent);
       return
     }
     const changedFiles = await this.files.getChangedFiles();
-    debugger
     if (changedFiles.length > 0) {
       const filesChangedDialog = await FilesChangedDialog.create(changedFiles.map(file => file.relativePath));
       this.files.applyChanges(changedFiles);
       this.dialogQueue.push(filesChangedDialog);
     }
     // const lastDialog = this.dialogFlow.at(-1)!.role = ;
-    this.dialogQueue.push(new UserInputDialog(userInput));
+    this.dialogQueue.push(new UserInputDialog(userInput, {}, agent));
     this.sendNextQueueItemToAgent();
   }
 
@@ -100,7 +93,7 @@ export class Conversation {
   }
 
   public async requestChangelist() {
-    this.dialogQueue.push(new ChangelistDialog());
+    this.dialogQueue.push(ChangelistDialog.create(this.lastAgent));
     this.sendNextQueueItemToAgent();
   }
 
@@ -116,15 +109,15 @@ export class Conversation {
     await this.files.addFiles(files);
   }
 
-  private async startConversation(userInput: string) {
+  private async startConversation(userInput: string, agent: AgentModels) {
     const systemDialog = new WholeCodebaseDialog();
-    const repoMapDialog = RepoMapDialog.create()
+    const repoMapDialog = RepoMapDialog.create(this.lastAgent);
 
     this.dialogFlow.push(systemDialog);
     this.dialogStream$.next(systemDialog);
 
     this.dialogQueue.push(repoMapDialog);
-    this.dialogQueue.push(new UserInputDialog(userInput));
+    this.dialogQueue.push(new UserInputDialog(userInput, {}, agent));
 
     this.sendNextQueueItemToAgent();
   }
@@ -160,9 +153,12 @@ export class Conversation {
           },
         ],
       }));
+
     const system = messages.shift()!;
-    this.agent
-      .sendMessages(system.content[0].text, messages)
+
+
+    getAgent(this.lastAgent)
+      .sendMessages(system.content[0].text, messages, this.lastAgent)
       .then(response => {
         this.agentInProgress = false;
         this.agentBusy$.next(false);
@@ -201,7 +197,7 @@ export class Conversation {
       const match = content.match(examineFilesRegex);
       const files = match ? match[1].trim().split(',') : [];
       await this.files.addFiles(files, true);
-      const addFilesDialog = await AddFilesDialog.create(files);
+      const addFilesDialog = await AddFilesDialog.create(files, this.lastAgent);
       this.dialogQueue.unshift(addFilesDialog);
     }
 
@@ -209,4 +205,21 @@ export class Conversation {
       this.sendNextQueueItemToAgent();
     }
   }
+
+  protected get lastAgent(): AgentModels {
+    // First check dialogQueue from newest to oldest
+    for (let i = this.dialogQueue.length - 1; i >= 0; i--) {
+      const agent = this.dialogQueue[i].getDialogData().agent;
+      if (agent) return agent;
+    }
+
+    // Then check dialogFlow from newest to oldest
+    for (let i = this.dialogFlow.length - 1; i >= 0; i--) {
+      const agent = this.dialogFlow[i].getDialogData().agent;
+      if (agent) return agent;
+    }
+
+    return defaultAgentModel;
+  }
+
 }

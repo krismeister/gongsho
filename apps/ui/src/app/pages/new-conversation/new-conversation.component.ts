@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AgentModels } from '@gongsho/types';
 import { ConversationTextareaComponent } from '../../components/conversation/conversation-textarea.component';
 import { ConversationService } from '../../services/conversation.service';
 
@@ -21,8 +22,8 @@ export class NewConversationComponent {
     private router: Router
   ) { }
 
-  handleSubmit(message: string) {
-    this.conversationService.createConversation(message).pipe(
+  handleSubmit(message: { message: string, model: AgentModels }) {
+    this.conversationService.createConversation(message.message, message.model).pipe(
     ).subscribe({
       next: (conversationSummary) => {
         this.router.navigate(['/conversations', conversationSummary.id]);

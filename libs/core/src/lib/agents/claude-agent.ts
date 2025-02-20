@@ -1,13 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { AgentModelConfigs, AgentModels, defaultAgentModel } from '@gongsho/types';
 import { gongshoConfig } from '../config/config';
-import { AgentModelConfig } from '../models/model-configs';
 import { AbstractAgent, AgentMessage, AgentResponse } from './abstract-agent';
 
 export class ClaudeAgent extends AbstractAgent {
   private anthropic: Anthropic;
 
-  constructor(modelConfig: AgentModelConfig) {
-    super(modelConfig);
+  constructor() {
+    super(AgentModelConfigs[defaultAgentModel]);
     this.anthropic = new Anthropic({
       apiKey: gongshoConfig.anthropicApiKey ?? '',
     });
@@ -15,13 +15,19 @@ export class ClaudeAgent extends AbstractAgent {
 
   async sendMessages(
     system: string,
-    messages: AgentMessage[]
+    messages: AgentMessage[],
+    model: AgentModels
   ): Promise<AgentResponse> {
+
+    if (!Object.values(AgentModels).includes(model)) {
+      throw new Error(`Unsupported model: ${model}`);
+    }
+
     console.log('sending messages', JSON.stringify(messages));
 
     const response = await this.anthropic.messages.create({
-      model: this.modelConfig.model,
-      max_tokens: this.modelConfig.maxTokens,
+      model: model,
+      max_tokens: AgentModelConfigs[model].maxOutputTokens,
       temperature: 1,
       system: system,
       // TODO deal with tool responses correctly.

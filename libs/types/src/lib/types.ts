@@ -6,3 +6,5 @@ export { AgentMessageRoles, ConversationData, ConversationDetails, ConversationS
 
 export { ChangeList, ChangeListFile, ChangeListItem, SearchReplaceBlock } from "./changelist";
 
+export { AgentModelConfig, AgentModelConfigs, AgentModels, defaultAgentModel } from "./agents";
+

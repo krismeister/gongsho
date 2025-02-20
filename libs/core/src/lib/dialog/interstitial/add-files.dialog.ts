@@ -1,4 +1,4 @@
-import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
+import { AgentMessageRoles, AgentModels, DialogRoles } from '@gongsho/types';
 import { RepoMap } from '../../repo-map/repo-map';
 import { deletesAndUpdates } from '../../utils/dialog';
 import { BaseDialog } from '../base-dialog';
@@ -7,15 +7,15 @@ export class AddFilesDialog extends BaseDialog {
   protected override description = 'Add Files';
   constructor(
     protected override readonly inputText = '',
-    protected override readonly fillValues: Record<string, string> = {}
+    protected override readonly fillValues: Record<string, string> = {},
+    protected override readonly agent: AgentModels
   ) {
     super(prompt, fillValues);
     this.role = AgentMessageRoles.USER;
     this.dialogRole = DialogRoles.INTERSTITIAL;
   }
 
-  public static async create(filePaths: string[]): Promise<AddFilesDialog> {
-    debugger;
+  public static async create(filePaths: string[], agent: AgentModels): Promise<AddFilesDialog> {
 
     const repoFiles = await RepoMap.loadContents(filePaths);
 
@@ -23,7 +23,7 @@ export class AddFilesDialog extends BaseDialog {
     const dialog = new AddFilesDialog('', {
       deletes: '',
       files,
-    });
+    }, agent);
 
     dialog.fileHashes = fileHashes;
 

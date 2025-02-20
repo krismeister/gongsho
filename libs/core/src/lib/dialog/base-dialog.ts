@@ -1,7 +1,6 @@
-import { AgentMessageRoles, DialogData, DialogRoles } from '@gongsho/types';
+import { AgentMessageRoles, AgentModels, DialogData, DialogRoles } from '@gongsho/types';
 import { v4 as uuidv4 } from 'uuid';
 import { fillDialog } from '../utils/dialog';
-
 export class BaseDialog {
   protected description: string;
   protected timestamp: Date;
@@ -10,10 +9,10 @@ export class BaseDialog {
   public dialogRole: DialogRoles = DialogRoles.SYSTEM;
   public role: AgentMessageRoles = AgentMessageRoles.ASSISTANT;
   public content = '';
-
   constructor(
     protected readonly inputText: string,
-    protected readonly fillValues: Record<string, string>
+    protected readonly fillValues: Record<string, string> = {},
+    protected readonly agent?: AgentModels
   ) {
     this.content = fillDialog(this.inputText, this.fillValues);
     this.description = '';
@@ -30,11 +29,15 @@ export class BaseDialog {
       content: this.content,
       timestamp: this.timestamp,
       fileHashes: this.fileHashes,
+      ...(this.agent ? { agent: this.agent } : {}),
     };
   }
 
   public static fromDialogData(data: DialogData): BaseDialog {
-    const newDialog = new BaseDialog(data.content, {});
+    if (data.agent as string === 'undefined') {
+      data.agent = undefined;
+    }
+    const newDialog = new BaseDialog(data.content, {}, data.agent);
     newDialog.description = data.description;
     newDialog.timestamp = data.timestamp;
     newDialog.id = data.id;

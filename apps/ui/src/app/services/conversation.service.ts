@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConversationData, ConversationSummary, DialogData } from '@gongsho/types';
+import { AgentModels, ConversationData, ConversationSummary, DialogData } from '@gongsho/types';
 import { SseClient } from 'ngx-sse-client';
 import { Observable, catchError, filter, map, throwError } from 'rxjs';
 
@@ -16,12 +16,12 @@ export class ConversationService {
     return this.http.get<ConversationData>(`${this.apiUrl}/conversations/${id}`);
   }
 
-  createConversation(input: string): Observable<ConversationSummary> {
-    return this.http.post<ConversationSummary>(`${this.apiUrl}/conversations`, { input });
+  createConversation(input: string, model: AgentModels): Observable<ConversationSummary> {
+    return this.http.post<ConversationSummary>(`${this.apiUrl}/conversations`, { input, model });
   }
 
-  addUserInput(conversationId: string, input: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/user-input`, { input });
+  addUserInput(conversationId: string, input: string, model: AgentModels): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/conversations/${conversationId}/user-input`, { input, model });
   }
 
   getDialogStream(conversationId: string): Observable<DialogData> {
