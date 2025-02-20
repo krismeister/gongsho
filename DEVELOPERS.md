@@ -18,13 +18,21 @@ Add an anthropic api key to the `.env` file.
 ## Running The UI and API
 
 ```shell
-npm run start:api
 npm run start:ui
+# run the server pointing to the `test-project` folder
+npm run dev:api
+
+
+# or point gongsho at gongsho :-)
+npm run start:api
 ```
 
-## Git Commit Guidelines
+## Git Commit Guidelines for squashed commits
 
-Fuse.js follows [conventional commits](conventional-commits). This leads to **more readable messages** that are easy to follow when looking through the **project history**. Also, these git commit messages are used to **generate the [changelog](changelog)**.
+**NOTE** If you are a contributed developer. You may submit your PRs with multple commits and you do not need to follow this conventions.
+**This convention is a guideline for merging to main**
+
+Gongsho follows [conventional commits](conventional-commits). This standard is used to generate the [CHANGELOG](CHANGELOG).
 
 ### Commit Message Format
 

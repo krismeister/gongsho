@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start:api": "nx serve api",
-    "dev:api": "PROJECT_PATH=project nx serve api",
+    "dev:api": "PROJECT_PATH=test-project nx serve api",
     "start:ui": "nx serve ui",
     "build:api": "nx build api",
     "build:ui": "nx build ui",

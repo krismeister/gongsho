@@ -47,7 +47,7 @@
         "NODE_ENV": "local",
         "NODE_PORT": "8000",
         "TS_NODE_PROJECT": "apps/api/tsconfig.app.json",
-        "PROJECT_PATH": "project"
+        "PROJECT_PATH": "test-project"
       },
       "sourceMaps": true,
       "console": "internalConsole",
