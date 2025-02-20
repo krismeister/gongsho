@@ -1,3 +1,24 @@
+## 0.0.1-4
+
+### 🚀 Features
+
+- adds path startup argument ([a4a69f1](https://github.com/krismeister/gongsho/commit/a4a69f1))
+- adds ability to change models partway through conversation ([4d3a7f7](https://github.com/krismeister/gongsho/commit/4d3a7f7))
+
+### 💅 Refactors
+
+- moved the test project to the `test-project` folder ([226f977](https://github.com/krismeister/gongsho/commit/226f977))
+
+### 📖 Documentation
+
+- adding more granularity to the changelog ([52879fc](https://github.com/krismeister/gongsho/commit/52879fc))
+
+### 🏡 Chore
+
+- release tweaks ([8548e5f](https://github.com/krismeister/gongsho/commit/8548e5f))
+- added more default ignored files ([d4b6ffc](https://github.com/krismeister/gongsho/commit/d4b6ffc))
+- updates documentation and adds todos ([9a7a6e6](https://github.com/krismeister/gongsho/commit/9a7a6e6))
+
 # Changelog
 
 ## 0.0.1-3 (2025-02-18)
