@@ -1,4 +1,4 @@
-import { AgentMessageRoles, AgentModels, DialogData, DialogRoles } from '@gongsho/types';
+import { AgentMessageRoles, AgentModels, DialogData, DialogRoles, Usage } from '@gongsho/types';
 import { v4 as uuidv4 } from 'uuid';
 import { fillDialog } from '../utils/dialog';
 export class BaseDialog {
@@ -9,6 +9,7 @@ export class BaseDialog {
   public dialogRole: DialogRoles = DialogRoles.SYSTEM;
   public role: AgentMessageRoles = AgentMessageRoles.ASSISTANT;
   public content = '';
+  public usage?: Usage;
   constructor(
     protected readonly inputText: string,
     protected readonly fillValues: Record<string, string> = {},
@@ -30,6 +31,7 @@ export class BaseDialog {
       timestamp: this.timestamp,
       fileHashes: this.fileHashes,
       ...(this.agent ? { agent: this.agent } : {}),
+      ...(this.usage ? { usage: this.usage } : {}),
     };
   }
 
@@ -44,6 +46,7 @@ export class BaseDialog {
     newDialog.dialogRole = data.dialogRole;
     newDialog.role = data.role;
     newDialog.fileHashes = data.fileHashes;
+    newDialog.usage = data.usage;
     return newDialog;
   }
 }

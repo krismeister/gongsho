@@ -1,5 +1,9 @@
 # The plan for Gongsho
 
+- [Good Reading](#good-reading)
+- [Tooling For Optimizing the LLM](#tooling-for-optimizing-the-llm)
+- [Larger plan as written by Claude](#larger-plan-as-written-by-claude)
+
 ## Good reading
 
 - [Benchmark from Aider on Search/Replace vs diff](https://aider.chat/docs/benchmarks.html)
@@ -7,7 +11,48 @@
 - [Anthropic Claud Tool/Function calling](https://docs.anthropic.com/en/docs/tools/tool-calling)
 - [OpenAI function calling](https://platform.openai.com/docs/guides/function-calling)
 
-## Large plan as written by Claude
+## Tooling For Optimizing the LLM
+
+Key Functions to Expose
+
+### getFileDependencies(filePath)
+
+**Purpose:** Identify other files that a specific file depends on. This can help in understanding the context and impact of changes in the file.  
+**Implementation:** Analyze import/require statements or similar constructs relevant to the programming language you're working with.
+
+### getAST(nodeId)
+
+**Purpose:** Retrieve the Abstract Syntax Tree for a particular node or file. The LLM can use it for structural code understanding.  
+**Implementation:** Use a parser to convert source code into an AST representation, potentially employing language-specific libraries.
+
+### getFunctionSignature(functionName)
+
+**Purpose:** Return the signature of a function, including parameter types and return type. This provides concise information on how to call a function.  
+**Implementation:** Perform static code analysis to extract signature details from code comments or type annotations.
+
+### searchCodebase(query)
+
+**Purpose:** Allow the LLM to search the codebase for specific terms or patterns, aiding in tasks like refactoring or feature implementation.  
+**Implementation:** Leverage an indexing library or search engine like Elasticsearch to build a searchable index of the codebase.
+
+### getFileVersionHistory(filePath)
+
+**Purpose:** Provide version history or changes for a file, which can assist in understanding the evolution of the codebase.  
+**Implementation:** Integrate with version control systems like Git to access commit history and diffs.
+
+### getCodeContext(filePath, lineNumber)
+
+**Purpose:** Fetch surrounding code for a particular line number to give context to the LLM for more accurate generation around specific sections.  
+**Implementation:** Utilize file operations to retrieve lines of interest with a specified range of code.
+
+### listAllFiles()
+
+**Purpose:** Enumerate all files in the project, which is useful for comprehensive changes or analyses.  
+**Implementation:** Directory traversal to list files, filtered by relevant file extensions.
+
+These exposed functions will not only optimize the interaction with the LLM but also provide richer, more structured, and relevant inputs that can considerably enhance the speed and accuracy of the generated responses or actions.
+
+## Larger plan as written by Claude
 
 Building an AI platform that can read a codebase, understand a user-given objective, and create a pull request using Claude is an ambitious project. Here's a high-level plan to approach this:
 

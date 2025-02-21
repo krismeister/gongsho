@@ -2,7 +2,7 @@
 
 - [Configuration](#configuration)
 - [Running](#running-the-ui-and-api)
-- [Git Commit Guidelines](#git-commit-guidelines)
+- [Git Commit Guidelines](#git-commit-guidelines-for-squashed-commits)
 - [Command Line Tools](#command-line-tools)
 
 ## Configuration

@@ -8,12 +8,13 @@ Gongsho currently uses Claude 3.5 Sonnet, you'll need an Anthropic API key to us
 
 [Live Demo on Youtube](https://youtu.be/ik5KnsCCmqE?si=kisDRSGncqGrv2-m)
 
-[![Gongsho UI](screenshots/conversation-page_thumb.png)](screenshots/conversation-page.png)
+[![Gongsho UI](docs/screenshots/conversation-page_thumb.png)](docs/screenshots/conversation-page.png)
 
 - [Install and Run](#install-and-run)
 - [Configuration](#configuration)
 - [TODOs](#todos)
-- [Developers Readme](DEVELOPERS.md) :link:
+- [Developers Readme](docs/DEVELOPERS.md) :link:
+- [Longer Term Plan](docs/PLAN.md) :link:
 
 ## Install and Run
 
@@ -21,13 +22,13 @@ You can either install gongsho in a project or globally
 
 ```bash
 # install in a project
-npm install gongsho  --save-dev
+npm install gongsho@latest  --save-dev
 
 # install globally
-npm install -g gongsho
+npm install -g gongsho@latest
 ```
 
-You'll need to get an Anthropic API key from [Anthropic](https://console.anthropic.com/settings/keys) and pass it to gongsho.
+You'll need to get an [Anthropic API key](https://console.anthropic.com/settings/keys) and pass it to gongsho.
 
 ```bash
 # If you have an ANTHROPIC_API_KEY env variable in your bash profile.

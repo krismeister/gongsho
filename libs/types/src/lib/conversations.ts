@@ -21,6 +21,13 @@ export enum AgentMessageRoles {
   NONE = 'none',
 }
 
+export type Usage = {
+  input_tokens: number;
+  output_tokens: number;
+  // cache_creation_input_tokens: number;
+  // cache_read_input_tokens: number;
+}
+
 export type DialogData = {
   id: string;
   role: AgentMessageRoles;
@@ -30,6 +37,7 @@ export type DialogData = {
   timestamp: Date;
   fileHashes: Record<string, string>;
   agent?: AgentModels;
+  usage?: Usage;
 };
 
 export type ConversationDetails = {
