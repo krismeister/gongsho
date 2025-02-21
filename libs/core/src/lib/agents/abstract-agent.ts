@@ -20,6 +20,7 @@ export type Usage = {
 
 export type AgentResponse = {
   id: string;
+  model: AgentModels;
   content: {
     type: string; // 'text' | 'tool';,
     text: string;

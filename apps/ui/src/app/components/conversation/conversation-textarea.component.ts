@@ -46,7 +46,6 @@ export class ConversationTextareaComponent {
   }
 
   onModelChange(model: AgentModels) {
-    debugger
     console.log('model changed', model);
     this.selectedModel = model;
   }
