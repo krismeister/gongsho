@@ -8,7 +8,7 @@ Gongsho currently uses Claude 3.5 Sonnet, you'll need an Anthropic API key to us
 
 [Live Demo on Youtube](https://youtu.be/ik5KnsCCmqE?si=kisDRSGncqGrv2-m)
 
-[![Gongsho UI](docs/screenshots/conversation-page_thumb.png)](docs/screenshots/conversation-page.png)
+[![Gongsho UI](docs/conversation-page_thumb.png)](docs/conversation-page.png)
 
 - [Install and Run](#install-and-run)
 - [Configuration](#configuration)
@@ -76,7 +76,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [x] NX project with Angular and NestJS
   - [x] Point to real project instead of projects directory
   - [x] Build NPM package
-  - [ ] Show tokens used and cost estimate
+  - [x] Show tokens used and cost estimate
 
 - LLM
 
@@ -88,6 +88,8 @@ When you have many files in a project you can create a `.gongshoignore` file to 
 
 - UI
 
+  - [ ] Sticky top nav with button "New Conversation",
+  - [ ] UI to see your history : "View Conversations"
   - [ ] Fix the apply button - for errors and for clearing
   - [ ] Add diff viewer of changes
   - [ ] Add ability to add files manually to the conversation
@@ -95,8 +97,6 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [x] Add apply button to apply changes to the project
   - [x] event stream
   - [ ] event fragments
-  - [ ] UI to see your history
-  - [ ] Research converting to [Vercel AI SDK](https://www.npmjs.com/package/ai)
 
 - Server
 
@@ -119,6 +119,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [ ] Research Tree-Splitter to give more context to LLM
   - [ ] Research Token size limits for user input and repo-maps
   - [ ] Optimize changelog generation
+  - [ ] Research converting to [Vercel AI SDK](https://www.npmjs.com/package/ai)
 
 - Features Ideas
 
@@ -136,6 +137,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [ ] Theres an extra conversations load `http://localhost:4200/api/conversations/` on the conversation details page
   - [ ] Handle conversation start when server has an error, better handling of clearing text area.
   - [ ] Deal with Agent errors better
+  - [ ] When the LLM Agent gives an error, the UI has already cleared the text area too early.
 
 - Backlog
   - [ ] Better way to handle titles of created conversations.

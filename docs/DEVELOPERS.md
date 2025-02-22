@@ -27,6 +27,24 @@ npm run dev:api
 npm run start:api
 ```
 
+## Major systems
+
+![Gongsho System Diagram](./system-diagram.drawio.png)
+
+Apps:
+
+- **apps/ui** - This is the UI for the application
+- **apps/api** - This is the API for the application.
+
+Libraries:
+
+These shared libraries are used by both the UI and API.
+
+- **libs/types** - Shared types for front end/ backend
+- **libs/text-to-blocks**
+- **libs/core**
+- **libs/ui** - see [spartan.ng](https://spartan.ng/) for component information.
+
 ## Git Commit Guidelines for squashed commits
 
 **NOTE** If you are a contributed developer. You may submit your PRs with multple commits and you do not need to follow this conventions.
