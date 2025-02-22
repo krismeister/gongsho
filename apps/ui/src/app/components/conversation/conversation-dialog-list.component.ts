@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { BlockTypes, MessageBlock, parseTextToBlocks } from '@gongsho/text-to-blocks';
 import { AgentMessageRoles, DialogData, DialogRoles } from '@gongsho/types';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -15,9 +15,11 @@ import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map, scan, tap } from 'rxjs/operators';
 import { ErrorCardComponent } from '../../components/cards/error-card.component';
+import { TokenCost, TokenCostPipe } from '../../pipes/token-cost.pipe';
 import { ConversationService } from '../../services/conversation.service';
 import { ApplyChangesButtonComponent } from '../buttons/apply-changes-button.component';
 import { GenerateChangelogButtonComponent } from '../buttons/generate-changelog-button.component';
+import { TokenCostEstimateComponent } from '../cost/token-cost-estimate.component';
 import { ConversationDialogComponent } from './conversation-dialog.component';
 
 type DialogWithBlocks = DialogData & { blocks: MessageBlock[] }
@@ -37,66 +39,77 @@ type DialogWithBlocks = DialogData & { blocks: MessageBlock[] }
     HlmSpinnerComponent,
     GenerateChangelogButtonComponent,
     ApplyChangesButtonComponent,
-    ErrorCardComponent
+    ErrorCardComponent,
+    TokenCostEstimateComponent
   ],
   providers: [
+    TokenCostPipe,
     provideIcons({ lucideChevronDown, lucideListX })
   ],
   template: `
-    <div class="space-y-4">
-      @for (dialog of groupedStream$ | async; track trackByDialog(0, dialog)) {
-        @if (isArray(dialog)) {
-          <div hlmAccordion type="single" class="w-full">
-            @for (item of dialog; track trackByDialog(0, item)) {
+    <div class="relative">
+      <div class="space-y-4">
+        @for (dialog of groupedStream$ | async; track trackByDialog(0, dialog)) {
+          @if (isArray(dialog)) {
+            <div hlmAccordion type="single" class="w-full">
+              @for (item of dialog; track trackByDialog(0, item)) {
 
-              <div hlmAccordionItem>
-                <button hlmAccordionTrigger>
-                  {{ getAccordionTitle(item) }}
-                  <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
-                </button>
-                <hlm-accordion-content>
-                    <app-conversation-dialog [dialog]="item" [blocks]="item.blocks" />
-                </hlm-accordion-content>
-              </div>
-            }
-          </div>
-        } @else {
-          <app-conversation-dialog [dialog]="dialog" [blocks]="dialog.blocks" />
+                <div hlmAccordionItem>
+                  <button hlmAccordionTrigger>
+                    {{ getAccordionTitle(item) }}
+                    <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
+                  </button>
+                  <hlm-accordion-content>
+                      <app-conversation-dialog [dialog]="item" [blocks]="item.blocks" />
+                  </hlm-accordion-content>
+                </div>
+              }
+            </div>
+          } @else {
+            <app-conversation-dialog [dialog]="dialog" [blocks]="dialog.blocks" />
+          }
         }
-      }
-    </div>
-
-
-    @if (waitingOnAssistant$ | async) {
-      <div class="py-4 flex justify-center">
-        <hlm-spinner />
       </div>
-    }
-    
-    @if (lastDialogHasChanges$ | async) {
-      <div class="py-4 flex justify-center">
-        <app-generate-changelog-button [conversationId]="conversationId" />
-      </div>
-    }
 
-    <ng-container *ngIf="lastDialogIsChangelist$ | async as changelist">
-      @if (changelist.isChangelist) {
+
+      @if (waitingOnAssistant$ | async) {
         <div class="py-4 flex justify-center">
-          <app-apply-changes-button 
-            [conversationId]="conversationId"
-            [changelistId]="changelist.changelistId"
-          />
+          <hlm-spinner />
         </div>
       }
-    </ng-container>
+      
+      @if (lastDialogHasChanges$ | async) {
+        <div class="py-4 flex justify-center">
+          <app-generate-changelog-button [conversationId]="conversationId" />
+        </div>
+      }
 
-    @if (error) {
-      <app-error-card title="404 Error" description="Could not find the conversation." />
-    }
+      <ng-container *ngIf="lastDialogIsChangelist$ | async as changelist">
+        @if (changelist.isChangelist) {
+          <div class="py-4 flex justify-center">
+            <app-apply-changes-button 
+              [conversationId]="conversationId"
+              [changelistId]="changelist.changelistId"
+            />
+          </div>
+        }
+      </ng-container>
 
+      @if (error) {
+        <app-error-card title="404 Error" description="Could not find the conversation." />
+      }
+
+
+      <div class="absolute bottom-4 right-0">
+        <app-token-cost-estimate message="est cost: " [tokenCost]="(totalCost$ | async) ?? { inputTokens: 0, outputTokens: 0, inputCost: 0, outputCost: 0 }" />
+      </div>
+
+    </div>
+   
   `
 })
 export class ConversationDialogListComponent implements OnInit, OnDestroy {
+  private tokenCostPipe = inject(TokenCostPipe);
   @Input() conversationId!: string;
   private SSESubscription?: Subscription;
   stream$: Subject<DialogData> = new Subject()
@@ -106,9 +119,13 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
   waitingOnAssistant$!: Observable<boolean>;
   lastDialogHasChanges$!: Observable<boolean>
   lastDialogIsChangelist$!: Observable<{ changelistId: string, isChangelist: boolean }>
+  totalCost$!: Observable<TokenCost>;
+
   error = false;
 
-  constructor(private conversationService: ConversationService) {
+  constructor(
+    private conversationService: ConversationService,
+  ) {
   }
 
   ngOnInit(): void {
@@ -174,6 +191,18 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
       }),
       distinctUntilChanged(),
       tap((data) => console.log('waiting on assistant 2', data)),
+    );
+
+    this.totalCost$ = this.streamWithBlocks$.pipe(
+      scan((acc: TokenCost, dialogData: DialogWithBlocks) => {
+        const cost = this.tokenCostPipe.transform(dialogData);
+        return {
+          inputTokens: acc.inputTokens + cost.inputTokens,
+          outputTokens: acc.outputTokens + cost.outputTokens,
+          inputCost: acc.inputCost + cost.inputCost,
+          outputCost: acc.outputCost + cost.outputCost,
+        };
+      }, { inputTokens: 0, outputTokens: 0, inputCost: 0, outputCost: 0 })
     );
   }
 

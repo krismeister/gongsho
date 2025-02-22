@@ -1,4 +1,4 @@
-import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
+import { AgentMessageRoles, AgentModels, DialogRoles, Usage } from '@gongsho/types';
 import { BaseDialog } from '../base-dialog';
 
 export class AssistantTextDialog extends BaseDialog {
@@ -10,15 +10,21 @@ export class AssistantTextDialog extends BaseDialog {
   public model = '';
   public stopReason = '';
   public stopSequence = '';
-  public usage: Record<string, string> = {};
 
   constructor(
     protected readonly text: string,
-    protected override readonly fillValues: Record<string, string> = {}
+    protected override readonly fillValues: Record<string, string> = {},
+    protected override readonly agent: AgentModels
   ) {
-    super(text, fillValues);
+    super(text, fillValues, agent);
     this.description = 'Assistant Output';
     this.role = AgentMessageRoles.ASSISTANT;
     this.dialogRole = DialogRoles.ASSISTANT;
+  }
+
+  public static create(text: string, agent: AgentModels, usage: Usage): AssistantTextDialog {
+    const dialog = new AssistantTextDialog(text, {}, agent);
+    dialog.usage = usage;
+    return dialog;
   }
 }

@@ -1,4 +1,4 @@
-import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogRoles } from '@gongsho/types';
+import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogRoles, Usage } from '@gongsho/types';
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
 import { AgentResponse } from '../agents/abstract-agent';
 import { getAgent } from '../agents/agents';
@@ -178,13 +178,24 @@ export class Conversation {
 
     const content = response.content[response.content.length - 1].text;
 
+    let usage: Usage = {
+      input_tokens: 0,
+      output_tokens: 0,
+    };
+    if (response.usage) {
+      usage = {
+        input_tokens: response.usage.input_tokens,
+        output_tokens: response.usage.output_tokens,
+      };
+    }
+
     let dialog: BaseDialog;
     if (content.startsWith('CHANGELIST')) {
-      dialog = new AssistantChangelistDialog(content);
+      dialog = AssistantChangelistDialog.create(content, response.model, usage);
     } else if (content == 'OK') {
-      dialog = new AssistantAcknowledgedDialog(content);
+      dialog = AssistantAcknowledgedDialog.create(content, response.model, usage);
     } else {
-      dialog = new AssistantTextDialog(content);
+      dialog = AssistantTextDialog.create(content, response.model, usage);
     }
 
     this.dialogFlow.push(dialog);

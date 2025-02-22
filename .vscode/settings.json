@@ -13,7 +13,8 @@
     "gitignore",
     "npmignore",
     "healthcheck",
-    "uuidv4"
+    "uuidv4",
+    "hovercard"
   ],
   "cSpell.ignorePaths": [
     "package-lock.json",
