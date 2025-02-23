@@ -16,9 +16,9 @@ import { UserInputDialog } from '../dialog/user-input.dialog';
 import { contentToChangelist } from '../utils/changelist';
 import { loadConversation, saveConversationDetails } from '../utils/storage';
 import { ConversationFiles } from './conversation-files';
-
 export class Conversation {
 
+  // TODO cleanup: we don't need to hold onto this dialogflow array.
   private dialogFlow: BaseDialog[] = [];
 
   private dialogStream$ = new ReplaySubject<BaseDialog>();
@@ -146,19 +146,17 @@ export class Conversation {
       .filter(item => item.role !== AgentMessageRoles.NONE)
       .map(item => ({
         role: item.role as 'user' | 'assistant',
-        content: [
-          {
-            type: 'text',
-            text: item.content,
-          },
-        ],
+        content: {
+          type: 'text',
+          text: item.content,
+        },
       }));
 
     const system = messages.shift()!;
 
 
     getAgent(this.lastAgent)
-      .sendMessages(system.content[0].text, messages, this.lastAgent)
+      .sendMessages(system.content.text, messages, this.lastAgent)
       .then(response => {
         this.agentInProgress = false;
         this.agentBusy$.next(false);
@@ -172,11 +170,16 @@ export class Conversation {
   }
 
   async onAgentResponse(response: AgentResponse) {
-    if (response.content.length === 0) {
+
+    if (response.steps.length === 0) {
       throw new Error('Agent response is empty, but should not happen.');
     }
 
-    const content = response.content[response.content.length - 1].text;
+    if (response.steps.length > 1) {
+      console.warn('Agent response has more than one step, but should not happen.');
+    }
+
+    const content = response.steps[0].text;
 
     let usage: Usage = {
       input_tokens: 0,
@@ -184,18 +187,18 @@ export class Conversation {
     };
     if (response.usage) {
       usage = {
-        input_tokens: response.usage.input_tokens,
-        output_tokens: response.usage.output_tokens,
+        input_tokens: response.usage.promptTokens,
+        output_tokens: response.usage.completionTokens,
       };
     }
 
     let dialog: BaseDialog;
     if (content.startsWith('CHANGELIST')) {
-      dialog = AssistantChangelistDialog.create(content, response.model, usage);
+      dialog = AssistantChangelistDialog.create(content, response.response.modelId as AgentModels, usage);
     } else if (content == 'OK') {
-      dialog = AssistantAcknowledgedDialog.create(content, response.model, usage);
+      dialog = AssistantAcknowledgedDialog.create(content, response.response.modelId as AgentModels, usage);
     } else {
-      dialog = AssistantTextDialog.create(content, response.model, usage);
+      dialog = AssistantTextDialog.create(content, response.response.modelId as AgentModels, usage);
     }
 
     this.dialogFlow.push(dialog);

@@ -116,10 +116,12 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [x] Add basic RepoMap with simple list of files
   - [x] Add aider like prompts to gongsho
   - [x] Implement RepoMap similar to [Aider Repo-Map](https://github.com/jxnl/aider/blob/main/aider/repo_map.py)
+  - [ ] Optimize changelog generation
+  - [ ] Add prompt caching, [Vercel](https://sdk.vercel.ai/providers/ai-sdk-providers/anthropic#cache-control), [Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)
   - [ ] Research Tree-Splitter to give more context to LLM
   - [ ] Research Token size limits for user input and repo-maps
-  - [ ] Optimize changelog generation
-  - [ ] Research converting to [Vercel AI SDK](https://www.npmjs.com/package/ai)
+  - [x] convert to [Vercel AI SDK](https://www.npmjs.com/package/ai)
+  - [ ] Research [LangGraph](https://github.com/langchain-ai/langgraph) multi-agent workflows
 
 - Features Ideas
 

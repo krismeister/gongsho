@@ -1,15 +1,16 @@
-import Anthropic from '@anthropic-ai/sdk';
-import { AgentModelConfigs, AgentModels, defaultAgentModel } from '@gongsho/types';
+import { AnthropicProvider, createAnthropic } from '@ai-sdk/anthropic';
+import { AgentModelConfigs, AgentModels } from '@gongsho/types';
+import { generateText } from 'ai';
 import { gongshoConfig } from '../config/config';
-import { AbstractAgent, AgentMessage, AgentResponse } from './abstract-agent';
+import { AgentMessage, AgentResponse } from './abstract-agent';
+// import { Anthropic } from '@anthropic-ai/sdk';
 
-export class ClaudeAgent extends AbstractAgent {
-  private anthropic: Anthropic;
+export class AnthropicAgent {
+  private anthropic: AnthropicProvider;
 
   constructor() {
-    super(AgentModelConfigs[defaultAgentModel]);
-    this.anthropic = new Anthropic({
-      apiKey: gongshoConfig.anthropicApiKey ?? '',
+    this.anthropic = createAnthropic({
+      apiKey: gongshoConfig.anthropicApiKey,
     });
   }
 
@@ -23,25 +24,20 @@ export class ClaudeAgent extends AbstractAgent {
       throw new Error(`Unsupported model: ${model}`);
     }
 
-    console.log('sending messages', JSON.stringify(messages));
-
-    const response = await this.anthropic.messages.create({
-      model: model,
-      max_tokens: AgentModelConfigs[model].maxOutputTokens,
-      temperature: 1,
-      system: system,
-      // TODO deal with tool responses correctly.
-      messages: messages.map(msg => ({
-        role: msg.role,
-        content: msg.content.map(c => ({
-          type: 'text',
-          text: c.text,
-        })),
-      })),
+    const response = await generateText({
+      model: this.anthropic(model),
+      maxTokens: AgentModelConfigs[model].maxOutputTokens,
+      messages: [
+        {
+          role: 'system',
+          content: system,
+        },
+        ...messages.map(m => ({ role: m.role, content: m.content.text })),
+      ],
     });
 
-    console.log('AGENT response', response);
+    console.log('AGENT RESPONSE', response);
 
-    return response as unknown as AgentResponse;
+    return response;
   }
 }

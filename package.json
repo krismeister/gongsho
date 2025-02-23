@@ -14,11 +14,12 @@
   },
   "private": false,
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.36.2",
+    "@ai-sdk/anthropic": "^1.1.9",
     "@nestjs/common": "^10.0.2",
     "@nestjs/core": "^10.0.2",
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/serve-static": "^4.0.2",
+    "ai": "^4.1.45",
     "axios": "^1.6.0",
     "dotenv": "^16.4.7",
     "open": "^10.1.0",
