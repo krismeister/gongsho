@@ -1,16 +1,27 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { provideIcons } from '@ng-icons/core';
+import { lucideChevronDown } from '@ng-icons/lucide';
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HighlightLoader } from 'ngx-highlightjs';
 
 @Component({
   selector: 'app-main-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, HlmButtonDirective],
+  providers: [
+    provideIcons({
+      lucideChevronDown,
+    }),
+  ],
   template: `
-    <nav class="px-4 py-2" style="position:relative;z-index:2">
+    <nav
+      class="px-4 py-2"
+      style="position:sticky;z-index:2; top:0; border-bottom: 1px solid #e5e7eb;"
+    >
       <div class=" mx-auto flex justify-between items-center h-8">
-        <div class="flex-shrink-0">
+        <div class="flex-shrink-0 flex flex-row gap-2">
           <a routerLink="/" class="block" aria-label="Home">
             <svg
               class="h-6 fill-purple-900 dark:fill-purple-100"
@@ -31,6 +42,23 @@ import { HighlightLoader } from 'ngx-highlightjs';
               />
             </svg>
           </a>
+
+          <div class="btn-container flex flex-row gap-2">
+            <button
+              hlmBtn
+              variant="default"
+              class="text-xs p-2 h-3/4  text-white dark:text-white bg-purple-800 hover:bg-purple-600 hover:transition: ease-in-out duration-300 "
+            >
+              New Conversation
+            </button>
+            <button
+              hlmBtn
+              variant="default"
+              class="text-xs p-2 h-3/4  text-white dark:text-white bg-purple-800 hover:bg-purple-600  hover:transition: ease-in-out duration-300 "
+            >
+              View Conversations
+            </button>
+          </div>
         </div>
 
         <!-- Theme Toggle Button -->
@@ -93,6 +121,7 @@ export class MainMenuComponent implements OnInit {
   private readonly darkThemeCss = '/highlight-css/felipec.min.css';
 
   isDark = signal(true);
+  isActive = signal(false);
   private hljsLoader: HighlightLoader = inject(HighlightLoader);
 
   ngOnInit() {
@@ -126,5 +155,14 @@ export class MainMenuComponent implements OnInit {
       this.hljsLoader.setTheme(!dark ? this.darkThemeCss : this.lightThemeCss);
       return !dark;
     });
+  }
+
+  toggleOptionsMenu() {
+    this.isActive.update((active) => !active);
+    if (this.isActive()) {
+      console.log('active');
+    } else {
+      console.log('inactive');
+    }
   }
 }
