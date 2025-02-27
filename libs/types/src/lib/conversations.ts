@@ -30,6 +30,7 @@ export type Usage = {
 
 export type DialogData = {
   id: string;
+  requestId?: string;
   role: AgentMessageRoles;
   dialogRole: DialogRoles;
   description: string;

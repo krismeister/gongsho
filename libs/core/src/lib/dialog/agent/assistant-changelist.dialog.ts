@@ -14,7 +14,7 @@ export class AssistantChangelistDialog extends BaseDialog {
   constructor(
     protected readonly text: string,
     protected override readonly fillValues: Record<string, string> = {},
-    protected override readonly agent: AgentModels
+    protected override readonly agent: AgentModels,
   ) {
     super(text, fillValues, agent);
     this.description = 'Assistant Generated Changelist';
@@ -22,8 +22,10 @@ export class AssistantChangelistDialog extends BaseDialog {
     this.dialogRole = DialogRoles.CHANGELIST;
   }
 
-  public static create(text: string, agent: AgentModels, usage: Usage): AssistantChangelistDialog {
+  public static create(text: string, agent: AgentModels, usage: Usage, id: string, requestId?: string): AssistantChangelistDialog {
     const dialog = new AssistantChangelistDialog(text, {}, agent);
+    dialog.id = id;
+    dialog.requestId = requestId;
     dialog.usage = usage;
     return dialog;
   }

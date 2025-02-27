@@ -6,10 +6,13 @@ export class BaseDialog {
   protected timestamp: Date;
   protected fileHashes: Record<string, string> = {};
   public id: string;
+  public requestId?: string;
+
   public dialogRole: DialogRoles = DialogRoles.SYSTEM;
   public role: AgentMessageRoles = AgentMessageRoles.ASSISTANT;
   public content = '';
   public usage?: Usage;
+
   constructor(
     protected readonly inputText: string,
     protected readonly fillValues: Record<string, string> = {},
@@ -24,6 +27,7 @@ export class BaseDialog {
   public getDialogData(): DialogData {
     return {
       id: this.id,
+      ...(this.requestId ? { requestId: this.requestId } : {}),
       role: this.role,
       dialogRole: this.dialogRole,
       description: this.description,
@@ -47,6 +51,7 @@ export class BaseDialog {
     newDialog.role = data.role;
     newDialog.fileHashes = data.fileHashes;
     newDialog.usage = data.usage;
+    newDialog.requestId = data.requestId;
     return newDialog;
   }
 }

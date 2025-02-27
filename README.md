@@ -122,6 +122,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [ ] Research Token size limits for user input and repo-maps
   - [x] convert to [Vercel AI SDK](https://www.npmjs.com/package/ai)
   - [ ] Research [LangGraph](https://github.com/langchain-ai/langgraph) multi-agent workflows
+  - [ ] Deal with finishReason better
 
 - Features Ideas
 

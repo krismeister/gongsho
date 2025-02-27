@@ -1,6 +1,6 @@
 import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogRoles, Usage } from '@gongsho/types';
 import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
-import { AgentResponse } from '../agents/abstract-agent';
+import { AgentResponse } from '../agents/agent-types';
 import { getAgent } from '../agents/agents';
 import { AssistantAcknowledgedDialog } from '../dialog/agent/assistant-acknowledged.dialog';
 import { AssistantChangelistDialog } from '../dialog/agent/assistant-changelist.dialog';
@@ -122,7 +122,7 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
-  sendNextQueueItemToAgent() {
+  async sendNextQueueItemToAgent() {
     if (
       this.dialogFlow.length < 1 ||
       this.dialogQueue.length < 1 ||
@@ -152,34 +152,28 @@ export class Conversation {
         },
       }));
 
+    // TODO make system messages more identifiable in DialogData
     const system = messages.shift()!;
 
-
-    getAgent(this.lastAgent)
-      .sendMessages(system.content.text, messages, this.lastAgent)
-      .then(response => {
-        this.agentInProgress = false;
-        this.agentBusy$.next(false);
-        this.onAgentResponse(response);
+    try {
+      const agent = getAgent(this.lastAgent);
+      agent.stream$.subscribe(text => {
+        console.log('stream response', text);
       })
-      .catch(error => {
-        console.error('Agent error:', error);
-        this.agentInProgress = false;
-        this.agentBusy$.next(false);
-      });
+      const response = await agent.sendStreamedMessages(system.content.text, messages, this.lastAgent)
+      this.agentInProgress = false;
+      this.agentBusy$.next(false);
+      this.onAgentResponse(response);
+    } catch (error) {
+      console.error('Agent error:', error);
+      this.agentInProgress = false;
+      this.agentBusy$.next(false);
+    }
   }
 
   async onAgentResponse(response: AgentResponse) {
 
-    if (response.steps.length === 0) {
-      throw new Error('Agent response is empty, but should not happen.');
-    }
-
-    if (response.steps.length > 1) {
-      console.warn('Agent response has more than one step, but should not happen.');
-    }
-
-    const content = response.steps[0].text;
+    const content = response.text;
 
     let usage: Usage = {
       input_tokens: 0,
@@ -194,11 +188,11 @@ export class Conversation {
 
     let dialog: BaseDialog;
     if (content.startsWith('CHANGELIST')) {
-      dialog = AssistantChangelistDialog.create(content, response.response.modelId as AgentModels, usage);
+      dialog = AssistantChangelistDialog.create(content, response.model as AgentModels, usage, response.id, response.requestId);
     } else if (content == 'OK') {
-      dialog = AssistantAcknowledgedDialog.create(content, response.response.modelId as AgentModels, usage);
+      dialog = AssistantAcknowledgedDialog.create(content, response.model as AgentModels, usage, response.id, response.requestId);
     } else {
-      dialog = AssistantTextDialog.create(content, response.response.modelId as AgentModels, usage);
+      dialog = AssistantTextDialog.create(content, response.model as AgentModels, usage, response.id, response.requestId);
     }
 
     this.dialogFlow.push(dialog);
