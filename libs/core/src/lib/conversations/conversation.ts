@@ -1,10 +1,12 @@
-import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogRoles, Usage } from '@gongsho/types';
-import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
+import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogFragment, DialogRoles, Usage } from '@gongsho/types';
+import { BehaviorSubject, map, Observable, of, ReplaySubject, take } from 'rxjs';
 import { AgentResponse } from '../agents/agent-types';
 import { getAgent } from '../agents/agents';
 import { AssistantAcknowledgedDialog } from '../dialog/agent/assistant-acknowledged.dialog';
 import { AssistantChangelistDialog } from '../dialog/agent/assistant-changelist.dialog';
+import { AssistantFragmentStartDialog } from '../dialog/agent/assistant-fragment-start.dialog';
 import { AssistantTextDialog } from '../dialog/agent/assistant-text.dialog';
+import { assistantFragment } from '../dialog/agent/fragment-creator';
 import { BaseDialog } from '../dialog/base-dialog';
 import { ChangelistAppliedDialog } from '../dialog/info/changelist-applied.dialog';
 import { AddFilesDialog } from '../dialog/interstitial/add-files.dialog';
@@ -22,7 +24,11 @@ export class Conversation {
   private dialogFlow: BaseDialog[] = [];
 
   private dialogStream$ = new ReplaySubject<BaseDialog>();
-  private dialogDataStream$ = this.dialogStream$.pipe(map(dialog => dialog.getDialogData()));
+  private dialogDataStream$ = this.dialogStream$.pipe(map((dialog) => {
+    return dialog.getDialogData();
+  }));
+
+  private fragmentStream$ = new ReplaySubject<DialogData | DialogFragment>()
 
   private agentBusy$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
@@ -48,6 +54,14 @@ export class Conversation {
     return this.dialogDataStream$
   }
 
+  public getFragmentStream$(dialogId: string): Observable<DialogData | DialogFragment> {
+    const dialog = this.dialogFlow.find(dialog => dialog.id === dialogId);
+    if (dialog) {
+      return of(dialog.getDialogData());
+    }
+    return this.fragmentStream$.asObservable();
+  }
+
   public getConversationDetails(): ConversationDetails {
     return {
       id: this.id,
@@ -55,7 +69,6 @@ export class Conversation {
       dialogData: this.dialogFlow.map(item => item.getDialogData()),
     }
   }
-
 
   public load() {
     const savedConversation = loadConversation(this.id)
@@ -156,10 +169,17 @@ export class Conversation {
     const system = messages.shift()!;
 
     try {
-      const agent = getAgent(this.lastAgent);
-      agent.stream$.subscribe(text => {
-        console.log('stream response', text);
+      const lastAgent = this.lastAgent;
+      const agent = getAgent(lastAgent);
+
+      agent.stream$.pipe(take(1)).subscribe(fragment => {
+        this.dialogStream$.next(AssistantFragmentStartDialog.create(fragment.text, lastAgent, fragment.id));
       })
+
+      agent.stream$.subscribe(fragment => {
+        this.fragmentStream$.next(assistantFragment(fragment.id, fragment.text));
+      })
+
       const response = await agent.sendStreamedMessages(system.content.text, messages, this.lastAgent)
       this.agentInProgress = false;
       this.agentBusy$.next(false);
@@ -197,6 +217,8 @@ export class Conversation {
 
     this.dialogFlow.push(dialog);
     this.dialogStream$.next(dialog);
+    this.fragmentStream$.next(dialog.getDialogData());
+    this.fragmentStream$.complete()
 
     this.saveToProject();
 

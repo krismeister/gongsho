@@ -8,7 +8,7 @@ export class BaseDialog {
   public id: string;
   public requestId?: string;
 
-  public dialogRole: DialogRoles = DialogRoles.SYSTEM;
+  public dialogRole: Exclude<DialogRoles, DialogRoles.ASSISTANT_FRAGMENT> = DialogRoles.SYSTEM;
   public role: AgentMessageRoles = AgentMessageRoles.ASSISTANT;
   public content = '';
   public usage?: Usage;
@@ -51,7 +51,6 @@ export class BaseDialog {
     newDialog.role = data.role;
     newDialog.fileHashes = data.fileHashes;
     newDialog.usage = data.usage;
-    newDialog.requestId = data.requestId;
     return newDialog;
   }
 }

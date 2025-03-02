@@ -11,6 +11,8 @@ export enum DialogRoles {
   SYSTEM = 'system',
   INTERSTITIAL = 'interstitial',
   ASSISTANT = 'assistant',
+  ASSISTANT_FRAGMENT = 'assistant-fragment',
+  ASSISTANT_FRAGMENT_START = 'assistant-fragment-start',
   CHANGELIST = 'changelist',
   INFO = 'info',
 }
@@ -32,7 +34,7 @@ export type DialogData = {
   id: string;
   requestId?: string;
   role: AgentMessageRoles;
-  dialogRole: DialogRoles;
+  dialogRole: Exclude<DialogRoles, DialogRoles.ASSISTANT_FRAGMENT>;
   description: string;
   content: string;
   timestamp: Date;
@@ -40,6 +42,14 @@ export type DialogData = {
   agent?: AgentModels;
   usage?: Usage;
 };
+
+export type DialogFragment = {
+  id: string;
+  role: DialogRoles;
+  dialogRole: DialogRoles.ASSISTANT_FRAGMENT;
+  description: string;
+  content: string;
+}
 
 export type ConversationDetails = {
   id: string,
