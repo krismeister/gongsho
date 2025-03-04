@@ -38,7 +38,7 @@ export const AgentModelConfigs: Record<AgentModels, AgentModelConfig> = {
   [AgentModels.CLAUDE_3_7_SONNET]: {
     model: AgentModels.CLAUDE_3_7_SONNET,
     friendlyName: 'Claude 3.7 Sonnet',
-    maxOutputTokens: 4096,
+    maxOutputTokens: 8192,
     cost: {
       inputTokensCostPerMillion: 3.0,
       outputTokensCostPerMillion: 15.0,

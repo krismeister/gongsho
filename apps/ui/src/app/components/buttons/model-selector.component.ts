@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AgentModelConfigs, AgentModels, defaultAgentModel, PreferredAgentModels } from '@gongsho/types';
+import { AgentModelConfigs, defaultAgentModel, PreferredAgentModels } from '@gongsho/types';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmSelectImports } from '@spartan-ng/ui-select-helm';
 import { UserPreferenceService } from '../../services/user-preference.service';
@@ -28,7 +28,7 @@ import { UserPreferenceService } from '../../services/user-preference.service';
 })
 export class ModelSelectorComponent {
   selectedModel: PreferredAgentModels = defaultAgentModel;
-  @Output() selectedModelChange = new EventEmitter<AgentModels>();
+  @Output() selectedModelChange = new EventEmitter<PreferredAgentModels>();
   options = Object.values(AgentModelConfigs)
     .filter(model => !model.deprecated)
     .map(model => ({
@@ -43,6 +43,6 @@ export class ModelSelectorComponent {
   onModelChange(event: string) {
     this.userPreferenceService.setSelectedModel(event as PreferredAgentModels);
     console.log('event', event);
-    this.selectedModelChange.emit(event as AgentModels);
+    this.selectedModelChange.emit(event as PreferredAgentModels);
   }
 }
