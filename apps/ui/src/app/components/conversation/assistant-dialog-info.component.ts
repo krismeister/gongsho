@@ -17,7 +17,7 @@ import { TokenCostEstimateComponent } from '../cost/token-cost-estimate.componen
     TokenCostPipe
   ],
   template: `
-    <div class="absolute right-0 -top-3 flex items-center gap-2">
+    <div class="absolute right-0 -top-3 flex items-center">
       <!-- eslint-disable-next-line -->
       <label class="flex items-center scale-[.6] cursor-pointer border border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700 rounded-md p-1" hlmLabel
         for="show-raw-{{ dialog.id }}"

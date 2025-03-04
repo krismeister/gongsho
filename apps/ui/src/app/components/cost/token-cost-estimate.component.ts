@@ -16,13 +16,13 @@ import { TokenCost } from '../../pipes/token-cost.pipe';
   template: `
   @if (tokenCost) {
     <brn-hover-card>
-      <div hlmBadge variant="outline" class="text-muted-foreground" brnHoverCardTrigger>
-        @if (showAsIcon) {
-          <ng-icon name="lucideInfo" />
-        } @else {
+      @if (showAsIcon) {
+        <ng-icon name="lucideInfo" class="text-muted-foreground" brnHoverCardTrigger />
+      } @else {
+        <div hlmBadge variant="outline" class="text-muted-foreground" brnHoverCardTrigger>
           {{ formatCost(tokenCost.inputCost + tokenCost.outputCost) }}
-        }
-      </div>
+        </div>
+      }
       <hlm-hover-card-content *brnHoverCardContent class="w-64">
         <div class="space-y-2">
           <h4 class="text-sm font-semibold">Estimated Cost</h4>

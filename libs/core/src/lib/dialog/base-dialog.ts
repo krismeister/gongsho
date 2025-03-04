@@ -47,6 +47,7 @@ export class BaseDialog {
     newDialog.description = data.description;
     newDialog.timestamp = data.timestamp;
     newDialog.id = data.id;
+    newDialog.requestId = data.requestId;
     newDialog.dialogRole = data.dialogRole;
     newDialog.role = data.role;
     newDialog.fileHashes = data.fileHashes;

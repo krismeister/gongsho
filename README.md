@@ -85,6 +85,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [x] Pass full text of files to LLM if explanation is required
   - [x] Save/Load conversation to/from file
   - [ ] increase performance on large projects
+  - [ ] refine prompts with examples from [Anthropic Code in NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code). [Prompts gist](https://gist.github.com/vincentschroeder/b64fb2705b8442e189b944275198d1f8)
 
 - UI
 
@@ -96,7 +97,8 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [x] Allow switching between agents
   - [x] Add apply button to apply changes to the project
   - [x] event stream
-  - [ ] event fragments
+  - [x] event fragments for text
+  - [ ] event fragments for code blocks
 
 - Server
 
@@ -136,11 +138,12 @@ When you have many files in a project you can create a `.gongshoignore` file to 
 - Bugs
 
   - [x] Add new file creation, during conversation
-  - [ ] Agent dropdown on textarea not hooked in, make textarea only clear when successfully applied
+  - [x] Agent dropdown on textarea not hooked in, make textarea only clear when successfully applied
   - [ ] Theres an extra conversations load `http://localhost:4200/api/conversations/` on the conversation details page
   - [ ] Handle conversation start when server has an error, better handling of clearing text area.
   - [ ] Deal with Agent errors better
   - [ ] When the LLM Agent gives an error, the UI has already cleared the text area too early.
+  - [ ] Fix the error on SSE completion from our SSE dependency: [ngx-sse-client](https://github.com/marcospds/ngx-sse-client/issues/6)
 
 - Backlog
   - [ ] Better way to handle titles of created conversations.
