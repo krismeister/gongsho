@@ -1,10 +1,3 @@
-export function types(): string {
-  return 'types';
-}
-
-export { AgentMessageRoles, ConversationData, ConversationDetails, ConversationSummary, DialogData, DialogFragment, DialogRoles, Usage } from "./conversations";
-
+export { AgentModelConfig, AgentModelConfigs, AgentModels, defaultAgentModel, PreferredAgentModels } from "./agents";
 export { ChangeList, ChangeListFile, ChangeListItem, SearchReplaceBlock } from "./changelist";
-
-export { AgentModelConfig, AgentModelConfigs, AgentModels, defaultAgentModel } from "./agents";
-
+export { AgentMessageRoles, ConversationData, ConversationDetails, ConversationSummary, DialogData, DialogFragment, DialogRoles, Usage } from "./conversations";
