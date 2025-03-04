@@ -1,4 +1,4 @@
-import { AgentModels, DialogData } from '@gongsho/types';
+import { AgentModels, DialogData, DialogFragment } from '@gongsho/types';
 import { Body, Controller, Get, Param, Post, Sse } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -49,6 +49,15 @@ export class AppController {
       map((dialogData) => ({
         data: dialogData
       } as MessageEvent<DialogData>))
+    );
+  }
+
+  @Sse('conversations/:id/stream/:dialogId')
+  getFragmentStream(@Param('id') id: string, @Param('dialogId') dialogId: string): Observable<MessageEvent<DialogData | DialogFragment>> {
+    return this.conversationsService.getFragmentStream(id, dialogId).pipe(
+      map((dialogData) => ({
+        data: dialogData
+      } as MessageEvent<DialogData | DialogFragment>))
     );
   }
 

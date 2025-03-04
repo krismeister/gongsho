@@ -1,13 +1,13 @@
 import { AgentModels } from "@gongsho/types";
-import { ClaudeAgent } from "./claude-agent";
+import { AnthropicAgent } from "./claude-agent";
 
-let claudeAgent: ClaudeAgent | null = null;
+let claudeAgent: AnthropicAgent | null = null;
 
 export const getAgent = (model: AgentModels) => {
   switch (model) {
     default:
       if (!claudeAgent) {
-        claudeAgent = new ClaudeAgent();
+        claudeAgent = new AnthropicAgent();
       }
       return claudeAgent;
   }

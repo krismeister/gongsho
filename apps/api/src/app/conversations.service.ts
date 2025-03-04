@@ -1,7 +1,7 @@
 import { Conversations, writeChangelistToFiles } from '@gongsho/core';
-import { AgentModels, ConversationData, ConversationSummary, DialogData } from '@gongsho/types';
+import { AgentModels, ConversationData, ConversationSummary, DialogData, DialogFragment } from '@gongsho/types';
 import { Injectable } from '@nestjs/common';
-import { concatMap, from, Observable, tap, throwError } from 'rxjs';
+import { concatMap, finalize, from, Observable, tap, throwError } from 'rxjs';
 @Injectable()
 export class ConversationsService {
 
@@ -38,7 +38,7 @@ export class ConversationsService {
     return { message: 'success' };
   }
 
-  getDialogDataStream(id: string): Observable<DialogData> {
+  getDialogDataStream(id: string): Observable<DialogData | DialogFragment> {
     return from(Conversations.getConversation(id)).pipe(
       concatMap(conversation => {
         if (!conversation) {
@@ -51,6 +51,22 @@ export class ConversationsService {
               console.log('streaming dialog:', dialogData.id)
             }),
           );
+      }),
+    );
+  }
+
+  getFragmentStream(conversationId: string, dialogId: string): Observable<DialogData | DialogFragment> {
+    return from(Conversations.getConversation(conversationId)).pipe(
+      concatMap(conversation => {
+        if (!conversation) {
+          console.error('Conversation not found');
+          return throwError(() => new Error('Conversation not found'));
+        }
+        return conversation.getFragmentStream$(dialogId).pipe(
+          finalize(() => {
+            console.log(`Closing fragment stream for dialog ${dialogId}`);
+          })
+        );
       }),
     );
   }

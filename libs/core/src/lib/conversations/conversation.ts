@@ -1,10 +1,12 @@
-import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogRoles, Usage } from '@gongsho/types';
-import { BehaviorSubject, map, ReplaySubject } from 'rxjs';
-import { AgentResponse } from '../agents/abstract-agent';
+import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogFragment, DialogRoles, Usage } from '@gongsho/types';
+import { BehaviorSubject, map, Observable, of, ReplaySubject, share, take } from 'rxjs';
+import { AgentResponse } from '../agents/agent-types';
 import { getAgent } from '../agents/agents';
 import { AssistantAcknowledgedDialog } from '../dialog/agent/assistant-acknowledged.dialog';
 import { AssistantChangelistDialog } from '../dialog/agent/assistant-changelist.dialog';
+import { AssistantFragmentStartDialog } from '../dialog/agent/assistant-fragment-start.dialog';
 import { AssistantTextDialog } from '../dialog/agent/assistant-text.dialog';
+import { assistantFragment } from '../dialog/agent/fragment-creator';
 import { BaseDialog } from '../dialog/base-dialog';
 import { ChangelistAppliedDialog } from '../dialog/info/changelist-applied.dialog';
 import { AddFilesDialog } from '../dialog/interstitial/add-files.dialog';
@@ -16,13 +18,17 @@ import { UserInputDialog } from '../dialog/user-input.dialog';
 import { contentToChangelist } from '../utils/changelist';
 import { loadConversation, saveConversationDetails } from '../utils/storage';
 import { ConversationFiles } from './conversation-files';
-
 export class Conversation {
 
+  // TODO cleanup: we don't need to hold onto this dialogflow array.
   private dialogFlow: BaseDialog[] = [];
 
   private dialogStream$ = new ReplaySubject<BaseDialog>();
-  private dialogDataStream$ = this.dialogStream$.pipe(map(dialog => dialog.getDialogData()));
+  private dialogDataStream$ = this.dialogStream$.pipe(map((dialog) => {
+    return dialog.getDialogData();
+  }));
+
+  private fragmentStream$ = new ReplaySubject<DialogData | DialogFragment>()
 
   private agentBusy$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
@@ -48,6 +54,14 @@ export class Conversation {
     return this.dialogDataStream$
   }
 
+  public getFragmentStream$(dialogId: string): Observable<DialogData | DialogFragment> {
+    const dialog = this.dialogFlow.find(dialog => dialog.id === dialogId);
+    if (dialog) {
+      return of(dialog.getDialogData());
+    }
+    return this.fragmentStream$.asObservable();
+  }
+
   public getConversationDetails(): ConversationDetails {
     return {
       id: this.id,
@@ -55,7 +69,6 @@ export class Conversation {
       dialogData: this.dialogFlow.map(item => item.getDialogData()),
     }
   }
-
 
   public load() {
     const savedConversation = loadConversation(this.id)
@@ -122,7 +135,7 @@ export class Conversation {
     this.sendNextQueueItemToAgent();
   }
 
-  sendNextQueueItemToAgent() {
+  async sendNextQueueItemToAgent() {
     if (
       this.dialogFlow.length < 1 ||
       this.dialogQueue.length < 1 ||
@@ -146,37 +159,49 @@ export class Conversation {
       .filter(item => item.role !== AgentMessageRoles.NONE)
       .map(item => ({
         role: item.role as 'user' | 'assistant',
-        content: [
-          {
-            type: 'text',
-            text: item.content,
-          },
-        ],
+        content: {
+          type: 'text',
+          text: item.content,
+        },
       }));
 
+    // TODO make system messages more identifiable in DialogData
     const system = messages.shift()!;
 
+    try {
+      const lastAgent = this.lastAgent;
+      const agent = getAgent(lastAgent);
 
-    getAgent(this.lastAgent)
-      .sendMessages(system.content[0].text, messages, this.lastAgent)
-      .then(response => {
-        this.agentInProgress = false;
-        this.agentBusy$.next(false);
-        this.onAgentResponse(response);
-      })
-      .catch(error => {
-        console.error('Agent error:', error);
-        this.agentInProgress = false;
-        this.agentBusy$.next(false);
+      // Share the stream so both subscriptions get the same values
+      const sharedStream$ = agent.stream$.pipe(share());
+
+      this.fragmentStream$.complete();
+      this.fragmentStream$ = new ReplaySubject<DialogData | DialogFragment>();
+
+      // First fragment handling
+      sharedStream$.pipe(take(1)).subscribe(fragment => {
+        this.dialogStream$.next(AssistantFragmentStartDialog.create(fragment.text, lastAgent, fragment.id));
       });
+
+      // Subsequent fragments
+      sharedStream$.subscribe(fragment => {
+        this.fragmentStream$.next(assistantFragment(fragment.id, fragment.text));
+      });
+
+      const response = await agent.sendStreamedMessages(system.content.text, messages, this.lastAgent)
+      this.agentInProgress = false;
+      this.agentBusy$.next(false);
+      this.onAgentResponse(response);
+    } catch (error) {
+      console.error('Agent error:', error);
+      this.agentInProgress = false;
+      this.agentBusy$.next(false);
+    }
   }
 
   async onAgentResponse(response: AgentResponse) {
-    if (response.content.length === 0) {
-      throw new Error('Agent response is empty, but should not happen.');
-    }
 
-    const content = response.content[response.content.length - 1].text;
+    const content = response.text;
 
     let usage: Usage = {
       input_tokens: 0,
@@ -184,22 +209,24 @@ export class Conversation {
     };
     if (response.usage) {
       usage = {
-        input_tokens: response.usage.input_tokens,
-        output_tokens: response.usage.output_tokens,
+        input_tokens: response.usage.promptTokens,
+        output_tokens: response.usage.completionTokens,
       };
     }
 
     let dialog: BaseDialog;
     if (content.startsWith('CHANGELIST')) {
-      dialog = AssistantChangelistDialog.create(content, response.model, usage);
+      dialog = AssistantChangelistDialog.create(content, response.model as AgentModels, usage, response.id, response.requestId);
     } else if (content == 'OK') {
-      dialog = AssistantAcknowledgedDialog.create(content, response.model, usage);
+      dialog = AssistantAcknowledgedDialog.create(content, response.model as AgentModels, usage, response.id, response.requestId);
     } else {
-      dialog = AssistantTextDialog.create(content, response.model, usage);
+      dialog = AssistantTextDialog.create(content, response.model as AgentModels, usage, response.id, response.requestId);
     }
 
     this.dialogFlow.push(dialog);
     this.dialogStream$.next(dialog);
+    this.fragmentStream$.next(dialog.getDialogData());
+    this.fragmentStream$.complete()
 
     this.saveToProject();
 

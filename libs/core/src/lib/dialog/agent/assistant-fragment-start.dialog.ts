@@ -1,7 +1,7 @@
-import { AgentMessageRoles, AgentModels, DialogRoles, Usage } from '@gongsho/types';
+import { AgentMessageRoles, AgentModels, DialogRoles } from '@gongsho/types';
 import { BaseDialog } from '../base-dialog';
 
-export class AssistantChangelistDialog extends BaseDialog {
+export class AssistantFragmentStartDialog extends BaseDialog {
 
   protected override description = 'Assistant Output';
 
@@ -17,16 +17,14 @@ export class AssistantChangelistDialog extends BaseDialog {
     protected override readonly agent: AgentModels,
   ) {
     super(text, fillValues, agent);
-    this.description = 'Assistant Generated Changelist';
+    this.description = 'Assistant Streaming Response';
     this.role = AgentMessageRoles.ASSISTANT;
-    this.dialogRole = DialogRoles.CHANGELIST;
+    this.dialogRole = DialogRoles.ASSISTANT_FRAGMENT_START;
   }
 
-  public static create(text: string, agent: AgentModels, usage: Usage, id: string, requestId?: string): AssistantChangelistDialog {
-    const dialog = new AssistantChangelistDialog(text, {}, agent);
+  public static create(text: string, agent: AgentModels, id: string): AssistantFragmentStartDialog {
+    const dialog = new AssistantFragmentStartDialog(text, {}, agent);
     dialog.id = id;
-    dialog.requestId = requestId;
-    dialog.usage = usage;
     return dialog;
   }
 }

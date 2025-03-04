@@ -14,7 +14,7 @@ export class AssistantAcknowledgedDialog extends BaseDialog {
   constructor(
     protected readonly text: string,
     protected override readonly fillValues: Record<string, string> = {},
-    protected override readonly agent: AgentModels
+    protected override readonly agent: AgentModels,
   ) {
     super(text, fillValues, agent);
     this.description = 'Assistant Acknowledged';
@@ -22,8 +22,10 @@ export class AssistantAcknowledgedDialog extends BaseDialog {
     this.dialogRole = DialogRoles.INTERSTITIAL;
   }
 
-  public static create(text: string, agent: AgentModels, usage: Usage): AssistantAcknowledgedDialog {
+  public static create(text: string, agent: AgentModels, usage: Usage, id: string, requestId?: string): AssistantAcknowledgedDialog {
     const dialog = new AssistantAcknowledgedDialog(text, {}, agent);
+    dialog.id = id;
+    dialog.requestId = requestId;
     dialog.usage = usage;
     return dialog;
   }

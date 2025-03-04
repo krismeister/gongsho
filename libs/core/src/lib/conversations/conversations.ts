@@ -29,22 +29,7 @@ class ConversationsBase {
     return summary;
   }
 
-  // TODO add Agent model as an input
-  // public async startConversation(input: string): Promise<Conversation> {
-  //   const conversationId = `${Date.now()}`;
-  //   const conversation = new Conversation(conversationId, input);
-  //   await conversation.addUserInput(input);
-  //   this.conversationsSummaries.push({
-  //     id: conversationId,
-  //     title: input.slice(0, 100),
-  //     createdAt: new Date(),
-  //   });
-  //   await this.save();
-  //   this.conversations.push(conversation);
-  //   return conversation;
-  // }
 
-  // TODO add Agent model as an input
   public async getConversation(id: string): Promise<Conversation> {
     let conversation = this.conversations.find(conversation => conversation.id === id);
     if (!conversation) {
