@@ -1,11 +1,16 @@
 import { DialogData, DialogFragment, DialogRoles } from '@gongsho/types';
-import { filter, Observable, OperatorFunction, scan } from 'rxjs';
+import { Observable, OperatorFunction, scan } from 'rxjs';
 import { BlockTypes, MessageBlock } from './text-to-blocks';
 
 interface ParsedFragment {
   complete: boolean;
   blocks: MessageBlock[];
   remainingText: string;
+  currentBlock?: {
+    type: BlockTypes;
+    partial: string;
+    language?: string;
+  };
 }
 
 interface ParserState {
@@ -34,13 +39,24 @@ export function parseStreamingBlocks(): OperatorFunction<DialogFragment | Dialog
 
       const blocks: MessageBlock[] = [];
       let currentPosition = 0;
+      let currentBlock: ParsedFragment['currentBlock'] = undefined;
 
       // Try to extract complete blocks
       while (currentPosition < acc.buffer.length) {
         if (!acc.inCodeBlock) {
           // Look for start of code blocks
           const codeStart = acc.buffer.indexOf('```', currentPosition);
-          if (codeStart === -1) break; // No complete code block yet
+          if (codeStart === -1) {
+            // No complete code block, but we might have partial text
+            const remainingText = acc.buffer.slice(currentPosition).trim();
+            if (remainingText) {
+              currentBlock = {
+                type: BlockTypes.TEXT,
+                partial: remainingText
+              };
+            }
+            break;
+          }
 
           // Add any text before code block
           const textContent = acc.buffer.slice(currentPosition, codeStart).trim();
@@ -62,7 +78,15 @@ export function parseStreamingBlocks(): OperatorFunction<DialogFragment | Dialog
         } else {
           // Look for end of code block
           const codeEnd = acc.buffer.indexOf('```', currentPosition);
-          if (codeEnd === -1) break; // Wait for more content
+          if (codeEnd === -1) {
+            // Incomplete code block, expose it as current
+            currentBlock = {
+              type: BlockTypes.BACKTICK_CODE,
+              partial: acc.buffer.slice(currentPosition),
+              language: acc.codeBlockType
+            };
+            break;
+          }
 
           const codeContent = acc.buffer.slice(currentPosition, codeEnd);
 
@@ -114,10 +138,10 @@ export function parseStreamingBlocks(): OperatorFunction<DialogFragment | Dialog
         ...acc,
         complete: completed,
         blocks,
-        remainingText: acc.buffer
+        remainingText: acc.buffer,
+        currentBlock
       };
-    }, { ...initialState, complete: false, blocks: [], remainingText: '' }),
-    filter(result => result.blocks.length > 0) // Only emit when we have complete blocks
+    }, { ...initialState, complete: false, blocks: [], remainingText: '', currentBlock: undefined }),
   );
 }
 

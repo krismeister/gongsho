@@ -25,7 +25,7 @@ import { TokenCostEstimateComponent } from '../cost/token-cost-estimate.componen
         <hlm-switch style="pointer-events:none" id="show-raw-{{ dialog.id }}" class="mr-2" [checked]="showRawValue" />
         Raw
       </label>
-      <app-token-cost-estimate [tokenCost]="dialog | tokenCost" />
+      <app-token-cost-estimate [tokenCost]="dialog | tokenCost" [showAsIcon]="true" [requestId]="dialog.requestId ?? 'n/a'" />
     </div>
   `
 })

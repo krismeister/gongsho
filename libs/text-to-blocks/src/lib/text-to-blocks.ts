@@ -1,11 +1,11 @@
 // Define block types as a const object
-export const BlockTypes = {
-  TEXT: 'text',
-  REPLACE: 'replace',
-  BASH: 'bash',
-  EXAMINE: 'examine',
-  BACKTICK_CODE: 'backtick_code'
-} as const;
+export enum BlockTypes {
+  TEXT = 'text',
+  REPLACE = 'replace',
+  BASH = 'bash',
+  EXAMINE = 'examine',
+  BACKTICK_CODE = 'backtick_code'
+}
 
 // Create a type from the values
 export type BlockType = typeof BlockTypes[keyof typeof BlockTypes];

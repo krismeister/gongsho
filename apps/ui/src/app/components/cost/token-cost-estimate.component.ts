@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 
 import { Component, Input } from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideInfo } from '@ng-icons/lucide';
 import { BrnHoverCardModule } from '@spartan-ng/brain/hover-card';
 import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import { HlmHoverCardModule } from '@spartan-ng/ui-hovercard-helm';
@@ -9,12 +11,17 @@ import { TokenCost } from '../../pipes/token-cost.pipe';
 @Component({
   selector: 'app-token-cost-estimate',
   standalone: true,
-  imports: [CommonModule, HlmBadgeDirective, BrnHoverCardModule, HlmHoverCardModule],
+  imports: [CommonModule, HlmBadgeDirective, BrnHoverCardModule, HlmHoverCardModule, NgIcon],
+  providers: [provideIcons({ lucideInfo })],
   template: `
   @if (tokenCost) {
     <brn-hover-card>
       <div hlmBadge variant="outline" class="text-muted-foreground" brnHoverCardTrigger>
-        {{message}}{{ formatCost(tokenCost.inputCost + tokenCost.outputCost) }}
+        @if (showAsIcon) {
+          <ng-icon name="lucideInfo" />
+        } @else {
+          {{ formatCost(tokenCost.inputCost + tokenCost.outputCost) }}
+        }
       </div>
       <hlm-hover-card-content *brnHoverCardContent class="w-64">
         <div class="space-y-2">
@@ -23,6 +30,10 @@ import { TokenCost } from '../../pipes/token-cost.pipe';
             <p>Input: {{ tokenCost.inputTokens }} tokens ({{ formatDetailedCost(tokenCost.inputCost) }})</p>
             <p>Output: {{ tokenCost.outputTokens }} tokens ({{ formatDetailedCost(tokenCost.outputCost) }})</p>
             <p class="text-xs text-muted-foreground" > based on public pricing </p>
+            @if (requestId) {
+              <p class="text-sm pt-1">Request ID:</p>
+              <p class="text-muted-foreground">{{ requestId }}</p>
+            }
           </div>
         </div>
       </hlm-hover-card-content>
@@ -33,7 +44,8 @@ import { TokenCost } from '../../pipes/token-cost.pipe';
 export class TokenCostEstimateComponent {
   @Input() tokenCost!: TokenCost;
   @Input() message = '';
-
+  @Input() showAsIcon = false;
+  @Input() requestId = '';
 
   public formatCost(cost: number): string {
     if (cost === 0) {

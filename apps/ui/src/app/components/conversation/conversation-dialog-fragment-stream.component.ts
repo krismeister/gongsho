@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
-import { MessageBlock, parseStreamingBlocks, parseTextToBlocks } from '@gongsho/text-to-blocks';
+import { BlockTypes, MessageBlock, parseStreamingBlocks, parseTextToBlocks } from '@gongsho/text-to-blocks';
 import { DialogData, DialogFragment, DialogRoles } from '@gongsho/types';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideBot } from '@ng-icons/lucide';
@@ -55,6 +55,7 @@ import { CONVERSATION_DIALOG_STYLES } from './styles/conversation-dialog.styles'
                   <app-message-blocks [blocks]="blocks"></app-message-blocks>
                 }
               }
+              {{ partialText }}
             }
           </div>
         </div>
@@ -67,6 +68,7 @@ export class ConversationDialogFragmentStreamComponent implements OnInit, OnDest
   @Input() conversationId!: string;
   @Input() dialog!: DialogData;
 
+  partialText = ''
   content = '';
   completeDialog?: DialogData
   blocks: MessageBlock[] = [];
@@ -88,7 +90,26 @@ export class ConversationDialogFragmentStreamComponent implements OnInit, OnDest
 
       this.blocksStream$ = sharedStream.pipe(
         parseStreamingBlocks(),
-        scan((acc: MessageBlock[], fragment) => [...acc, ...fragment.blocks], []),
+        scan((acc: MessageBlock[], fragment) => {
+
+          if (fragment.currentBlock?.type === BlockTypes.TEXT) {
+            this.partialText = fragment.currentBlock.partial;
+            console.log('partialText', this.partialText);
+          } else {
+            this.partialText = '';
+          }
+
+          if (fragment.blocks.length > 0) {
+            const lastBlock = acc[acc.length - 1];
+            const nextBlock = fragment.blocks[0];
+            if (lastBlock?.type === BlockTypes.TEXT && nextBlock?.type === BlockTypes.TEXT
+              && lastBlock.content === nextBlock.content) {
+              return acc;
+            }
+            return [...acc, ...fragment.blocks]
+          }
+          return acc
+        }, []),
         tap((blocks) => console.log('streamed blocks', blocks))
       );
 
