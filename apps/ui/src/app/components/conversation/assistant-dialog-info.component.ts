@@ -19,8 +19,10 @@ import { TokenCostEstimateComponent } from '../cost/token-cost-estimate.componen
   template: `
     <div class="absolute right-0 -top-3 flex items-center gap-2">
       <!-- eslint-disable-next-line -->
-      <label class="flex items-center scale-[.6] cursor-pointer border border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700 rounded-md p-1" hlmLabel for="show-raw" (click)="toggleRaw.emit(!showRawValue)">
-        <hlm-switch style="pointer-events:none" id="show-raw" class="mr-2" [checked]="showRawValue" />
+      <label class="flex items-center scale-[.6] cursor-pointer border border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700 rounded-md p-1" hlmLabel
+        for="show-raw-{{ dialog.id }}"
+        (click)="toggleRaw.emit(!showRawValue)">
+        <hlm-switch style="pointer-events:none" id="show-raw-{{ dialog.id }}" class="mr-2" [checked]="showRawValue" />
         Raw
       </label>
       <app-token-cost-estimate [tokenCost]="dialog | tokenCost" />

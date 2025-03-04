@@ -100,6 +100,7 @@ export class AnthropicAgent {
         });
       } else if (isFinish(part)) {
         console.log('Finish:', part.finishReason);
+        this.textStream$.complete();
         response = await this.convertFinishToAgentResponse(part, accumulatedText, messageId);
         break;
       } else if (isReasoning(part)) {

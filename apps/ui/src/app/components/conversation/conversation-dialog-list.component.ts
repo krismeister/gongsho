@@ -13,13 +13,14 @@ import {
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, map, scan, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, pairwise, scan, tap } from 'rxjs/operators';
 import { ErrorCardComponent } from '../../components/cards/error-card.component';
 import { TokenCost, TokenCostPipe } from '../../pipes/token-cost.pipe';
 import { ConversationService } from '../../services/conversation.service';
 import { ApplyChangesButtonComponent } from '../buttons/apply-changes-button.component';
 import { GenerateChangelogButtonComponent } from '../buttons/generate-changelog-button.component';
 import { TokenCostEstimateComponent } from '../cost/token-cost-estimate.component';
+import { ConversationDialogFragmentStreamComponent } from './conversation-dialog-fragment-stream.component';
 import { ConversationDialogComponent } from './conversation-dialog.component';
 
 type DialogWithBlocks = DialogData & { blocks: MessageBlock[] }
@@ -40,7 +41,8 @@ type DialogWithBlocks = DialogData & { blocks: MessageBlock[] }
     GenerateChangelogButtonComponent,
     ApplyChangesButtonComponent,
     ErrorCardComponent,
-    TokenCostEstimateComponent
+    TokenCostEstimateComponent,
+    ConversationDialogFragmentStreamComponent
   ],
   providers: [
     TokenCostPipe,
@@ -60,13 +62,27 @@ type DialogWithBlocks = DialogData & { blocks: MessageBlock[] }
                     <ng-icon name="lucideChevronDown" hlm hlmAccIcon />
                   </button>
                   <hlm-accordion-content>
+                    @if (item.dialogRole === DialogRoles.ASSISTANT_FRAGMENT_START) {
+                      <app-conversation-dialog-fragment-stream
+                        [conversationId]="conversationId"
+                        [dialog]="item"
+                      />
+                    } @else {
                       <app-conversation-dialog [dialog]="item" [blocks]="item.blocks" />
+                    }
                   </hlm-accordion-content>
                 </div>
               }
             </div>
           } @else {
-            <app-conversation-dialog [dialog]="dialog" [blocks]="dialog.blocks" />
+            @if (dialog.dialogRole === DialogRoles.ASSISTANT_FRAGMENT_START) {
+              <app-conversation-dialog-fragment-stream
+                [conversationId]="conversationId"
+                [dialog]="dialog"
+                      />
+            } @else {
+              <app-conversation-dialog [dialog]="dialog" [blocks]="dialog.blocks" />
+            }
           }
         }
       </div>
@@ -109,6 +125,7 @@ type DialogWithBlocks = DialogData & { blocks: MessageBlock[] }
   `
 })
 export class ConversationDialogListComponent implements OnInit, OnDestroy {
+  public DialogRoles = DialogRoles;
   private tokenCostPipe = inject(TokenCostPipe);
   @Input() conversationId!: string;
   private SSESubscription?: Subscription;
@@ -142,8 +159,10 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
     })
 
     this.streamWithBlocks$ = this.stream$.pipe(
-      map((dialogData) => {
-        return { ...dialogData, blocks: parseTextToBlocks(dialogData.content) }
+      pairwise(),
+      filter(([prev, current]) => prev.id !== current.id),
+      map(([, current]) => {
+        return { ...current, blocks: parseTextToBlocks(current.content) }
       }),
     )
 
@@ -166,13 +185,17 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
       }, [] as Array<DialogWithBlocks | DialogWithBlocks[]>),
     );
 
-    this.lastDialogHasChanges$ = this.streamWithBlocks$.pipe(
+    this.lastDialogHasChanges$ = this.stream$.pipe(
+      map((current) => {
+        return { ...current, blocks: parseTextToBlocks(current.content) }
+      }),
       map((dialogData) => {
         return (
           dialogData.blocks.some(block => block.type === BlockTypes.REPLACE) &&
           dialogData.dialogRole !== DialogRoles.CHANGELIST
         )
-      })
+      }),
+      distinctUntilChanged()
     );
 
     this.lastDialogIsChangelist$ = this.stream$.pipe(
@@ -182,19 +205,19 @@ export class ConversationDialogListComponent implements OnInit, OnDestroy {
           isChangelist: dialogData.dialogRole === DialogRoles.CHANGELIST
         }
       }),
+      distinctUntilChanged()
     );
 
-    this.waitingOnAssistant$ = this.streamWithBlocks$.pipe(
-      tap((data) => console.log('waiting on assistant', data.role, data.role !== AgentMessageRoles.ASSISTANT)),
+    this.waitingOnAssistant$ = this.stream$.pipe(
       map((dialogData) => {
-        return dialogData.role === AgentMessageRoles.USER
+        return dialogData.role === AgentMessageRoles.USER || dialogData.dialogRole === DialogRoles.ASSISTANT_FRAGMENT_START
       }),
       distinctUntilChanged(),
-      tap((data) => console.log('waiting on assistant 2', data)),
+      tap((data) => console.log('waiting on assistant', data)),
     );
 
-    this.totalCost$ = this.streamWithBlocks$.pipe(
-      scan((acc: TokenCost, dialogData: DialogWithBlocks) => {
+    this.totalCost$ = this.stream$.pipe(
+      scan((acc: TokenCost, dialogData: DialogData) => {
         const cost = this.tokenCostPipe.transform(dialogData);
         return {
           inputTokens: acc.inputTokens + cost.inputTokens,

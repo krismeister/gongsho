@@ -1,5 +1,5 @@
 import { AgentMessageRoles, AgentModels, ChangeList, ConversationDetails, defaultAgentModel, DialogData, DialogFragment, DialogRoles, Usage } from '@gongsho/types';
-import { BehaviorSubject, map, Observable, of, ReplaySubject, take } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, ReplaySubject, share, take } from 'rxjs';
 import { AgentResponse } from '../agents/agent-types';
 import { getAgent } from '../agents/agents';
 import { AssistantAcknowledgedDialog } from '../dialog/agent/assistant-acknowledged.dialog';
@@ -172,13 +172,21 @@ export class Conversation {
       const lastAgent = this.lastAgent;
       const agent = getAgent(lastAgent);
 
-      agent.stream$.pipe(take(1)).subscribe(fragment => {
-        this.dialogStream$.next(AssistantFragmentStartDialog.create(fragment.text, lastAgent, fragment.id));
-      })
+      // Share the stream so both subscriptions get the same values
+      const sharedStream$ = agent.stream$.pipe(share());
 
-      agent.stream$.subscribe(fragment => {
+      this.fragmentStream$.complete();
+      this.fragmentStream$ = new ReplaySubject<DialogData | DialogFragment>();
+
+      // First fragment handling
+      sharedStream$.pipe(take(1)).subscribe(fragment => {
+        this.dialogStream$.next(AssistantFragmentStartDialog.create(fragment.text, lastAgent, fragment.id));
+      });
+
+      // Subsequent fragments
+      sharedStream$.subscribe(fragment => {
         this.fragmentStream$.next(assistantFragment(fragment.id, fragment.text));
-      })
+      });
 
       const response = await agent.sendStreamedMessages(system.content.text, messages, this.lastAgent)
       this.agentInProgress = false;

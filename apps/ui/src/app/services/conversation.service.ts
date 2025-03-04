@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AgentModels, ConversationData, ConversationSummary, DialogData } from '@gongsho/types';
+import { AgentModels, ConversationData, ConversationSummary, DialogData, DialogFragment } from '@gongsho/types';
 import { SseClient } from 'ngx-sse-client';
 import { Observable, catchError, filter, map, throwError } from 'rxjs';
 
@@ -37,6 +37,21 @@ export class ConversationService {
       }),
       catchError(error => throwError(() => error)),
       filter(Boolean)
+    );
+  }
+
+  getFragmentStream(conversationId: string, dialogId: string): Observable<DialogFragment | DialogData> {
+    return this.sseClient.stream(
+      `${this.apiUrl}/conversations/${conversationId}/stream/${dialogId}`
+    ).pipe(
+      map(event => {
+        if (event.type === 'error') {
+          throw new Error((event as MessageEvent).data);
+        }
+        const data = event as MessageEvent;
+        return JSON.parse(data.data) as DialogFragment;
+      }),
+      catchError(error => throwError(() => error)),
     );
   }
 
