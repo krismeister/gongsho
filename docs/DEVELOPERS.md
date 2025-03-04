@@ -169,3 +169,9 @@ npx nx migrate --run-migrations --if-exists
 [closing-issues]: https://help.github.com/articles/closing-issues-via-commit-messages/
 [conventional-commits]: https://www.conventionalcommits.org/en/v1.0.0-beta.2/
 [changelog]: CHANGELOG.md
+
+### Manually update dependencies in package.json's
+
+```shell
+./tools/sync-updates.sh ai @ai-sdk/anthropic
+```
