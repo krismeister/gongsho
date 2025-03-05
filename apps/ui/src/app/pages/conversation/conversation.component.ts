@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AgentModels, ConversationSummary } from '@gongsho/types';
+import { ConversationSummary } from '@gongsho/types';
 import { map, Observable } from 'rxjs';
 import { ConversationDialogListComponent } from '../../components/conversation/conversation-dialog-list.component';
 import { ConversationTextareaComponent } from '../../components/conversation/conversation-textarea.component';
 import { ConversationService } from '../../services/conversation.service';
+import { UserPreferenceService } from '../../services/user-preference.service';
 @Component({
   selector: 'app-conversation',
   template: `
@@ -22,7 +23,7 @@ export class ConversationComponent implements OnInit {
   conversationId: string;
   conversation$: Observable<ConversationSummary>;
 
-  constructor(private route: ActivatedRoute, private conversationService: ConversationService) {
+  constructor(private route: ActivatedRoute, private conversationService: ConversationService, private userPreferenceService: UserPreferenceService) {
     this.conversationId = '';
     this.conversation$ = this.conversationService.getConversation(this.conversationId).pipe(map(data => data.summary))
   }
@@ -31,7 +32,8 @@ export class ConversationComponent implements OnInit {
     this.conversationId = this.route.snapshot.paramMap.get('id') || '';
   }
 
-  handleSubmit(message: { message: string, model: AgentModels }) {
-    this.conversationService.addUserInput(this.conversationId, message.message, message.model).subscribe();
+  handleSubmit(message: { message: string }) {
+    const model = this.userPreferenceService.getSelectedModel();
+    this.conversationService.addUserInput(this.conversationId, message.message, model).subscribe();
   }
 }

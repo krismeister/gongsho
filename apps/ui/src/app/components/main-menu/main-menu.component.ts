@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { HighlightLoader } from 'ngx-highlightjs';
+import { UserPreferenceService } from '../../services/user-preference.service';
 
 @Component({
   selector: 'app-main-menu',
   standalone: true,
   imports: [CommonModule, RouterModule],
+
   template: `
     <nav class="px-4 py-2" style="position:relative;z-index:2">
       <div class="max-w-7xl mx-auto flex justify-between items-center h-8">
@@ -51,45 +52,14 @@ import { HighlightLoader } from 'ngx-highlightjs';
     </nav>
   `
 })
-export class MainMenuComponent implements OnInit {
-  private readonly lightThemeCss = '/highlight-css/github.min.css';
-  private readonly darkThemeCss = '/highlight-css/felipec.min.css';
+export class MainMenuComponent {
+  constructor(public userPreferenceService: UserPreferenceService) { }
 
-  isDark = signal(true);
-  private hljsLoader: HighlightLoader = inject(HighlightLoader);
-
-  ngOnInit() {
-
-    // Set initial theme to dark
-
-
-    if (typeof window !== 'undefined') {
-      // Check localStorage first
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        this.isDark.set(savedTheme !== 'light');
-        if (savedTheme == 'light') {
-          this.hljsLoader.setTheme(this.lightThemeCss);
-        } else {
-          this.hljsLoader.setTheme(this.darkThemeCss);
-        }
-      } else {
-        // Default to dark
-        this.isDark.set(true);
-        this.hljsLoader.setTheme(this.darkThemeCss);
-      }
-
-      // Apply the theme
-      document.documentElement.classList.toggle('dark', this.isDark());
-    }
+  isDark(): boolean {
+    return this.userPreferenceService.isDark()
   }
 
   toggleTheme() {
-    this.isDark.update(dark => {
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', !dark ? 'dark' : 'light');
-      this.hljsLoader.setTheme(!dark ? this.darkThemeCss : this.lightThemeCss);
-      return !dark;
-    });
+    this.userPreferenceService.toggleTheme();
   }
 } 

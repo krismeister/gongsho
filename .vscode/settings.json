@@ -14,7 +14,9 @@
     "npmignore",
     "healthcheck",
     "uuidv4",
-    "hovercard"
+    "hovercard",
+    "felipec",
+    "highlightjs"
   ],
   "cSpell.ignorePaths": [
     "package-lock.json",

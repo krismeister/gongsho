@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AgentModelConfigs, AgentModels, defaultAgentModel } from '@gongsho/types';
+import { AgentModelConfigs, defaultAgentModel, PreferredAgentModels } from '@gongsho/types';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmSelectImports } from '@spartan-ng/ui-select-helm';
+import { UserPreferenceService } from '../../services/user-preference.service';
 
 @Component({
   selector: 'app-model-selector',
@@ -26,26 +27,22 @@ import { HlmSelectImports } from '@spartan-ng/ui-select-helm';
   `
 })
 export class ModelSelectorComponent {
-  selectedModel = defaultAgentModel;
-  @Output() selectedModelChange = new EventEmitter<AgentModels>();
-  options = Object.values(AgentModelConfigs).map(model => ({
-    label: model.friendlyName,
-    value: model.model,
-  }));
+  selectedModel: PreferredAgentModels = defaultAgentModel;
+  @Output() selectedModelChange = new EventEmitter<PreferredAgentModels>();
+  options = Object.values(AgentModelConfigs)
+    .filter(model => !model.deprecated)
+    .map(model => ({
+      label: model.friendlyName,
+      value: model.model,
+    }));
 
-  constructor() {
-    // Load saved model from localStorage or use default
-    const savedModel = localStorage.getItem('selectedModel');
-    if (savedModel && Object.values(AgentModels).includes(savedModel as AgentModels)) {
-      this.selectedModel = savedModel as AgentModels;
-    } else {
-      this.selectedModel = defaultAgentModel;
-    }
+  constructor(private userPreferenceService: UserPreferenceService) {
+    this.selectedModel = this.userPreferenceService.getSelectedModel();
   }
 
   onModelChange(event: string) {
-    localStorage.setItem('selectedModel', event);
+    this.userPreferenceService.setSelectedModel(event as PreferredAgentModels);
     console.log('event', event);
-    this.selectedModelChange.emit(event as AgentModels);
+    this.selectedModelChange.emit(event as PreferredAgentModels);
   }
-} 
+}
