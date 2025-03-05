@@ -34,7 +34,10 @@ export class AppController {
   }
 
   @Post('conversations')
-  createConversation(@Body() body: { input?: string, model: AgentModels }) {
+  createConversation(@Body() body: { input: string, model: AgentModels }) {
+    if (!body.input) {
+      throw new Error('Input is required');
+    }
     return this.conversationsService.createConversation(body.input, body.model);
   }
 
