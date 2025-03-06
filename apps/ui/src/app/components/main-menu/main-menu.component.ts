@@ -1,22 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideGithub, lucideMoon, lucideSquarePlus, lucideSun } from '@ng-icons/lucide';
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { UserPreferenceService } from '../../services/user-preference.service';
 
 @Component({
   selector: 'app-main-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-
+  imports: [CommonModule, RouterModule, HlmButtonDirective, NgIcon],
+  providers: [provideIcons({ lucideGithub, lucideSun, lucideMoon, lucideSquarePlus })],
   template: `
     <nav
-      class="fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800"
-      style="z-index:2"
+    [class]="'fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-[2] transition-shadow ' + (isScrolled ? 'shadow-md' : '')"
     >
       <div class="container mx-auto px-4 py-2">
         <div class="flex justify-between items-center h-8">
           <!-- Logo -->
-          <div class="flex-shrink-0">
+          <div class="flex items-center gap-4">
             <a routerLink="/" class="block" aria-label="Home">
               <svg
                 class="h-6 fill-purple-900 dark:fill-purple-100"
@@ -37,57 +39,57 @@ import { UserPreferenceService } from '../../services/user-preference.service';
                 />
               </svg>
             </a>
+            
+            <a
+              hlmBtn
+              routerLink="/"
+              variant="ghostPurple"
+              size="xsm"
+            >
+              <ng-icon 
+                name="lucideSquarePlus" 
+                class="mr-1"
+                style="width: 16px; height: 16px;"
+              />
+              <span class="relative top-[1px]">
+                New Conversation
+              </span>
+            </a>
           </div>
 
           <!-- Theme Toggle Button -->
           <div class="flex items-center gap-2">
             <a
+              hlmBtn
               href="https://github.com/krismeister/gongsho"
               target="_blank"
-              class="text-purple-900 dark:text-purple-200 hover:text-purple-800 dark:hover:text-purple-100 transition-colors"
+              variant="ghostPurple"
+              size="xsm"
               aria-label="GitHub Repository"
             >
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  fill-rule="evenodd"
-                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <ng-icon 
+                name="lucideGithub" 
+                class="w-4 h-4"
+              />
             </a>
             <button
+              hlmBtn
               (click)="toggleTheme()"
-              class="text-purple-600 dark:text-purple-100 hover:bg-purple-200/50 dark:hover:bg-purple-700/50 p-1.5 rounded-md transition-colors"
+              variant="ghostPurple"
+              size="xsm"
               aria-label="Toggle theme"
             >
-              <svg
-                *ngIf="isDark()"
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                ></path>
-              </svg>
-              <svg
-                *ngIf="!isDark()"
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                ></path>
-              </svg>
+              @if (userPreferenceService.isDark()) {
+                <ng-icon 
+                  name="lucideSun" 
+                  class="w-4 h-4"
+                />
+              } @else {
+                <ng-icon 
+                  name="lucideMoon" 
+                  class="w-4 h-4"
+                />
+              }
             </button>
           </div>
         </div>
@@ -96,10 +98,16 @@ import { UserPreferenceService } from '../../services/user-preference.service';
   `,
 })
 export class MainMenuComponent {
-  constructor(public userPreferenceService: UserPreferenceService) { }
+  isScrolled = false;
 
-  isDark(): boolean {
-    return this.userPreferenceService.isDark();
+  constructor(public userPreferenceService: UserPreferenceService) {
+    // Check initial scroll position
+    this.checkScroll();
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  checkScroll() {
+    this.isScrolled = window.scrollY > 10;
   }
 
   toggleTheme() {
