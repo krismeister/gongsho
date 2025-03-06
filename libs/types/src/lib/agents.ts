@@ -2,7 +2,7 @@
 // list of anthropic models: https://docs.anthropic.com/en/docs/about-claude/models/all-models
 export enum PreferredAgentModels {
   CLAUDE_3_7_SONNET = 'claude-3-7-sonnet-20250219',
-  CLAUDE_3_7_HAIKU = 'claude-3-5-haiku-20241022',
+  CLAUDE_3_5_HAIKU = 'claude-3-5-haiku-20241022',
   CLAUDE_3_OPUS = 'claude-3-opus-20240229',
 }
 
@@ -53,9 +53,9 @@ export const AgentModelConfigs: Record<AgentModels, AgentModelConfig> = {
       outputTokensCostPerMillion: 75.0,
     },
   },
-  [AgentModels.CLAUDE_3_7_HAIKU]: {
-    model: AgentModels.CLAUDE_3_7_HAIKU,
-    friendlyName: 'Claude 3.7 Haiku',
+  [AgentModels.CLAUDE_3_5_HAIKU]: {
+    model: AgentModels.CLAUDE_3_5_HAIKU,
+    friendlyName: 'Claude 3.5 Haiku',
     maxOutputTokens: 2048,
     cost: {
       inputTokensCostPerMillion: 0.80,
