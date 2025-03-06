@@ -23,11 +23,20 @@ bashPreBuild() {
 
 bashPreBuild
 
+echo ""
 read -p "Verify the publish directory is correct"
+echo ""
+echo "sanity check"
+echo "cd publish/api && node ./main.js --anthropic-api-key=$ANTHROPIC_API_KEY"
+echo ""
+read -p "Press Enter to continue"
 
 npx nx release --skip-publish
 
-read -p "Verify the CHANGELOG.md is correct"
+echo ""
+read "Verify the CHANGELOG.md is correct"
+echo ""
+read -p "Press Enter to continue"
 
 # publish the package
 cd publish/api

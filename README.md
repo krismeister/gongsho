@@ -2,37 +2,39 @@
 
 An NPM library to add AI CodeGen to your typescript project. Simply install `npm i gongsho` then run the start command to open the gongsho web interface. It reads your project files and allows you to have a conversation with the LLM to generate code.
 
-Gongsho currently uses Claude 3.5 Sonnet, you'll need an Anthropic API key to use it.
+Gongsho uses Claude Sonnet, you'll need an Anthropic API key to use it. Support for additional LLMs is coming soon.
 
 ## See a live Demo
 
-[Live Demo on Youtube](https://youtu.be/ik5KnsCCmqE?si=kisDRSGncqGrv2-m)
+[Live Demo on Youtube][youtube-demo]
 
-[![Gongsho UI](docs/conversation-page_thumb.png)](docs/conversation-page.png)
+[![Gongsho UI][ui-image]][youtube-demo]
 
 - [Install and Run](#install-and-run)
 - [Configuration](#configuration)
+- [CHANGELOG][changelog]
 - [TODOs](#todos)
-- [Developers Readme](docs/DEVELOPERS.md) :link:
-- [Longer Term Plan](docs/PLAN.md) :link:
+- [Developers Readme][dev-readme]
+- [Longer Term Plan][plan]
 
 ## Install and Run
 
-You can either install gongsho in a project or globally
+You can either install gongsho in a project or globally.
 
 ```bash
+# make sure you have node 18 or higher
+node -v
+# make sure > v18
+
 # install in a project
 npm install gongsho@latest  --save-dev
-
-# install globally
-npm install -g gongsho@latest
 ```
 
 You'll need to get an [Anthropic API key](https://console.anthropic.com/settings/keys) and pass it to gongsho.
 
 ```bash
 # If you have an ANTHROPIC_API_KEY env variable in your bash profile.
-npx gongsho anthropic-api-key=$ANTHROPIC_API_KEY
+npx gongsho --anthropic-api-key=$ANTHROPIC_API_KEY
 ```
 
 ## Configuration
@@ -67,29 +69,31 @@ MAX_FILES=800
 
 ### .gongshoignore
 
-When you have many files in a project you can create a `.gongshoignore` file to exclude files from the conversation. This will greatly improve performance. When you don't create a custom `.gongshoignore` file, gongsho will use the `.gitignore` file. There are additional some _sensible defaults_ that will always be ignored.
+When you have many files in a project you can create a `.gongshoignore` file to exclude files from the conversation. This will greatly improve performance. When you don't create a custom `.gongshoignore` file, gongsho will use the `.gitignore` file. There are additionally some _sensible defaults_ that will always be ignored.
 
 ## TODOs
 
-- MVP for v0.1.0
+- MVP for v0.2.0
 
-  - [x] NX project with Angular and NestJS
-  - [x] Point to real project instead of projects directory
-  - [x] Build NPM package
-  - [x] Show tokens used and cost estimate
+  - [ ] Show better UI for CHANGELIST
+  - [ ] Verify larger project support
+  - [ ] Show previous conversations
+  - [ ] Auto Scroll to the bottom of the conversation
 
 - LLM
 
-  - [x] Make initial prompt asking if codebase explanation is required
+  - [ ] Make initial prompt asking if codebase explanation is required
   - [x] Make interstitial
   - [x] Pass full text of files to LLM if explanation is required
   - [x] Save/Load conversation to/from file
   - [ ] increase performance on large projects
-  - [ ] refine prompts with examples from [Anthropic Code in NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code). [Prompts gist](https://gist.github.com/vincentschroeder/b64fb2705b8442e189b944275198d1f8)
+  - [ ] refine prompts with examples from [Anthropic Code in NPM][anthropic-code-in-npm]. [Prompts gist][prompts-gist]
+  - [ ] Add getFiles tooling
+  - [ ] Add getDependencies tooling
 
 - UI
 
-  - [ ] Sticky top nav with button "New Conversation",
+  - [x] Sticky top nav with button "New Conversation",
   - [ ] UI to see your history : "View Conversations"
   - [ ] Fix the apply button - for errors and for clearing
   - [ ] Add diff viewer of changes
@@ -117,13 +121,13 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [x] Take claude's response and apply it to the project folder
   - [x] Add basic RepoMap with simple list of files
   - [x] Add aider like prompts to gongsho
-  - [x] Implement RepoMap similar to [Aider Repo-Map](https://github.com/jxnl/aider/blob/main/aider/repo_map.py)
-  - [ ] Optimize changelog generation
-  - [ ] Add prompt caching, [Vercel](https://sdk.vercel.ai/providers/ai-sdk-providers/anthropic#cache-control), [Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)
+  - [x] Implement RepoMap similar to [Aider Repo-Map][aider-repo-map]
+  - [x] Optimize changelog generation
+  - [ ] Add prompt caching, [Vercel][vercel], [Anthropic][anthropic]
   - [ ] Research Tree-Splitter to give more context to LLM
   - [ ] Research Token size limits for user input and repo-maps
-  - [x] convert to [Vercel AI SDK](https://www.npmjs.com/package/ai)
-  - [ ] Research [LangGraph](https://github.com/langchain-ai/langgraph) multi-agent workflows
+  - [x] convert to [Vercel AI SDK][vercel-ai-sdk]
+  - [ ] Research [LangGraph][langgraph] multi-agent workflows
   - [ ] Deal with finishReason better
 
 - Features Ideas
@@ -133,18 +137,33 @@ When you have many files in a project you can create a `.gongshoignore` file to 
   - [ ] Highlight code snippet and ask for a change
   - [ ] Add "Explain My Project" feature
   - [ ] Add "Rules" feature for the AI to follow
-  - [ ] Facilitate update with UI notification to update gongsho [Gong Update Feed](https://registry.npmjs.org/-/package/gongsho/dist-tags) + [Compare Versions](https://www.npmjs.com/package/compare-versions)
+  - [ ] Facilitate update with UI notification to update gongsho [Gongsho Update Feed][gongsho-update-feed] + [Compare Versions][compare-versions]
 
 - Bugs
 
   - [x] Add new file creation, during conversation
   - [x] Agent dropdown on textarea not hooked in, make textarea only clear when successfully applied
   - [ ] Theres an extra conversations load `http://localhost:4200/api/conversations/` on the conversation details page
-  - [ ] Handle conversation start when server has an error, better handling of clearing text area.
   - [ ] Deal with Agent errors better
-  - [ ] When the LLM Agent gives an error, the UI has already cleared the text area too early.
-  - [ ] Fix the error on SSE completion from our SSE dependency: [ngx-sse-client](https://github.com/marcospds/ngx-sse-client/issues/6)
+  - [x] When the LLM Agent gives an error, the UI has already cleared the text area too early.
+  - [ ] Fix the error on SSE completion from our SSE dependency: [ngx-sse-client][ngx-sse-client]
 
 - Backlog
   - [ ] Better way to handle titles of created conversations.
   - [ ] Upgrade nestjs to latest (**Note:** We had to install an old version of `@nestjs/serve-static@10.4.15` due to NX compatibility).
+
+[youtube-demo]: https://youtu.be/ik5KnsCCmqE?si=kisDRSGncqGrv2-m
+[ui-image]: docs/conversation-page_thumb.png
+[changelog]: CHANGELOG.md
+[dev-readme]: docs/DEVELOPERS.md
+[plan]: docs/PLAN.md
+[anthropic-code-in-npm]: https://www.npmjs.com/package/@anthropic-ai/claude-code
+[prompts-gist]: https://gist.github.com/vincentschroeder/b64fb2705b8442e189b944275198d1f8
+[aider-repo-map]: https://github.com/jxnl/aider/blob/main/aider/repo_map.py
+[vercel]: https://sdk.vercel.ai/providers/ai-sdk-providers/anthropic#cache-control
+[anthropic]: https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
+[vercel-ai-sdk]: https://www.npmjs.com/package/ai
+[langgraph]: https://github.com/langchain-ai/langgraph
+[gongsho-update-feed]: https://registry.npmjs.org/-/package/gongsho/dist-tags
+[compare-versions]: https://www.npmjs.com/package/compare-versions
+[ngx-sse-client]: https://github.com/marcospds/ngx-sse-client/issues/6

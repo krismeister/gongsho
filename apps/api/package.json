@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": false,
+  "bugs": {
+    "url": "https://github.com/krismeister/gongsho/issues/new/choose"
+  },
+  "homepage": "https://github.com/krismeister/gongsho#readme",
   "dependencies": {
     "@nestjs/common": "^10.0.2",
     "@nestjs/core": "^10.0.2",
