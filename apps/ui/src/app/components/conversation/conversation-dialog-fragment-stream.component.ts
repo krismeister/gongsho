@@ -5,7 +5,7 @@ import { DialogData, DialogFragment, DialogRoles } from '@gongsho/types';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideBot } from '@ng-icons/lucide';
 import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
-import { Observable, scan, share, Subscription, tap } from 'rxjs';
+import { Observable, scan, share, Subscription } from 'rxjs';
 import { ConversationService } from '../../services/conversation.service';
 import { MessageBlocksComponent } from '../message-blocks/message-blocks.component';
 import { AssistantDialogInfoComponent } from './assistant-dialog-info.component';
@@ -94,7 +94,6 @@ export class ConversationDialogFragmentStreamComponent implements OnInit, OnDest
 
           if (fragment.currentBlock?.type === BlockTypes.TEXT) {
             this.partialText = fragment.currentBlock.partial;
-            console.log('partialText', this.partialText);
           } else {
             this.partialText = '';
           }
@@ -109,8 +108,7 @@ export class ConversationDialogFragmentStreamComponent implements OnInit, OnDest
             return [...acc, ...fragment.blocks]
           }
           return acc
-        }, []),
-        tap((blocks) => console.log('streamed blocks', blocks))
+        }, [])
       );
 
       this.subscription = sharedStream.subscribe({
