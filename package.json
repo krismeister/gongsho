@@ -86,7 +86,7 @@
     "ng-packagr": "~19.1.0",
     "ngx-highlightjs": "^14.0.0",
     "ngx-scrollbar": ">=16.0.0",
-    "ngx-sonner": "^2.0.0",
+    "ngx-sonner": "^3.0.0",
     "ngx-sse-client": "^19.0.0",
     "nx": "20.4.4",
     "postcss": "^8.4.5",

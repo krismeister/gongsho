@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { toast } from 'ngx-sonner';
 import { ConversationTextareaComponent } from '../../components/conversation/conversation-textarea.component';
 import { ConversationService } from '../../services/conversation.service';
 import { UserPreferenceService } from '../../services/user-preference.service';
@@ -31,8 +32,11 @@ export class NewConversationComponent {
         this.router.navigate(['/conversations', conversationSummary.id]);
       },
       error: (error) => {
-        console.error('Error in conversation flow:', error);
-        // Handle error appropriately
+        console.error('Error adding message:', error);
+        toast.error('Error creating the conversation', {
+          position: 'bottom-center',
+          description: error.message,
+        });
       }
     });
   }

@@ -9,7 +9,8 @@ export class UserPreferenceService {
   private readonly lightThemeCss = '/highlight-css/github.min.css';
   private readonly darkThemeCss = '/highlight-css/felipec.min.css';
 
-  isDark = signal(true);
+  private readonly _isDark = signal(true);
+  public readonly isDark = this._isDark.asReadonly();
 
   constructor(private hljsLoader: HighlightLoader) {
     this.initializeTheme();
@@ -20,11 +21,11 @@ export class UserPreferenceService {
       // Check localStorage first
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
-        this.isDark.set(savedTheme !== 'light');
+        this._isDark.set(savedTheme !== 'light');
         this.hljsLoader.setTheme(savedTheme === 'light' ? this.lightThemeCss : this.darkThemeCss);
       } else {
         // Default to dark
-        this.isDark.set(true);
+        this._isDark.set(true);
         this.hljsLoader.setTheme(this.darkThemeCss);
       }
 
@@ -34,7 +35,7 @@ export class UserPreferenceService {
   }
 
   toggleTheme() {
-    this.isDark.update(dark => {
+    this._isDark.update(dark => {
       document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', !dark ? 'dark' : 'light');
       this.hljsLoader.setTheme(!dark ? this.darkThemeCss : this.lightThemeCss);

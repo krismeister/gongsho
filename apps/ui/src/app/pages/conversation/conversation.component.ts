@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ConversationSummary } from '@gongsho/types';
+import { toast } from 'ngx-sonner';
 import { map, Observable } from 'rxjs';
 import { ConversationDialogListComponent } from '../../components/conversation/conversation-dialog-list.component';
 import { ConversationTextareaComponent } from '../../components/conversation/conversation-textarea.component';
@@ -39,6 +40,10 @@ export class ConversationComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error adding message:', error);
+        toast.error('Error adding the message', {
+          position: 'bottom-center',
+          description: error.message,
+        });
       }
     });
   }
