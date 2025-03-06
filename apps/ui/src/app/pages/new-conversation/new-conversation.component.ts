@@ -23,11 +23,11 @@ export class NewConversationComponent {
     private userPreferenceService: UserPreferenceService
   ) { }
 
-  handleSubmit(message: { message: string }) {
-    const model = this.userPreferenceService.getSelectedModel();
-    this.conversationService.createConversation(message.message, model).pipe(
+  handleSubmit(data: { message: string, onSuccess: () => void }) {
+    this.conversationService.createConversation(data.message, this.userPreferenceService.getSelectedModel()).pipe(
     ).subscribe({
       next: (conversationSummary) => {
+        data.onSuccess(); // Clear the textarea
         this.router.navigate(['/conversations', conversationSummary.id]);
       },
       error: (error) => {

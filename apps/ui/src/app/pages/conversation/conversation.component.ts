@@ -32,8 +32,14 @@ export class ConversationComponent implements OnInit {
     this.conversationId = this.route.snapshot.paramMap.get('id') || '';
   }
 
-  handleSubmit(message: { message: string }) {
-    const model = this.userPreferenceService.getSelectedModel();
-    this.conversationService.addUserInput(this.conversationId, message.message, model).subscribe();
+  handleSubmit(data: { message: string, onSuccess: () => void }) {
+    this.conversationService.addUserInput(this.conversationId, data.message, this.userPreferenceService.getSelectedModel()).subscribe({
+      next: () => {
+        data.onSuccess(); // Clear the textarea
+      },
+      error: (error) => {
+        console.error('Error adding message:', error);
+      }
+    });
   }
 }

@@ -42,7 +42,7 @@ export class ConversationService {
 
   getFragmentStream(conversationId: string, dialogId: string): Observable<DialogFragment | DialogData> {
     return this.sseClient.stream(
-      `${this.apiUrl}/conversations/${conversationId}/stream/${dialogId}`
+      `${this.apiUrl}/conversations/${conversationId}/stream/${dialogId}`, { keepAlive: false }
     ).pipe(
       map(event => {
         if (event.type === 'error') {

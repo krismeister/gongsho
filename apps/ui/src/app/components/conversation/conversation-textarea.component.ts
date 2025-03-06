@@ -30,7 +30,10 @@ import { ModelSelectorComponent } from '../buttons/model-selector.component';
   `
 })
 export class ConversationTextareaComponent {
-  @Output() submitMessage = new EventEmitter<{ message: string }>();
+  @Output() submitMessage = new EventEmitter<{
+    message: string,
+    onSuccess: () => void
+  }>();
   message = '';
 
   handleEnterKey(ev: Event) {
@@ -43,8 +46,12 @@ export class ConversationTextareaComponent {
 
   onSubmit() {
     if (this.message.trim()) {
-      this.submitMessage.emit({ message: this.message.trim() });
-      this.message = ''; // Clear the input after submission
+      this.submitMessage.emit({
+        message: this.message.trim(),
+        onSuccess: () => {
+          this.message = ''; // Only clear when parent signals success
+        }
+      });
     }
   }
 } 
