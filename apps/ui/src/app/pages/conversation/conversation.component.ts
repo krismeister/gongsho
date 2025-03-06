@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ConversationSummary } from '@gongsho/types';
+import { toast } from 'ngx-sonner';
 import { map, Observable } from 'rxjs';
 import { ConversationDialogListComponent } from '../../components/conversation/conversation-dialog-list.component';
 import { ConversationTextareaComponent } from '../../components/conversation/conversation-textarea.component';
@@ -32,8 +33,18 @@ export class ConversationComponent implements OnInit {
     this.conversationId = this.route.snapshot.paramMap.get('id') || '';
   }
 
-  handleSubmit(message: { message: string }) {
-    const model = this.userPreferenceService.getSelectedModel();
-    this.conversationService.addUserInput(this.conversationId, message.message, model).subscribe();
+  handleSubmit(data: { message: string, onSuccess: () => void }) {
+    this.conversationService.addUserInput(this.conversationId, data.message, this.userPreferenceService.getSelectedModel()).subscribe({
+      next: () => {
+        data.onSuccess(); // Clear the textarea
+      },
+      error: (error) => {
+        console.error('Error adding message:', error);
+        toast.error('Error adding the message', {
+          position: 'bottom-center',
+          description: error.message,
+        });
+      }
+    });
   }
 }

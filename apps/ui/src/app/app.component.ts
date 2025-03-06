@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MainMenuComponent } from './components/main-menu/main-menu.component';
-
+import { SonnerOutputComponent } from './components/notifications/sonner-output.component';
 @Component({
   standalone: true,
-  imports: [RouterModule, MainMenuComponent],
+  imports: [RouterModule, MainMenuComponent, SonnerOutputComponent],
   selector: 'app-root',
   template: `
     <div class="root-div min-h-screen flex flex-col">
@@ -15,6 +15,7 @@ import { MainMenuComponent } from './components/main-menu/main-menu.component';
           <router-outlet></router-outlet>
         </main>
       </div>
+      <app-sonner-output></app-sonner-output>
     </div>
   `
 })
