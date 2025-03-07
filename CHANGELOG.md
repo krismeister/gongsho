@@ -1,3 +1,19 @@
+## 0.1.0
+
+### 🚀 Features
+
+- Add Cost Estimate ([#2](https://github.com/krismeister/gongsho/pull/2))
+- streams conversation text to the ui ([#8](https://github.com/krismeister/gongsho/pull/8))
+- supports back to node18 ([b2965f5](https://github.com/krismeister/gongsho/commit/b2965f5))
+- adds claude sonnet 3.7 ([#10](https://github.com/krismeister/gongsho/pull/10))
+- adds new conversation button to main nav ([#12](https://github.com/krismeister/gongsho/pull/12))
+
+### 🏡 Chore
+
+- added todos ([5b5139f](https://github.com/krismeister/gongsho/commit/5b5139f))
+- plan and document LLM tooling feature ([4e0b26d](https://github.com/krismeister/gongsho/commit/4e0b26d))
+- adds github bug template ([12a9ebb](https://github.com/krismeister/gongsho/commit/12a9ebb))
+
 ## 0.0.1-4
 
 ### 🚀 Features

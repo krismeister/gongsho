@@ -24,10 +24,10 @@ bashPreBuild() {
 bashPreBuild
 
 echo ""
-read -p "Verify the publish directory is correct"
+read "Verify the publish directory is correct"
 echo ""
 echo "sanity check"
-echo "cd publish/api && node ./main.js --anthropic-api-key=$ANTHROPIC_API_KEY"
+echo "cd publish/api && node ./main.js --anthropic-api-key=\$ANTHROPIC_API_KEY"
 echo ""
 read -p "Press Enter to continue"
 
