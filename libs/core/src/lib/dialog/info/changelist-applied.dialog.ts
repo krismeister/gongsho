@@ -1,6 +1,7 @@
 import { AgentMessageRoles, DialogRoles } from "@gongsho/types";
 import { BaseDialog } from "../base-dialog";
 
+const prompt = `The changelist has been applied.`
 export class ChangelistAppliedDialog extends BaseDialog {
   constructor(
     protected override readonly inputText = '',
@@ -12,5 +13,3 @@ export class ChangelistAppliedDialog extends BaseDialog {
     this.description = 'Changelist Applied';
   }
 }
-
-const prompt = `The changelist has been applied.`

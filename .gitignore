@@ -47,3 +47,5 @@ local.env
 .env
 
 publish
+
+apps/api/src/assets/tpl/
