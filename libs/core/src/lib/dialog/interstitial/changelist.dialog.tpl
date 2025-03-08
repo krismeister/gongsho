@@ -1,0 +1,2 @@
+Build me a "CHANGELIST" of the changes you have recommended based on my the latest files I have added to the chat. Only reply with "CHANGELIST" then all the *SEARCH/REPLACE* blocks.
+Only respond with a "CHANGELIST" when specifically requested.

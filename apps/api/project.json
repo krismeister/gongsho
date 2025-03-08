@@ -5,8 +5,15 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "pre-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./tools/pre-api-build.sh"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
+      "dependsOn": ["pre-build"],
       "options": {
         "command": "webpack-cli build",
         "args": ["node-env=production"]

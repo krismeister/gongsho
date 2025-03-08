@@ -1,5 +1,8 @@
 import { AgentMessageRoles, AgentModels, DialogRoles } from "@gongsho/types";
+import { loadTemplate } from "../../utils/template";
 import { BaseDialog } from "../base-dialog";
+
+const prompt = loadTemplate('changelist.dialog.tpl');
 
 export class ChangelistDialog extends BaseDialog {
 
@@ -18,6 +21,3 @@ export class ChangelistDialog extends BaseDialog {
     return new ChangelistDialog(prompt, {}, agent);
   }
 }
-
-const prompt = `Build me a "CHANGELIST" of the changes you have recommended based on my the latest files I have added to the chat. Only reply with "CHANGELIST" then all the *SEARCH/REPLACE* blocks.
-Only respond with a "CHANGELIST" when specifically requested.`

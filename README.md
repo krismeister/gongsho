@@ -151,6 +151,7 @@ When you have many files in a project you can create a `.gongshoignore` file to 
 - Backlog
   - [ ] Better way to handle titles of created conversations.
   - [ ] Upgrade nestjs to latest (**Note:** We had to install an old version of `@nestjs/serve-static@10.4.15` due to NX compatibility).
+  - [ ] **Aug 2025** Deprioritize Node18 support - if support is lost, add a check in the [pre-start script][pre-start-script].
 
 [youtube-demo]: https://youtu.be/ik5KnsCCmqE?si=kisDRSGncqGrv2-m
 [ui-image]: docs/conversation-page_thumb.png
@@ -167,3 +168,4 @@ When you have many files in a project you can create a `.gongshoignore` file to 
 [gongsho-update-feed]: https://registry.npmjs.org/-/package/gongsho/dist-tags
 [compare-versions]: https://www.npmjs.com/package/compare-versions
 [ngx-sse-client]: https://github.com/marcospds/ngx-sse-client/issues/6
+[pre-start-script]: https://medium.com/codeptivesolutions/want-to-check-node-version-before-project-get-executed-using-script-47cd32c2f1fe

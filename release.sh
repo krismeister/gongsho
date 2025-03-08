@@ -17,14 +17,15 @@ bashPreBuild() {
   # inject the bin field into main.js
   sed -i '1i #!/usr/bin/env node' publish/api/main.js
 
+  # check if all the dependencies are in the publish/api/package.json
   printf "\n\nAre all these dependencies in the publish/api/package.json?\n"
-  grep -n "module.exports = " publish/api/main.js
+  grep -n "module.exports = require(" publish/api/main.js
 }
 
 bashPreBuild
 
 echo ""
-read "Verify the publish directory is correct"
+echo "Verify the publish directory is correct"
 echo ""
 echo "sanity check"
 echo "cd publish/api && node ./main.js --anthropic-api-key=\$ANTHROPIC_API_KEY"

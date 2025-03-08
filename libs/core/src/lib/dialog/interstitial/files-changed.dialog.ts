@@ -1,8 +1,10 @@
 import { AgentMessageRoles, DialogRoles } from '@gongsho/types';
 import { RepoMap } from '../../repo-map/repo-map';
 import { deletesAndUpdates } from '../../utils/dialog';
+import { loadTemplate } from '../../utils/template';
 import { BaseDialog } from '../base-dialog';
 
+const prompt = loadTemplate('files-changed.dialog.tpl');
 export class FilesChangedDialog extends BaseDialog {
   protected override description = 'Files Changed';
   constructor(
@@ -34,11 +36,3 @@ export class FilesChangedDialog extends BaseDialog {
     return dialog
   }
 }
-
-const prompt = `I have *updated or deleted these files* that I sent you earlier.
-Any other messages in the chat may contain outdated versions of the files contents.
-
-I want to ask you followup questions, please respond with "OK" if you are ready to answer.
-{{deletes}}
-{{files}}
-`;

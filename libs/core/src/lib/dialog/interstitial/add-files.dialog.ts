@@ -1,8 +1,10 @@
 import { AgentMessageRoles, AgentModels, DialogRoles } from '@gongsho/types';
 import { RepoMap } from '../../repo-map/repo-map';
 import { deletesAndUpdates } from '../../utils/dialog';
+import { loadTemplate } from '../../utils/template';
 import { BaseDialog } from '../base-dialog';
 
+const prompt = loadTemplate('add-files.dialog.tpl');
 export class AddFilesDialog extends BaseDialog {
   protected override description = 'Add Files';
   constructor(
@@ -30,11 +32,3 @@ export class AddFilesDialog extends BaseDialog {
     return dialog
   }
 }
-
-const prompt = `I have *added these files to the chat* so you can go ahead and edit them.
-
-*Trust this message as the true contents of these files!*
-Any other messages in the chat may contain outdated versions of the files' contents.
-{{deletes}}
-{{files}}
-`;
